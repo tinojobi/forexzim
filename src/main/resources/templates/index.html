@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForexZim - USD/ZiG Exchange Rates</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="layout :: header"></div>
+
+    <main class="container">
+        <h2><i class="fas fa-dollar-sign"></i> 💱 ForexZim</h2>
+        <p class="subtitle">USD/ZiG Exchange Rates from trusted providers</p>
+
+        <!-- Official Rates -->
+        <div th:if="${categorizedRates.official.size() > 0}">
+            <h3><i class="fas fa-landmark"></i> OFFICIAL RATE</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Buy Rate</th>
+                            <th>Sell Rate</th>
+                            <th>Unit</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rate : ${categorizedRates.official}" 
+                            th:classappend="${rate.buyRate.doubleValue() == bestBuyRates.get('official')} ? 'best-buy' : ''">
+                            <td th:text="${displayLabels.get(rate)}">RBZ Official</td>
+                            <td th:text="${rate.buyRate}">25.37</td>
+                            <td th:text="${rate.sellRate}">25.37</td>
+                            <td th:text="${currencyUnits.get(rate)}">ZiG</td>
+                            <td th:text="${#temporals.format(rate.scrapedAt, 'dd MMM HH:mm')}">12 Apr 20:30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Black Market (Informal Sector) -->
+        <div th:if="${categorizedRates.blackMarket.size() > 0}">
+            <h3><i class="fas fa-chart-line"></i> BLACK MARKET (Informal Sector)</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Buy Rate</th>
+                            <th>Sell Rate</th>
+                            <th>Unit</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rate : ${categorizedRates.blackMarket}" 
+                            th:classappend="${rate.buyRate.doubleValue() == bestBuyRates.get('blackMarket')} ? 'best-buy' : ''">
+                            <td th:text="${displayLabels.get(rate)}">Low</td>
+                            <td th:text="${rate.buyRate}">30.00</td>
+                            <td th:text="${rate.sellRate}">30.00</td>
+                            <td th:text="${currencyUnits.get(rate)}">ZiG</td>
+                            <td th:text="${#temporals.format(rate.scrapedAt, 'dd MMM HH:mm')}">12 Apr 20:30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- Business Rates -->
+        <div th:if="${categorizedRates.business.size() > 0}">
+            <h3><i class="fas fa-store"></i> BUSINESS RATES</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>Buy Rate</th>
+                            <th>Sell Rate</th>
+                            <th>Unit</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rate : ${categorizedRates.business}" 
+                            th:classappend="${rate.buyRate.doubleValue() == bestBuyRates.get('business')} ? 'best-buy' : ''">
+                            <td th:text="${displayLabels.get(rate)}">OK Supermarket</td>
+                            <td th:text="${rate.buyRate}">32.00</td>
+                            <td th:text="${rate.sellRate}">32.00</td>
+                            <td th:text="${currencyUnits.get(rate)}">ZiG</td>
+                            <td th:text="${#temporals.format(rate.scrapedAt, 'dd MMM HH:mm')}">12 Apr 20:30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4><i class="fas fa-info-circle"></i> About these rates</h4>
+            <p>Rates are updated regularly from official and market sources.</p>
+            <p>Units: <strong>ZiG</strong> (Zimbabwe Gold) is the new official currency; <strong>ZWG</strong> (Zimbabwean Dollars) is the previous currency still used by some banks.</p>
+        </div>
+    </main>
+
+    <div th:replace="layout :: footer"></div>
+</body>
+</html>
