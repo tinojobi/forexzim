@@ -33,5 +33,10 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### Environment / secrets ###
+.env
+.env.*
+!.env.example
+
 ### VS Code ###
 .vscode/
