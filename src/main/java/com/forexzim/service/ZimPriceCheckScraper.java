@@ -1,7 +1,7 @@
 package com.forexzim.service;
 
-import com.forexzim.Rate;
-import com.forexzim.Source;
+import com.forexzim.model.Rate;
+import com.forexzim.model.Source;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

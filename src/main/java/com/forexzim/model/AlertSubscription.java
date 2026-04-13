@@ -1,4 +1,4 @@
-package com.forexzim;
+package com.forexzim.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -28,11 +28,14 @@ public class AlertSubscription {
     private BigDecimal threshold;
 
     @Column(length = 10)
-    private String direction; // 'above' or 'below'
+    private String direction; // "above" or "below"
 
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean active = true;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "last_notified_at")
+    private LocalDateTime lastNotifiedAt;
 }

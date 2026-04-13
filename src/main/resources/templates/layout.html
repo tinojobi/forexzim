@@ -6,28 +6,39 @@
     <title>ForexZim - Zimbabwe Forex Rates</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header th:fragment="header">
-        <div class="container">
-            <h1><i class="fas fa-chart-line"></i> ForexZim</h1>
-            <p>Real‑time forex rates from Zimbabwean banks &amp; official sources</p>
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="header-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="header-title">
+                    <h1>Forex<span class="gold">Zim</span></h1>
+                    <p>Real-time exchange rates &middot; Zimbabwe</p>
+                </div>
+            </div>
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                <span class="live-label">Live Rates</span>
+            </div>
         </div>
     </header>
 
     <main class="container">
         <div th:fragment="content">
-            <!-- Content placeholder -->
             <div th:replace="this :: content">Content will be replaced by individual pages</div>
         </div>
     </main>
 
     <footer th:fragment="footer">
-        <div class="container">
-            <p>Data is updated every 30 minutes. Last scraped: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">just now</span></p>
-            <p class="disclaimer">Rates are indicative and may differ at the point of transaction. Use at your own discretion.</p>
-            <p>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> ForexZim • <a href="/api/rates/latest-grouped" target="_blank">API</a></p>
+        <div class="footer-inner">
+            <div class="footer-brand">Forex<span class="gold">Zim</span></div>
+            <p class="footer-meta">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">just now</span></p>
+            <p class="footer-disclaimer">Rates are indicative and may differ at the point of transaction. Use at your own discretion.</p>
+            <p class="footer-copy">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> ForexZim</p>
         </div>
     </footer>
 </body>

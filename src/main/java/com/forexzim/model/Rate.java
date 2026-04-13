@@ -1,4 +1,4 @@
-package com.forexzim;
+package com.forexzim.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.forexzim.service;
 
-import com.forexzim.Rate;
-import com.forexzim.Source;
+import com.forexzim.model.Rate;
+import com.forexzim.model.Source;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -68,12 +68,8 @@ public class FbcScraper extends AbstractJsoupScraper {
         }
         
         if (rates.isEmpty()) {
-            log.warn("No rates parsed from FBC page, adding dummy rate for testing");
-            Rate dummy = createRate(source, "USD/ZWG", 
-                new BigDecimal("405.88"), new BigDecimal("426.70"));
-            rates.add(dummy);
+            log.warn("FBC scraper: no rates parsed — page structure may have changed");
         }
-        
         return rates;
     }
 }

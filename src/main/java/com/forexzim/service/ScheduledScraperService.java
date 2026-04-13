@@ -1,7 +1,7 @@
 package com.forexzim.service;
 
-import com.forexzim.Rate;
-import com.forexzim.Source;
+import com.forexzim.model.Rate;
+import com.forexzim.model.Source;
 import com.forexzim.repository.RateRepository;
 import com.forexzim.repository.SourceRepository;
 import org.slf4j.Logger;
@@ -18,69 +18,88 @@ import java.util.stream.Collectors;
 
 @Service
 public class ScheduledScraperService {
+
     private static final Logger log = LoggerFactory.getLogger(ScheduledScraperService.class);
-    
+
     private final List<RateScraper> scrapers;
     private final SourceRepository sourceRepository;
     private final RateRepository rateRepository;
-    
-    // Map scraper class simple name to scraper instance
-    private Map<String, RateScraper> scraperMap;
-    
+    private final RateService rateService;
+    private final AlertService alertService;
+
+    private final Map<String, RateScraper> scraperMap;
+
     public ScheduledScraperService(List<RateScraper> scrapers,
                                    SourceRepository sourceRepository,
-                                   RateRepository rateRepository) {
+                                   RateRepository rateRepository,
+                                   RateService rateService,
+                                   AlertService alertService) {
         this.scrapers = scrapers;
         this.sourceRepository = sourceRepository;
         this.rateRepository = rateRepository;
+        this.rateService = rateService;
+        this.alertService = alertService;
         this.scraperMap = scrapers.stream()
                 .collect(Collectors.toMap(sc -> sc.getClass().getSimpleName(), Function.identity()));
         log.info("Loaded {} scrapers: {}", scrapers.size(), scraperMap.keySet());
     }
-    
+
     @EventListener(ApplicationReadyEvent.class)
     public void scrapeOnStartup() {
-        log.info("Application ready, performing initial scrape");
+        log.info("Application ready — performing initial scrape");
         scrapeAllActiveSources();
     }
-    
-    @Scheduled(fixedDelay = 30 * 60 * 1000) // every 30 minutes
+
+    /** Interval is configurable via forexzim.scrape.interval-ms (default 30 min). */
+    @Scheduled(fixedDelayString = "${forexzim.scrape.interval-ms:1800000}")
     public void scrapeAllActiveSources() {
-        log.info("Starting scheduled scraping job");
+        log.info("Scrape job started");
+
         List<Source> activeSources = sourceRepository.findAll().stream()
                 .filter(Source::getActive)
                 .toList();
-        log.info("Found {} active sources", activeSources.size());
-        
+
+        log.info("{} active sources to scrape", activeSources.size());
+
         int totalRates = 0;
         for (Source source : activeSources) {
             RateScraper scraper = findScraperForSource(source);
             if (scraper == null) {
-                log.warn("No scraper found for source: {}", source.getName());
+                log.warn("No scraper registered for source '{}'", source.getName());
                 continue;
             }
             try {
                 List<Rate> rates = scraper.scrape(source);
                 if (rates != null && !rates.isEmpty()) {
                     rateRepository.saveAll(rates);
-                    log.info("Saved {} rates from source {}", rates.size(), source.getName());
                     totalRates += rates.size();
+                    log.info("Saved {} rates from '{}'", rates.size(), source.getName());
                 } else {
-                    log.warn("No rates scraped from source {}", source.getName());
+                    log.warn("No rates returned from '{}'", source.getName());
                 }
             } catch (Exception e) {
-                log.error("Error scraping source {}: {}", source.getName(), e.getMessage(), e);
+                log.error("Error scraping '{}': {}", source.getName(), e.getMessage(), e);
             }
         }
-        log.info("Scheduled scraping job completed, saved {} total rates", totalRates);
+
+        log.info("Scrape job complete — {} total rates saved", totalRates);
+
+        // Invalidate cache so the next page request reflects fresh data
+        rateService.evictRateCache();
+
+        // Check alert thresholds against the newly saved rates
+        try {
+            alertService.checkAndNotify(rateService.getLatestRates());
+        } catch (Exception e) {
+            log.error("Alert check failed: {}", e.getMessage(), e);
+        }
     }
-    
+
     private RateScraper findScraperForSource(Source source) {
-        // Simple mapping based on source name
         String scraperName = mapSourceNameToScraperName(source.getName());
         RateScraper scraper = scraperMap.get(scraperName);
         if (scraper == null) {
-            // fallback: try to match by class name containing source name
+            // Fallback: fuzzy match by class name
             scraper = scraperMap.values().stream()
                     .filter(s -> s.getClass().getSimpleName().toLowerCase()
                             .contains(source.getName().toLowerCase().replace(" ", "")))
@@ -89,23 +108,16 @@ public class ScheduledScraperService {
         }
         return scraper;
     }
-    
+
     private String mapSourceNameToScraperName(String sourceName) {
-        switch (sourceName) {
-            case "RBZ":
-                return "RbzScraper";
-            case "CBZ":
-                return "CbzScraper";
-            case "ZimRates":
-                return "ZimRatesScraper";
-            case "Exchange Rate API":
-                return "ExchangeRateApiScraper";
-            case "FBC Bank":
-                return "FbcScraper";
-            case "ZimPriceCheck":
-                return "ZimPriceCheckScraper";
-            default:
-                return sourceName + "Scraper";
-        }
+        return switch (sourceName) {
+            case "RBZ"              -> "RbzScraper";
+            case "CBZ"              -> "CbzScraper";
+            case "ZimRates"         -> "ZimRatesScraper";
+            case "Exchange Rate API"-> "ExchangeRateApiScraper";
+            case "FBC Bank"         -> "FbcScraper";
+            case "ZimPriceCheck"    -> "ZimPriceCheckScraper";
+            default                 -> sourceName + "Scraper";
+        };
     }
 }
