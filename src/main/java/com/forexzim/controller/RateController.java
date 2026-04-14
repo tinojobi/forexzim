@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -222,6 +223,20 @@ public class RateController {
                     .max(LocalDateTime::compareTo)
                     .ifPresent(t -> model.addAttribute("latestScrape", t));
 
+            // ── Structured data JSON-LD ───────────────────────────────────────
+            if (!official.isEmpty()) {
+                double sdRate = official.get(0).getBuyRate().doubleValue();
+                model.addAttribute("structuredData", String.format(
+                    "{\"@context\":\"https://schema.org\",\"@graph\":["
+                    + "{\"@type\":\"WebSite\",\"name\":\"ZimRate\","
+                    + "\"url\":\"https://zimrate.com\","
+                    + "\"description\":\"Real-time USD/ZiG exchange rates for Zimbabwe — official, black market, and bank rates.\"},"
+                    + "{\"@type\":\"ExchangeRateSpecification\",\"currency\":\"USD\","
+                    + "\"currentExchangeRate\":{\"@type\":\"UnitPriceSpecification\","
+                    + "\"price\":\"%.4f\",\"priceCurrency\":\"ZWG\"}}"
+                    + "]}", sdRate));
+            }
+
             model.addAttribute("categorizedRates", categorized);
             model.addAttribute("bestBuyRates",     bestBuyRates);
             model.addAttribute("displayLabels",    displayLabels);
@@ -246,6 +261,49 @@ public class RateController {
         @GetMapping("/contact")
         public String contact() {
             return "contact";
+        }
+
+        @GetMapping("/convert/{amount:[0-9]+}-usd-to-zig")
+        public String convert(@PathVariable("amount") String amountStr, Model model) {
+            long amount;
+            try {
+                amount = Long.parseLong(amountStr);
+            } catch (NumberFormatException e) {
+                return "redirect:/";
+            }
+            if (amount <= 0 || amount > 10_000_000) return "redirect:/";
+
+            List<Rate> rates = rateService.getLatestRates();
+
+            Optional<Rate> officialOpt = rates.stream()
+                    .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
+                              && "USD/ZiG".equals(r.getCurrencyPair()))
+                    .findFirst();
+
+            if (officialOpt.isEmpty()) return "redirect:/";
+
+            double rate   = officialOpt.get().getBuyRate().doubleValue();
+            double result = amount * rate;
+
+            model.addAttribute("amount",       amount);
+            model.addAttribute("officialRate", rate);
+            model.addAttribute("result",       result);
+            model.addAttribute("scrapedAt",    officialOpt.get().getScrapedAt());
+
+            rates.stream()
+                    .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
+                              && "USD/ZiG_InformalLow".equals(r.getCurrencyPair()))
+                    .findFirst()
+                    .ifPresent(bm -> {
+                        double bmRate = bm.getBuyRate().doubleValue();
+                        model.addAttribute("blackMarketRate",   bmRate);
+                        model.addAttribute("blackMarketResult", amount * bmRate);
+                    });
+
+            model.addAttribute("commonAmounts",
+                    new long[]{1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000});
+
+            return "convert";
         }
 
         private int getOfficialOrder(String source, String pair) {

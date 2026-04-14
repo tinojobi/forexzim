@@ -1918,6 +1918,221 @@ footer {
    PRINT STYLES
 ═══════════════════════════════════════ */
 
+/* ═══════════════════════════════════════
+   CONVERTER PAGE (/convert/...)
+═══════════════════════════════════════ */
+
+.convert-breadcrumb {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    margin: 1.25rem 0 0;
+}
+.convert-breadcrumb a { color: var(--green-700); text-decoration: none; }
+.convert-breadcrumb a:hover { text-decoration: underline; }
+.convert-breadcrumb-sep { margin: 0 0.4rem; }
+
+.convert-page { max-width: 760px; margin: 0 auto; padding: 1.5rem 0 3rem; }
+
+.convert-hero {
+    background: linear-gradient(135deg, var(--green-900) 0%, var(--green-700) 100%);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.25rem;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.convert-hero h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+.convert-result {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.convert-result-left,
+.convert-result-right { display: flex; flex-direction: column; gap: 0.25rem; }
+
+.convert-from-label,
+.convert-to-label { font-size: 0.75rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.convert-from-value { font-size: 1.4rem; font-weight: 700; }
+.convert-to-value   { font-size: 1.4rem; font-weight: 800; color: var(--gold-300); }
+
+.convert-arrow-wrap {
+    font-size: 1.25rem;
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+
+.convert-rate-note {
+    font-size: 0.82rem;
+    opacity: 0.85;
+}
+
+.convert-updated { opacity: 0.65; }
+
+.convert-card {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.convert-card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.convert-card-title i { color: var(--green-600); }
+
+.convert-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+.convert-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: var(--gray-50);
+    color: var(--gray-600);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.convert-table td {
+    padding: 0.75rem;
+    border-top: 1px solid var(--gray-100);
+    vertical-align: middle;
+}
+.convert-table-result { font-weight: 700; color: var(--gray-900); }
+
+.convert-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.convert-badge-official { background: var(--blue-100);  color: var(--blue-700); }
+.convert-badge-bm       { background: var(--amber-100); color: var(--amber-700); }
+
+.convert-form-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.convert-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex: 1;
+    min-width: 160px;
+}
+.convert-input-prefix {
+    padding: 0.55rem 0.75rem;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-right: 1.5px solid var(--gray-300);
+}
+.convert-input {
+    border: none;
+    outline: none;
+    padding: 0.55rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    flex: 1;
+    min-width: 0;
+}
+.convert-form-arrow { color: var(--gray-400); font-size: 0.9rem; }
+.convert-form-target {
+    font-weight: 700;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+}
+.convert-go-btn {
+    padding: 0.6rem 1.25rem;
+    background: var(--green-700);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s;
+    white-space: nowrap;
+}
+.convert-go-btn:hover { background: var(--green-800); }
+
+.convert-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.convert-grid-item {
+    padding: 0.4rem 0.85rem;
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1.5px solid transparent;
+}
+.convert-grid-item:hover   { background: var(--green-50); border-color: var(--green-700); color: var(--green-800); }
+.convert-grid-active       { background: var(--green-700) !important; color: white !important; border-color: var(--green-700) !important; }
+
+.convert-disclaimer {
+    font-size: 0.78rem;
+    color: var(--gray-500);
+    text-align: center;
+    line-height: 1.6;
+}
+.convert-disclaimer a { color: var(--green-700); }
+
+/* Dark mode — converter */
+[data-theme="dark"] .convert-card             { background: #1e293b; }
+[data-theme="dark"] .convert-card-title       { color: #94a3b8; }
+[data-theme="dark"] .convert-table th         { background: #0f172a; color: #64748b; }
+[data-theme="dark"] .convert-table td         { border-color: #1e293b; color: #e2e8f0; }
+[data-theme="dark"] .convert-table-result     { color: #f1f5f9; }
+[data-theme="dark"] .convert-input-wrap       { border-color: #334155; }
+[data-theme="dark"] .convert-input-prefix     { background: #0f172a; color: #94a3b8; border-color: #334155; }
+[data-theme="dark"] .convert-input            { background: #1e293b; color: #f1f5f9; }
+[data-theme="dark"] .convert-grid-item        { background: #1e293b; color: #94a3b8; }
+[data-theme="dark"] .convert-grid-item:hover  { background: #064e3b; border-color: #10b981; color: #6ee7b7; }
+[data-theme="dark"] .convert-disclaimer       { color: #64748b; }
+
+@media (max-width: 520px) {
+    .convert-hero { padding: 1.5rem 1.25rem; }
+    .convert-hero h1 { font-size: 1.3rem; }
+    .convert-from-value,
+    .convert-to-value { font-size: 1.15rem; }
+    .convert-card { padding: 1.25rem 1rem; }
+    .convert-form-row { flex-direction: column; align-items: stretch; }
+    .convert-go-btn { width: 100%; text-align: center; }
+}
+
 @media print {
     body::before,
     header .live-badge,
