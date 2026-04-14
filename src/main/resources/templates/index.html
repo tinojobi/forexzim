@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#14532d">
     <link rel="manifest" th:href="@{/manifest.json}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
-    <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';}());</script>
+<script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -569,29 +569,50 @@
     }
 
     // ── Dark mode toggle ─────────────────────────────────────────────────────
-    (function () {
-        var toggle = document.getElementById('themeToggle');
-        var icon   = document.getElementById('themeIcon');
+(function () {
+    var toggle = document.getElementById('themeToggle');
+    var icon   = document.getElementById('themeIcon');
 
-        function applyTheme(theme) {
-            document.documentElement.dataset.theme = theme;
+    function applyTheme(theme, save) {
+        document.documentElement.dataset.theme = theme;
+        if (save !== false) {
             localStorage.setItem('theme', theme);
-            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            if (typeof window._updateRateChartTheme === 'function') window._updateRateChartTheme();
         }
+        if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (typeof window._updateRateChartTheme === 'function') window._updateRateChartTheme();
+    }
 
-        if (document.documentElement.dataset.theme === 'dark' && icon) {
-            icon.className = 'fas fa-sun';
+    // Set initial icon based on current theme (already set by inline script)
+    if (document.documentElement.dataset.theme === 'dark' && icon) {
+        icon.className = 'fas fa-sun';
+    }
+
+    // Listen for system preference changes
+    var systemMedia = window.matchMedia('(prefers-color-scheme: dark)');
+    systemMedia.addEventListener('change', function (e) {
+        var saved = localStorage.getItem('theme');
+        if (saved !== 'dark' && saved !== 'light') {
+            // No manual preference, follow system
+            applyTheme(e.matches ? 'dark' : 'light', false);
         }
+    });
 
-        if (toggle) {
-            toggle.addEventListener('click', function () {
-                applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-            });
-        }
-    }());
-
-    // ── Relative time for "Last Updated" ────────────────────────────────────
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            var saved = localStorage.getItem('theme');
+            var current = document.documentElement.dataset.theme;
+            if (saved === 'dark' || saved === 'light') {
+                // Toggle between light/dark
+                applyTheme(current === 'dark' ? 'light' : 'dark');
+            } else {
+                // Currently following system preference; toggle to opposite of system
+                var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var newTheme = systemDark ? 'light' : 'dark';
+                applyTheme(newTheme);
+            }
+        });
+    }
+}());// ── Relative time for "Last Updated" ────────────────────────────────────
     (function () {
         var el = document.getElementById('lastUpdatedDisplay');
         if (!el || !el.dataset.scrapedAt) return;
