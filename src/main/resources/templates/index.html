@@ -15,6 +15,54 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <th:block th:replace="~{layout :: head-meta}"></th:block>
     <script th:if="${structuredData != null}" type="application/ld+json" th:utext="${structuredData}"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the official USD to ZiG rate today?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The official USD/ZiG rate is set by the Reserve Bank of Zimbabwe (RBZ). ZimRate displays the current official rate in real-time, updated every 30 minutes from official sources. Check the top of the page for today's live rate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the black market exchange rate in Zimbabwe?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The black market (informal market) rate reflects USD/ZiG exchanges outside official channels. It is typically higher than the official rate. ZimRate tracks both official and informal market rates so you can compare them side by side and see the market premium."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Zimbabwe Gold (ZiG)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Zimbabwe Gold (ZiG) is Zimbabwe's structured currency introduced by the Reserve Bank of Zimbabwe in April 2024. It replaced the RTGS dollar as Zimbabwe's primary domestic currency and is backed by gold and foreign currency reserves held by the RBZ."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often are rates updated on ZimRate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Rates on ZimRate are updated automatically every 30 minutes. Data is collected from multiple sources including the Reserve Bank of Zimbabwe, commercial banks (CBZ, FBC), and market trackers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between the official rate and the black market rate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The official rate is set and regulated by the Reserve Bank of Zimbabwe and is used for formal transactions. The black market rate fluctuates based on informal supply and demand and is typically higher than the official rate. The percentage difference between them is called the market premium, which ZimRate displays on the homepage."
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
     <div th:replace="layout :: header"></div>
