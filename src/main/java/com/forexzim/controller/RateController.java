@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,15 @@ public class RateController {
     public Map<String, List<Rate>> getLatestRatesGrouped() {
         return rateService.getLatestRates().stream()
                 .collect(Collectors.groupingBy(Rate::getCurrencyPair));
+    }
+
+    @GetMapping("/history")
+    public List<Map<String, Object>> getRateHistory(
+            @RequestParam(defaultValue = "ZimPriceCheck") String source,
+            @RequestParam(defaultValue = "USD/ZiG")       String pair,
+            @RequestParam(defaultValue = "7")             int    days) {
+        int clampedDays = Math.max(1, Math.min(days, 90));
+        return rateService.getRateHistory(source, pair, clampedDays);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -95,11 +105,8 @@ public class RateController {
             // ── Sort ─────────────────────────────────────────────────────────
             official.sort(Comparator.comparingInt(r ->
                     getOfficialOrder(r.getSource().getName(), r.getCurrencyPair())));
-
             blackMarket.sort(Comparator.comparingDouble(r -> r.getBuyRate().doubleValue()));
-
             bank.sort(Comparator.comparing(r -> r.getSource().getName()));
-
             business.sort(Comparator.comparing(Rate::getCurrencyPair));
 
             categorized.put("official",    official);
@@ -125,7 +132,6 @@ public class RateController {
             }));
 
             // ── Rate delta vs previous scrape ────────────────────────────────
-            // Key: "sourceName:currencyPair"
             Map<String, Rate> previousByKey = previousRates.stream()
                     .collect(Collectors.toMap(
                             r -> r.getSource().getName() + ":" + r.getCurrencyPair(),
@@ -163,16 +169,47 @@ public class RateController {
                 double officialBuy = official.get(0).getBuyRate().doubleValue();
                 model.addAttribute("officialBuyRate", String.format("%.2f", officialBuy));
 
-                OptionalDouble informalMaxOpt = blackMarket.stream()
-                        .mapToDouble(r -> r.getBuyRate().doubleValue())
-                        .max();
-
-                if (informalMaxOpt.isPresent()) {
-                    double informalHigh = informalMaxOpt.getAsDouble();
-                    double premium = ((informalHigh - officialBuy) / officialBuy) * 100;
-                    model.addAttribute("informalHighRate", String.format("%.2f", informalHigh));
-                    model.addAttribute("marketPremiumPct", String.format("%.1f", premium));
+                // Stat bar delta — official rate vs previous scrape
+                Rate officialCurr = official.get(0);
+                Rate officialPrev = previousByKey.get(
+                        officialCurr.getSource().getName() + ":" + officialCurr.getCurrencyPair());
+                if (officialPrev != null && officialPrev.getBuyRate() != null) {
+                    double d = officialBuy - officialPrev.getBuyRate().doubleValue();
+                    model.addAttribute("officialDelta",   d >= 0 ? String.format("+%.2f", d) : String.format("%.2f", d));
+                    model.addAttribute("officialDeltaUp", d >= 0);
                 }
+
+                // InformalLow pair is numerically the higher (black market max) rate
+                blackMarket.stream()
+                        .filter(r -> r.getCurrencyPair().equals("USD/ZiG_InformalLow"))
+                        .findFirst()
+                        .ifPresent(r -> {
+                            double informalHigh = r.getBuyRate().doubleValue();
+                            double premium = ((informalHigh - officialBuy) / officialBuy) * 100;
+                            model.addAttribute("informalHighRate", String.format("%.2f", informalHigh));
+                            model.addAttribute("marketPremiumPct", String.format("%.1f", premium));
+
+                            // Stat bar delta — black market max vs previous scrape
+                            Rate bmPrev = previousByKey.get(r.getSource().getName() + ":" + r.getCurrencyPair());
+                            if (bmPrev != null && bmPrev.getBuyRate() != null) {
+                                double d = informalHigh - bmPrev.getBuyRate().doubleValue();
+                                model.addAttribute("blackMarketDelta",   d >= 0 ? String.format("+%.2f", d) : String.format("%.2f", d));
+                                model.addAttribute("blackMarketDeltaUp", d >= 0);
+                            }
+                        });
+
+                // InformalHigh pair is numerically the lower (black market min) rate
+                blackMarket.stream()
+                        .filter(r -> r.getCurrencyPair().equals("USD/ZiG_InformalHigh"))
+                        .findFirst()
+                        .ifPresent(r -> model.addAttribute("informalLowRate",
+                                String.format("%.2f", r.getBuyRate().doubleValue())));
+
+                blackMarket.stream()
+                        .filter(r -> r.getCurrencyPair().equals("USD/ZiG_Cash"))
+                        .findFirst()
+                        .ifPresent(r -> model.addAttribute("cashRate",
+                                String.format("%.2f", r.getBuyRate().doubleValue())));
             }
 
             // ── Latest scrape timestamp ──────────────────────────────────────
@@ -192,8 +229,8 @@ public class RateController {
         }
 
         private int getOfficialOrder(String source, String pair) {
-            if (pair.equals("USD/ZiG"))            return 1;
-            if (source.equals("Exchange Rate API")) return 2;
+            if (pair.equals("USD/ZiG"))             return 1;
+            if (source.equals("Exchange Rate API"))  return 2;
             if (pair.equals("USD/ZiG_MaxBusiness")) return 3;
             return 4;
         }
@@ -202,16 +239,16 @@ public class RateController {
             String source = rate.getSource().getName();
             String pair   = rate.getCurrencyPair();
 
-            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG"))             return "Central Bank";
-            if (source.equals("Exchange Rate API") && pair.equals("USD/ZWG"))          return "Official Rate";
-            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_MaxBusiness")) return "Business Max";
-            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_InformalLow")) return "Informal Low";  // ← fixed (was "Market High")
-            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_InformalHigh"))return "Informal High"; // ← fixed (was "Market Low")
-            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_Cash"))        return "Cash Rate";
-            if (source.equals("CBZ") && pair.equals("USD/ZWG"))                        return "CBZ Bank";      // ← fixed (was "Bank 1")
-            if (source.equals("FBC Bank") && pair.equals("USD/ZWG"))                   return "FBC Bank";      // ← fixed (was "Bank 2")
-            if (source.equals("ZimPriceCheck") && pair.contains("OKSuperm"))           return "OK Supermarket";
-            if (source.equals("ZimPriceCheck") && pair.contains("PickNPay"))           return "Pick N Pay";
+            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG"))              return "Central Bank";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/ZWG"))           return "Official Rate";
+            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_MaxBusiness"))  return "Business Max";
+            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_InformalLow"))  return "Black Market Max";
+            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_InformalHigh")) return "Black Market Min";
+            if (source.equals("ZimPriceCheck") && pair.equals("USD/ZiG_Cash"))         return "Cash Rate";
+            if (source.equals("CBZ") && pair.equals("USD/ZWG"))                         return "CBZ Bank";
+            if (source.equals("FBC Bank") && pair.equals("USD/ZWG"))                    return "FBC Bank";
+            if (source.equals("ZimPriceCheck") && pair.contains("OKSuperm"))            return "OK Supermarket";
+            if (source.equals("ZimPriceCheck") && pair.contains("PickNPay"))            return "Pick N Pay";
 
             return source;
         }

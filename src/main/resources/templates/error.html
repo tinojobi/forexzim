@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Error ' + ${status} + ' · ForexZim'">Error · ForexZim</title>
+    <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .error-page {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.25rem;
+            gap: 1rem;
+        }
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 1;
+            color: var(--gray-200);
+        }
+        .error-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--amber-50);
+            color: var(--amber-600);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+        .error-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .error-message {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            max-width: 420px;
+        }
+        .error-path {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            font-family: monospace;
+            background: var(--gray-100);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+        }
+        .error-actions { display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap; justify-content: center; }
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--green-700);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.18s ease;
+        }
+        .btn-home:hover { background: var(--green-800); }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.18s ease;
+        }
+        .btn-back:hover { background: var(--gray-50); }
+
+        [data-theme="dark"] .error-code  { color: #1e293b; }
+        [data-theme="dark"] .error-icon  { background: rgba(217,119,6,0.15); color: #fcd34d; }
+        [data-theme="dark"] .error-title { color: #e2e8f0; }
+        [data-theme="dark"] .error-path  { background: #0f172a; color: #64748b; }
+        [data-theme="dark"] .btn-back    { background: #1a2535; color: #cbd5e1; border-color: #243048; }
+        [data-theme="dark"] .btn-back:hover { background: #243048; }
+    </style>
+</head>
+<body>
+    <div th:replace="layout :: header"></div>
+
+    <main class="container">
+        <div class="error-page">
+            <div class="error-code" th:text="${status}">500</div>
+            <div class="error-icon">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <div class="error-title" th:text="${error ?: 'Something went wrong'}">Internal Server Error</div>
+            <p class="error-message"
+               th:text="${message ?: 'An unexpected error occurred. Please try again or go back to the home page.'}">
+                An unexpected error occurred. Please try again or go back to the home page.
+            </p>
+            <span class="error-path" th:if="${path}" th:text="${path}">/some/path</span>
+            <div class="error-actions">
+                <a href="/" class="btn-home"><i class="fas fa-house"></i> Back to rates</a>
+                <a href="javascript:history.back()" class="btn-back"><i class="fas fa-arrow-left"></i> Go back</a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="layout :: footer"></div>
+</body>
+</html>

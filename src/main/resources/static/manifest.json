@@ -1,0 +1,17 @@
+{
+  "name": "ForexZim — Zimbabwe Forex Rates",
+  "short_name": "ForexZim",
+  "description": "Real-time USD/ZiG exchange rates — official, black market, banks, and business rates.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#14532d",
+  "theme_color": "#14532d",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

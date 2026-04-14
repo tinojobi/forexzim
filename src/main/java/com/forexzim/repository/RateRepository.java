@@ -42,6 +42,26 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
             """, nativeQuery = true)
     List<Rate> findPreviousBySourceAndCurrencyPair();
 
+    /**
+     * Daily average buy rate over the past N days — used for the trend chart.
+     * Dates are bucketed in Africa/Harare (SAST, UTC+2) so chart day boundaries
+     * match what Zimbabwean users expect.
+     */
+    @Query(value = """
+            SELECT DATE(r.scraped_at AT TIME ZONE 'Africa/Harare') AS day,
+                   ROUND(AVG(r.buy_rate)::numeric, 4)              AS avg_rate
+            FROM   rates  r
+            JOIN   sources s ON r.source_id = s.id
+            WHERE  s.name          = :sourceName
+              AND  r.currency_pair = :currencyPair
+              AND  r.scraped_at   >= NOW() - MAKE_INTERVAL(days => :days)
+            GROUP  BY DATE(r.scraped_at AT TIME ZONE 'Africa/Harare')
+            ORDER  BY day ASC
+            """, nativeQuery = true)
+    List<Object[]> findDailyAverages(@Param("sourceName") String sourceName,
+                                      @Param("currencyPair") String currencyPair,
+                                      @Param("days") int days);
+
     /** Delete all rows older than the given cutoff — called by the cleanup scheduler. */
     @Modifying
     @Transactional

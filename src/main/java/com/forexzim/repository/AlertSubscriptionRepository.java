@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface AlertSubscriptionRepository extends JpaRepository<AlertSubscription, Long> {
     List<AlertSubscription> findByActiveTrue();
-    List<AlertSubscription> findByEmail(String email);
+    List<AlertSubscription> findByEmailOrderByCreatedAtDesc(String email);
+    boolean existsByEmailAndCurrencyPairAndDirectionAndActiveTrue(
+            String email, String currencyPair, String direction);
 }

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#14532d"/>
+  <!-- Subtle grid lines -->
+  <line x1="6" y1="22" x2="26" y2="22" stroke="#ffffff" stroke-width="0.5" opacity="0.15"/>
+  <line x1="6" y1="16" x2="26" y2="16" stroke="#ffffff" stroke-width="0.5" opacity="0.1"/>
+  <!-- Rising chart line (gold) -->
+  <polyline points="6,21 12,17 17,19 22,12 26,10"
+            fill="none" stroke="#facc15" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Endpoint dot -->
+  <circle cx="26" cy="10" r="2" fill="#facc15"/>
+  <!-- "Z" monogram bottom-left -->
+  <text x="7" y="29" font-family="Arial,sans-serif" font-weight="800"
+        font-size="7" fill="#ffffff" opacity="0.75">ZiG</text>
+</svg>

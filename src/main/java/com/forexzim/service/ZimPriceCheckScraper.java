@@ -41,12 +41,9 @@ public class ZimPriceCheckScraper extends AbstractJsoupScraper {
         }
         
         if (rates.isEmpty()) {
-            log.warn("No rates parsed from ZimPriceCheck, adding dummy rate");
-            Rate dummy = createRate(source, "USD/ZiG", 
-                new BigDecimal("25.37"), new BigDecimal("25.37"));
-            rates.add(dummy);
+            log.warn("No rates parsed from ZimPriceCheck — returning empty list");
         }
-        
+
         return rates;
     }
     
