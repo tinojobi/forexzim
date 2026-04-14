@@ -16,12 +16,12 @@
               th:content="${searchConsoleVerification}">
         <!-- Google Analytics 4 -->
         <th:block th:if="${ga4Id != null and !#strings.isEmpty(ga4Id)}">
-            <script th:src="@{'https://www.googletagmanager.com/gtag/js?id=' + ${ga4Id}}" async></script>
+            <script th:attr="src='https://www.googletagmanager.com/gtag/js?id='+${ga4Id}" async="async"></script>
             <script th:inline="javascript">
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', /*[[${ga4Id}]]*/ '');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', /*[[${ga4Id}]]*/ 'G-XXXXXXXXXX');
             </script>
         </th:block>
     </th:block>
