@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy · ZimRate</title>
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="layout :: header"></div>
+
+    <main class="container">
+        <div class="info-card privacy-card">
+            <div class="privacy-header">
+                <h2><i class="fas fa-shield-halved"></i> Privacy Policy</h2>
+                <p class="privacy-date">Last updated: April 2026</p>
+            </div>
+
+            <div class="privacy-body">
+                <h3>1. Who we are</h3>
+                <p>ZimRate is a free exchange-rate aggregator for Zimbabwean USD/ZiG rates. We do not sell products or collect payment information.</p>
+
+                <h3>2. Information we collect</h3>
+                <p>We do not require you to create an account. We collect:</p>
+                <ul>
+                    <li><strong>Alert subscriptions</strong> — your email address and rate threshold, only when you voluntarily set an alert.</li>
+                    <li><strong>Usage data</strong> — standard server logs (IP address, browser type, pages visited) retained for up to 30 days for security and debugging.</li>
+                    <li><strong>Cookies</strong> — a small cookie to remember your dark-mode preference and cookie-consent choice. No tracking cookies are set by us.</li>
+                </ul>
+
+                <h3>3. Advertising</h3>
+                <p>We display third-party ads (e.g. Google AdSense) to fund the service. Ad networks may use cookies to show you relevant ads based on your browsing history across other sites. You can opt out via <a href="https://www.google.com/settings/ads" class="privacy-link" target="_blank" rel="noopener">Google Ad Settings</a> or the <a href="https://optout.aboutads.info/" class="privacy-link" target="_blank" rel="noopener">Digital Advertising Alliance opt-out</a>.</p>
+
+                <h3>4. How we use your data</h3>
+                <ul>
+                    <li>Email addresses collected for alerts are used solely to send the triggered alert email and are deleted after the alert fires or is cancelled.</li>
+                    <li>We do not sell, rent, or share your personal data with third parties except as required by law.</li>
+                </ul>
+
+                <h3>5. Data retention</h3>
+                <p>Alert subscriptions are retained until cancelled or triggered. Server logs are purged after 30 days.</p>
+
+                <h3>6. Your rights</h3>
+                <p>You can request deletion of your alert subscription at any time via the Alerts modal on the home page (My Alerts tab → Cancel). For other data requests, contact us at the address below.</p>
+
+                <h3>7. Security</h3>
+                <p>We use HTTPS for all traffic. Rate data is served from our own PostgreSQL database; no financial data is transmitted to third parties.</p>
+
+                <h3>8. Changes to this policy</h3>
+                <p>We may update this policy as our service evolves. Material changes will be noted on this page.</p>
+
+                <h3>9. Contact</h3>
+                <p>For privacy questions: <a href="mailto:privacy@zimrate.com" class="privacy-link">privacy@zimrate.com</a></p>
+            </div>
+
+            <div class="privacy-footer">
+                <a th:href="@{/}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to rates</a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="layout :: footer"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>
