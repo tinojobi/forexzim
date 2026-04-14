@@ -26,6 +26,7 @@ public class ScheduledScraperService {
     private final RateRepository rateRepository;
     private final RateService rateService;
     private final AlertService alertService;
+    private final TelegramService telegramService;
 
     private final Map<String, RateScraper> scraperMap;
 
@@ -33,12 +34,14 @@ public class ScheduledScraperService {
                                    SourceRepository sourceRepository,
                                    RateRepository rateRepository,
                                    RateService rateService,
-                                   AlertService alertService) {
+                                   AlertService alertService,
+                                   TelegramService telegramService) {
         this.scrapers = scrapers;
         this.sourceRepository = sourceRepository;
         this.rateRepository = rateRepository;
         this.rateService = rateService;
         this.alertService = alertService;
+        this.telegramService = telegramService;
         this.scraperMap = scrapers.stream()
                 .collect(Collectors.toMap(sc -> sc.getClass().getSimpleName(), Function.identity()));
         log.info("Loaded {} scrapers: {}", scrapers.size(), scraperMap.keySet());
@@ -92,6 +95,13 @@ public class ScheduledScraperService {
             alertService.checkAndNotify(rateService.getLatestRates());
         } catch (Exception e) {
             log.error("Alert check failed: {}", e.getMessage(), e);
+        }
+
+        // Post rate update to Telegram channel
+        try {
+            telegramService.postRateUpdate(rateService.getLatestRates());
+        } catch (Exception e) {
+            log.error("Telegram notification failed: {}", e.getMessage(), e);
         }
     }
 

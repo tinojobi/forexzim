@@ -238,6 +238,16 @@ public class RateController {
             return "privacy";
         }
 
+        @GetMapping("/about")
+        public String about() {
+            return "about";
+        }
+
+        @GetMapping("/contact")
+        public String contact() {
+            return "contact";
+        }
+
         private int getOfficialOrder(String source, String pair) {
             if (pair.equals("USD/ZiG"))             return 1;
             if (source.equals("Exchange Rate API"))  return 2;
