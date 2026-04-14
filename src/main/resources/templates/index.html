@@ -126,30 +126,6 @@
             </div>
         </div>
 
-        <!-- Rate Trend Chart -->
-        <div class="chart-card" id="chartCard">
-            <div class="chart-header-row">
-                <div style="display:flex;align-items:center;gap:0.875rem;">
-                    <div class="section-icon icon-official">
-                        <i class="fas fa-chart-area"></i>
-                    </div>
-                    <div class="section-info">
-                        <div class="section-title">Rate Trend</div>
-                        <div class="section-sub">Official vs Black Market Max (ZiG per 1 USD)</div>
-                    </div>
-                </div>
-                <div class="chart-period-pills">
-                    <button class="chart-period-btn active" data-days="7">7D</button>
-                    <button class="chart-period-btn" data-days="30">30D</button>
-                    <button class="chart-period-btn" data-days="90">90D</button>
-                </div>
-            </div>
-            <div class="chart-body">
-                <div class="chart-skeleton" id="chartSkeleton"></div>
-                <canvas id="rateChart" style="display:none"></canvas>
-            </div>
-        </div>
-
         <!-- Official Rates -->
         <div class="rate-section" data-category="official" th:if="${categorizedRates.official.size() > 0}">
             <div class="section-header">
@@ -423,6 +399,30 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Rate Trend Chart -->
+        <div class="chart-card" id="chartCard">
+            <div class="chart-header-row">
+                <div style="display:flex;align-items:center;gap:0.875rem;">
+                    <div class="section-icon icon-official">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <div class="section-info">
+                        <div class="section-title">Rate Trend</div>
+                        <div class="section-sub">Official vs Black Market Max (ZiG per 1 USD)</div>
+                    </div>
+                </div>
+                <div class="chart-period-pills">
+                    <button class="chart-period-btn active" data-days="7">7D</button>
+                    <button class="chart-period-btn" data-days="30">30D</button>
+                    <button class="chart-period-btn" data-days="90">90D</button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="chart-skeleton" id="chartSkeleton"></div>
+                <canvas id="rateChart" style="display:none"></canvas>
             </div>
         </div>
 
