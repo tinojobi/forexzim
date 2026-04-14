@@ -46,8 +46,43 @@
             <div class="footer-brand">Forex<span class="gold">Zim</span></div>
             <p class="footer-meta">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">just now</span></p>
             <p class="footer-disclaimer">Rates are indicative and may differ at the point of transaction. Use at your own discretion.</p>
+            <p class="footer-links">
+                <a th:href="@{/privacy}" class="footer-link">Privacy Policy</a>
+            </p>
             <p class="footer-copy">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> ForexZim</p>
         </div>
     </footer>
+
+    <!-- Cookie consent banner -->
+    <div class="cookie-banner" id="cookieBanner" role="alertdialog" aria-label="Cookie consent" style="display:none">
+        <div class="cookie-inner">
+            <p class="cookie-text">
+                We use cookies and display ads to keep ForexZim free.
+                By continuing to use this site you agree to our
+                <a th:href="@{/privacy}" class="cookie-link">Privacy Policy</a>.
+            </p>
+            <div class="cookie-actions">
+                <button class="cookie-btn cookie-btn--accept" id="cookieAccept">Accept</button>
+                <button class="cookie-btn cookie-btn--decline" id="cookieDecline">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var banner = document.getElementById('cookieBanner');
+        var consent = localStorage.getItem('cookieConsent');
+        if (!consent) banner.style.display = 'flex';
+
+        document.getElementById('cookieAccept').addEventListener('click', function () {
+            localStorage.setItem('cookieConsent', 'accepted');
+            banner.style.display = 'none';
+        });
+        document.getElementById('cookieDecline').addEventListener('click', function () {
+            localStorage.setItem('cookieConsent', 'declined');
+            banner.style.display = 'none';
+        });
+    }());
+    </script>
 </body>
 </html>
