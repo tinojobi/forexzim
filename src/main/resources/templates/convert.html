@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${amount} + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'">100 USD to ZiG Today | ZimRate</title>
+    <meta name="description"
+          th:content="'Convert ' + ${amount} + ' USD to ZiG at today\'s official Zimbabwe rate. Live USD/ZiG rates updated every 30 minutes.'">
+    <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
+
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <th:block th:replace="~{layout :: header}"></th:block>
+
+    <main class="container">
+        <!-- Breadcrumb -->
+        <nav class="convert-breadcrumb" aria-label="Breadcrumb">
+            <a th:href="@{/}">Home</a>
+            <span class="convert-breadcrumb-sep">›</span>
+            <span th:text="${amount} + ' USD to ZiG'">100 USD to ZiG</span>
+        </nav>
+
+        <div class="convert-page">
+            <!-- Result hero -->
+            <div class="convert-hero">
+                <h1 th:text="${amount} + ' USD to ZiG'">100 USD to ZiG</h1>
+                <div class="convert-result">
+                    <div class="convert-result-left">
+                        <span class="convert-from-label">You have</span>
+                        <span class="convert-from-value" th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD'">100 USD</span>
+                    </div>
+                    <div class="convert-arrow-wrap">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="convert-result-right">
+                        <span class="convert-to-label">Official rate</span>
+                        <span class="convert-to-value"
+                              th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">2,750.00 ZiG</span>
+                    </div>
+                </div>
+                <p class="convert-rate-note">
+                    Rate: <strong th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')} + ' ZiG per USD'">27.5000 ZiG per USD</strong>
+                    <span class="convert-updated" th:if="${scrapedAt != null}">
+                        · Updated <span th:text="${#temporals.format(scrapedAt, 'dd MMM yyyy, HH:mm')}">14 Apr 2026, 12:00</span>
+                    </span>
+                </p>
+            </div>
+
+            <!-- Rate comparison table -->
+            <div class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-table"></i> Rate Breakdown</h2>
+                <table class="convert-table">
+                    <thead>
+                        <tr>
+                            <th>Market</th>
+                            <th>Rate (ZiG / USD)</th>
+                            <th th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD ='">100 USD =</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="convert-table-official">
+                            <td><span class="convert-badge convert-badge-official">Official</span></td>
+                            <td th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')}">27.50</td>
+                            <td class="convert-table-result"
+                                th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">2,750.00 ZiG</td>
+                        </tr>
+                        <tr th:if="${blackMarketRate != null}" class="convert-table-bm">
+                            <td><span class="convert-badge convert-badge-bm">Black Market</span></td>
+                            <td th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">30.00</td>
+                            <td class="convert-table-result"
+                                th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">3,000.00 ZiG</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Custom converter -->
+            <div class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-calculator"></i> Convert Another Amount</h2>
+                <form id="convertForm" class="convert-form">
+                    <div class="convert-form-row">
+                        <div class="convert-input-wrap">
+                            <span class="convert-input-prefix">USD</span>
+                            <input type="number" id="customAmount" class="convert-input"
+                                   placeholder="Enter amount" min="1" max="10000000" step="1">
+                        </div>
+                        <span class="convert-form-arrow"><i class="fas fa-arrow-right"></i></span>
+                        <span class="convert-form-target">ZiG</span>
+                        <button type="submit" class="convert-go-btn">Convert</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Popular conversions -->
+            <div class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-star"></i> Popular Conversions</h2>
+                <div class="convert-grid">
+                    <a th:each="amt : ${commonAmounts}"
+                       th:href="@{'/convert/' + ${amt} + '-usd-to-zig'}"
+                       th:text="${#numbers.formatInteger(amt, 0, 'COMMA')} + ' USD → ZiG'"
+                       th:classappend="${amt == amount} ? ' convert-grid-active' : ''"
+                       class="convert-grid-item">100 USD → ZiG</a>
+                </div>
+            </div>
+
+            <!-- Disclaimer + back link -->
+            <p class="convert-disclaimer">
+                Rates are indicative and sourced from public data. They may differ at the point of transaction.
+                <a th:href="@{/}">View all Zimbabwe forex rates →</a>
+            </p>
+        </div>
+    </main>
+
+    <th:block th:replace="~{layout :: footer}"></th:block>
+
+    <script>
+    document.getElementById('convertForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var val = parseInt(document.getElementById('customAmount').value, 10);
+        if (val > 0 && val <= 10000000) {
+            window.location.href = '/convert/' + val + '-usd-to-zig';
+        }
+    });
+    </script>
+</body>
+</html>

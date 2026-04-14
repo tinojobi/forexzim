@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zimrate.com/sitemap.xml
