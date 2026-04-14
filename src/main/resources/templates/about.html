@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About ZimRate · Real-time Zimbabwe Forex Rates</title>
+    <meta name="description" content="ZimRate aggregates official, black market, and bank USD/ZiG exchange rates in real time for Zimbabweans.">
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+        <div class="privacy-card">
+
+            <div class="privacy-header">
+                <h2><i class="fas fa-circle-info"></i> About ZimRate</h2>
+                <p class="privacy-date">Free · Real-time · Zimbabwe</p>
+            </div>
+
+            <div class="privacy-body">
+
+                <h3>What is ZimRate?</h3>
+                <p>
+                    ZimRate is a free, real-time exchange rate aggregator built for Zimbabweans.
+                    We pull USD/ZiG rates from official, black market, and banking sources every
+                    30 minutes and display them in one place — no account required, no paywalls.
+                </p>
+                <p>
+                    Whether you're converting USD for groceries, tracking the parallel market, or
+                    comparing bank rates before a transaction, ZimRate gives you the full picture.
+                </p>
+
+                <h3>Our Data Sources</h3>
+                <div class="source-grid">
+                    <div class="source-item">
+                        <div class="source-icon icon-official"><i class="fas fa-landmark"></i></div>
+                        <div class="source-info">
+                            <div class="source-name">ZimPriceCheck</div>
+                            <div class="source-desc">Official RBZ rate, black market (min/max/cash), and retail business rates scraped every 30 minutes.</div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-icon icon-official"><i class="fas fa-building-columns"></i></div>
+                        <div class="source-info">
+                            <div class="source-name">CBZ Bank</div>
+                            <div class="source-desc">Commercial Bank of Zimbabwe — official USD/ZWG buying and selling rates.</div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-icon icon-official"><i class="fas fa-building-columns"></i></div>
+                        <div class="source-info">
+                            <div class="source-name">FBC Bank</div>
+                            <div class="source-desc">FBC Holdings — official USD/ZWG rates from one of Zimbabwe's major banks.</div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-icon icon-business"><i class="fas fa-globe"></i></div>
+                        <div class="source-info">
+                            <div class="source-name">ExchangeRate API</div>
+                            <div class="source-desc">International USD/ZWG mid-market rates used as an independent reference point.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>ZiG vs ZWG — What's the Difference?</h3>
+                <p>
+                    They are the same currency. <strong>ZiG</strong> (Zimbabwe Gold) is the common name
+                    used in everyday conversation, while <strong>ZWG</strong> is the official ISO 4217
+                    currency code. Zimbabwe Gold was introduced in April 2024, replacing the ZWL
+                    (Zimbabwe Dollar) as the country's domestic currency, backed by gold and foreign
+                    currency reserves.
+                </p>
+
+                <h3>How Often Are Rates Updated?</h3>
+                <p>
+                    Our scrapers run every <strong>30 minutes</strong>, pulling fresh data from all
+                    active sources. The "Last Updated" timestamp on the homepage shows when the
+                    most recent successful scrape occurred. You can also refresh manually at any time.
+                </p>
+
+                <h3>Is ZimRate Free?</h3>
+                <p>
+                    Yes — and it will stay free. We cover running costs through small display
+                    advertisements and affiliate partnerships with remittance services. We never
+                    sell your data and we don't require an account to use the site.
+                </p>
+
+                <h3>Disclaimer</h3>
+                <p>
+                    All rates shown on ZimRate are <strong>indicative only</strong>. Actual rates
+                    at banks, forex bureaus, or on the parallel market may differ at the point of
+                    transaction. ZimRate does not offer financial advice, currency trading, or
+                    brokerage services. Always confirm rates directly with your provider before
+                    transacting.
+                </p>
+
+            </div>
+
+            <div class="privacy-footer">
+                <a th:href="@{/}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to rates</a>
+                <a th:href="@{/contact}" class="btn-back" style="margin-left:0.75rem"><i class="fas fa-envelope"></i> Get in touch</a>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>

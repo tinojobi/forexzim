@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact ZimRate · Zimbabwe Forex Rates</title>
+    <meta name="description" content="Get in touch with the ZimRate team — advertising, partnerships, or general enquiries.">
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+        <div class="privacy-card">
+
+            <div class="privacy-header">
+                <h2><i class="fas fa-envelope"></i> Get in Touch</h2>
+                <p class="privacy-date">We usually respond within 24 hours</p>
+            </div>
+
+            <div class="privacy-body">
+
+                <h3>General Enquiries</h3>
+                <div class="contact-methods">
+                    <a href="mailto:hello@zimrate.com" class="contact-method">
+                        <div class="contact-method-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="contact-method-info">
+                            <div class="contact-method-label">Email</div>
+                            <div class="contact-method-value">hello@zimrate.com</div>
+                        </div>
+                        <i class="fas fa-arrow-right contact-method-arrow"></i>
+                    </a>
+                </div>
+
+                <h3>Advertising &amp; Partnerships</h3>
+                <p>Interested in reaching Zimbabweans tracking forex rates? We offer display advertising,
+                   sponsored rate listings, and affiliate partnerships with remittance companies.</p>
+                <div class="contact-methods">
+                    <a href="mailto:ads@zimrate.com" class="contact-method">
+                        <div class="contact-method-icon"><i class="fas fa-rectangle-ad"></i></div>
+                        <div class="contact-method-info">
+                            <div class="contact-method-label">Advertising</div>
+                            <div class="contact-method-value">ads@zimrate.com</div>
+                        </div>
+                        <i class="fas fa-arrow-right contact-method-arrow"></i>
+                    </a>
+                    <a href="mailto:partners@zimrate.com" class="contact-method">
+                        <div class="contact-method-icon icon-business"><i class="fas fa-handshake"></i></div>
+                        <div class="contact-method-info">
+                            <div class="contact-method-label">Partnerships &amp; Data</div>
+                            <div class="contact-method-value">partners@zimrate.com</div>
+                        </div>
+                        <i class="fas fa-arrow-right contact-method-arrow"></i>
+                    </a>
+                </div>
+
+                <h3>Report a Rate Error</h3>
+                <p>If you spot an incorrect rate or a data source that's out of date, please let us know
+                   and we'll investigate.</p>
+                <div class="contact-methods">
+                    <a href="mailto:hello@zimrate.com?subject=Rate%20Error%20Report" class="contact-method">
+                        <div class="contact-method-icon" style="background:var(--amber-50);color:var(--amber-600)"><i class="fas fa-triangle-exclamation"></i></div>
+                        <div class="contact-method-info">
+                            <div class="contact-method-label">Rate Error Report</div>
+                            <div class="contact-method-value">hello@zimrate.com</div>
+                        </div>
+                        <i class="fas fa-arrow-right contact-method-arrow"></i>
+                    </a>
+                </div>
+
+                <h3>Privacy &amp; Data Requests</h3>
+                <div class="contact-methods">
+                    <a href="mailto:privacy@zimrate.com" class="contact-method">
+                        <div class="contact-method-icon" style="background:var(--blue-50);color:var(--blue-600)"><i class="fas fa-shield-halved"></i></div>
+                        <div class="contact-method-info">
+                            <div class="contact-method-label">Privacy</div>
+                            <div class="contact-method-value">privacy@zimrate.com</div>
+                        </div>
+                        <i class="fas fa-arrow-right contact-method-arrow"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="privacy-footer">
+                <a th:href="@{/}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to rates</a>
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>
