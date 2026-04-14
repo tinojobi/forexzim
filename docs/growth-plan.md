@@ -4,7 +4,7 @@
 **Created:** April 14, 2026
 **Last Updated:** April 14, 2026
 **Target:** Increase traffic for AdSense, affiliate, and API revenue
-**Current State:** Live with 5 scrapers, HTTPS, dark mode, no SEO/social presence
+**Current State:** Step 0 foundations in progress — GA4, Search Console, About, Contact done; Telegram pending
 
 ---
 
@@ -28,11 +28,11 @@ ZimRate.com is a forex rate aggregator serving Zimbabweans checking daily USD/Zi
 
 These must be done before Phase 1. Without them, nothing is measurable.
 
-1. **Google Analytics 4** — install GA4 tracking on all pages (~half a day)
-2. **Google Search Console** — verify domain ownership, submit sitemap once created (~half a day)
-3. **About page** (`/about`) — required by Google AdSense before approval (~1 day)
-4. **Contact page** (`/contact`) — required by Google AdSense before approval (~half a day)
-5. **Telegram channel** — set up a channel that auto-posts daily rates via the existing scraper (~1 day). Use this as the push channel while waiting for WhatsApp Business API approval (which takes 2–4 weeks, not 3 days).
+1. ✅ **Google Analytics 4** — install GA4 tracking on all pages (~half a day) — **DONE** (G-XNK9RP5FBW)
+2. ✅ **Google Search Console** — verify domain ownership, submit sitemap once created (~half a day) — **DONE**
+3. ✅ **About page** (`/about`) — required by Google AdSense before approval (~1 day) — **DONE**
+4. ✅ **Contact page** (`/contact`) — required by Google AdSense before approval (~half a day) — **DONE**
+5. ⏳ **Telegram channel** — set up a channel that auto-posts daily rates via the existing scraper (~1 day). Use this as the push channel while waiting for WhatsApp Business API approval (which takes 2–4 weeks, not 3 days). — **PENDING** (backend built; set TELEGRAM_BOT_TOKEN + TELEGRAM_CHANNEL_ID to activate)
 
 ---
 
@@ -84,8 +84,8 @@ These must be done before Phase 1. Without them, nothing is measurable.
 | Mobile-Friendliness | Likely good | Confirm with Google Mobile-Friendly Test |
 | HTTPS | Already live | Ensure HSTS, secure cookies |
 | Crawlability | Unknown | Verify no `noindex` tags; use `rel="canonical"` |
-| Google Analytics 4 | Not present | See Step 0 |
-| Google Search Console | Not present | See Step 0 |
+| Google Analytics 4 | ✅ Live (G-XNK9RP5FBW) | Done |
+| Google Search Console | ✅ Verified | Submit sitemap once created |
 
 > **Schema note:** `FinancialQuote` is not a valid Schema.org type — Google will ignore it.
 > Use `ExchangeRateSpecification` (nested inside `MonetaryAmount`) for rate data,
@@ -368,11 +368,11 @@ Google has largely moved away from AMP preference. Only consider if Google Disco
 
 These are prerequisites and blockers for everything else.
 
-1. **Google Analytics 4** — install on all pages (half a day)
-2. **Google Search Console** — verify domain, ready for sitemap submission (half a day)
-3. **About page** (`/about`) — required for AdSense approval (1 day)
-4. **Contact page** (`/contact`) — required for AdSense approval (half a day)
-5. **Telegram channel** — set up + bot that auto-posts rates after each scrape run (1 day)
+1. ✅ **Google Analytics 4** — install on all pages (half a day) — **DONE**
+2. ✅ **Google Search Console** — verify domain, ready for sitemap submission (half a day) — **DONE**
+3. ✅ **About page** (`/about`) — required for AdSense approval (1 day) — **DONE**
+4. ✅ **Contact page** (`/contact`) — required for AdSense approval (half a day) — **DONE**
+5. ⏳ **Telegram channel** — set up + bot that auto-posts rates after each scrape run (1 day) — **PENDING**
 
 ### Phase 1: Foundation (Weeks 1–2)
 **Effort:** Medium | **Impact:** High
@@ -491,9 +491,9 @@ Ranked by impact-to-effort ratio:
 
 | # | Item | Effort | Impact | Phase |
 |---|------|--------|--------|-------|
-| 1 | Google Analytics 4 + Search Console | Low | Critical | Step 0 |
-| 2 | About + Contact pages | Low | Critical (AdSense gate) | Step 0 |
-| 3 | Telegram bot | Low | High | Step 0 |
+| 1 | ✅ Google Analytics 4 + Search Console | Low | Critical | Step 0 |
+| 2 | ✅ About + Contact pages | Low | Critical (AdSense gate) | Step 0 |
+| 3 | ⏳ Telegram bot | Low | High | Step 0 |
 | 4 | XML sitemap + robots.txt | Low | High | Phase 1 |
 | 5 | Correct structured data | Low | High | Phase 1 |
 | 6 | Rate calculator pages (`/convert/...`) | Low | Very High | Phase 1 |
@@ -509,4 +509,5 @@ Ranked by impact-to-effort ratio:
 ---
 
 *Plan originally authored by Rex (Business Agent). Updated with technical review April 14, 2026.*
-*Next step: Begin Step 0 — GA4, Search Console, About page, Contact page, Telegram bot.*
+*Step 0 status: GA4 ✅, Search Console ✅, About ✅, Contact ✅, Telegram ⏳ (pending env vars)*
+*Next step: Phase 1 — XML sitemap, robots.txt, structured data, on-page SEO.*
