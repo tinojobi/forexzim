@@ -1,4 +1,4 @@
-/* ForexZim — Modern Fintech Design · Zimbabwe Gold Theme */
+/* ZimRate — Modern Fintech Design · Zimbabwe Gold Theme */
 
 :root {
     /* Brand greens (Zimbabwe) */
@@ -1632,6 +1632,231 @@ footer {
 [data-theme="dark"] .chart-skeleton    { background: linear-gradient(90deg, #1e293b 25%, #243048 50%, #1e293b 75%); background-size: 200% 100%; }
 
 /* ═══════════════════════════════════════
+   AD SLOTS
+═══════════════════════════════════════ */
+
+.ad-slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0.5rem 0 1.25rem;
+    padding: 0.375rem 0 0.5rem;
+}
+
+.ad-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    line-height: 1;
+}
+
+/* Dummy placeholder — remove this block once real ads are wired up */
+.ad-dummy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 728px;
+    border: 1.5px dashed var(--gray-200);
+    border-radius: var(--radius-md);
+    background: var(--gray-50);
+    color: var(--gray-400);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.ad-slot--leaderboard .ad-dummy { height: 90px; }
+.ad-slot--rectangle   .ad-dummy { height: 280px; max-width: 336px; }
+
+/* Dark mode */
+[data-theme="dark"] .ad-dummy {
+    background: #0f172a;
+    border-color: #243048;
+    color: #334155;
+}
+
+/* Mobile: collapse leaderboard height so it doesn't eat too much vertical space */
+@media (max-width: 600px) {
+    .ad-slot--leaderboard .ad-dummy { height: 60px; }
+    .ad-slot--rectangle   .ad-dummy { max-width: 100%; }
+}
+
+/* ═══════════════════════════════════════
+   COOKIE CONSENT BANNER
+═══════════════════════════════════════ */
+
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: var(--gray-900);
+    color: var(--gray-100);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.25);
+}
+
+.cookie-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    max-width: 860px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.cookie-text {
+    flex: 1;
+    font-size: 0.825rem;
+    line-height: 1.5;
+    color: var(--gray-300);
+    min-width: 200px;
+}
+
+.cookie-link {
+    color: var(--gold-400);
+    text-decoration: underline;
+}
+
+.cookie-actions {
+    display: flex;
+    gap: 0.625rem;
+    flex-shrink: 0;
+}
+
+.cookie-btn {
+    padding: 0.45rem 1.1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+}
+
+.cookie-btn--accept {
+    background: var(--green-600);
+    color: white;
+}
+
+.cookie-btn--accept:hover { background: var(--green-700); }
+
+.cookie-btn--decline {
+    background: transparent;
+    color: var(--gray-400);
+    border: 1px solid var(--gray-600);
+}
+
+.cookie-btn--decline:hover { background: #1e293b; }
+
+@media (max-width: 600px) {
+    .cookie-inner { flex-direction: column; gap: 0.75rem; }
+    .cookie-actions { width: 100%; }
+    .cookie-btn { flex: 1; text-align: center; }
+}
+
+/* Footer links */
+.footer-links { margin: 0.25rem 0; }
+.footer-link { color: var(--gray-400); font-size: 0.8rem; text-decoration: underline; }
+.footer-link:hover { color: var(--gold-400); }
+
+/* ═══════════════════════════════════════
+   PRIVACY PAGE
+═══════════════════════════════════════ */
+
+.privacy-card {
+    max-width: 760px;
+    margin: 2rem auto;
+    display: block;
+    padding: 2rem 2.25rem;
+}
+
+.privacy-header {
+    margin-bottom: 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.privacy-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.privacy-header h2 i { color: var(--green-600); }
+
+.privacy-date {
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    margin-top: 0.375rem;
+}
+
+.privacy-body h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin: 1.5rem 0 0.5rem;
+}
+
+.privacy-body p,
+.privacy-body li {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--gray-600);
+}
+
+.privacy-body ul { padding-left: 1.4rem; margin: 0.4rem 0; }
+.privacy-body li { margin-bottom: 0.3rem; }
+
+.privacy-link { color: var(--green-600); text-decoration: underline; }
+.privacy-link:hover { color: var(--green-700); }
+
+.privacy-footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--green-700);
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--green-200, #bbf7d0);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.btn-back:hover {
+    background: var(--green-50);
+}
+
+[data-theme="dark"] .privacy-header { border-bottom-color: #243048; }
+[data-theme="dark"] .privacy-header h2 { color: #e2e8f0; }
+[data-theme="dark"] .privacy-body h3 { color: #94a3b8; }
+[data-theme="dark"] .privacy-body p,
+[data-theme="dark"] .privacy-body li { color: #64748b; }
+[data-theme="dark"] .privacy-footer { border-top-color: #243048; }
+[data-theme="dark"] .btn-back { color: var(--green-400, #4ade80); border-color: #243048; }
+[data-theme="dark"] .btn-back:hover { background: #0f172a; }
+
+/* ═══════════════════════════════════════
    PRINT STYLES
 ═══════════════════════════════════════ */
 
@@ -1645,6 +1870,8 @@ footer {
     .refresh-btn,
     .delta,
     .stat-delta,
+    .ad-slot,
+    .cookie-banner,
     footer { display: none !important; }
 
     body { background: white; color: black; }

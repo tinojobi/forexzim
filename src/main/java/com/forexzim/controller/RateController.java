@@ -2,6 +2,7 @@ package com.forexzim.controller;
 
 import com.forexzim.model.Rate;
 import com.forexzim.service.RateService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +54,9 @@ public class RateController {
     public static class WebController {
 
         private final RateService rateService;
+
+        @Value("${zimrate.ads.enabled:true}")
+        private boolean adsEnabled;
 
         public WebController(RateService rateService) {
             this.rateService = rateService;
@@ -224,8 +228,14 @@ public class RateController {
             model.addAttribute("currencyUnits",    currencyUnits);
             model.addAttribute("rateDeltas",       rateDeltas);
             model.addAttribute("staleSections",    staleSections);
+            model.addAttribute("adsEnabled",       adsEnabled);
 
             return "index";
+        }
+
+        @GetMapping("/privacy")
+        public String privacy() {
+            return "privacy";
         }
 
         private int getOfficialOrder(String source, String pair) {

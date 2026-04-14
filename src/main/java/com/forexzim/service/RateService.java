@@ -38,8 +38,10 @@ public class RateService {
     /** Returns daily average buy rates for the past {@code days} days for chart rendering. */
     public List<Map<String, Object>> getRateHistory(String sourceName, String currencyPair, int days) {
         List<Object[]> rows = rateRepository.findDailyAverages(sourceName, currencyPair, days);
+        if (rows == null || rows.isEmpty()) return new ArrayList<>();
         List<Map<String, Object>> result = new ArrayList<>();
         for (Object[] row : rows) {
+            if (row == null || row[0] == null || row[1] == null) continue;
             Map<String, Object> entry = new LinkedHashMap<>();
             entry.put("day",  row[0].toString());
             entry.put("rate", ((Number) row[1]).doubleValue());

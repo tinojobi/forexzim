@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ForexZim - USD/ZiG Exchange Rates</title>
+    <title>ZimRate - USD/ZiG Exchange Rates</title>
     <meta name="theme-color" content="#14532d">
     <link rel="manifest" th:href="@{/manifest.json}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
@@ -70,6 +70,24 @@
             <button class="filter-pill" data-filter="blackMarket"><i class="fas fa-chart-line"></i> Black Market</button>
             <button class="filter-pill" data-filter="bank"><i class="fas fa-building-columns"></i> Banks</button>
             <button class="filter-pill" data-filter="business"><i class="fas fa-store"></i> Business</button>
+        </div>
+
+        <!-- Ad Slot: Leaderboard (728×90) — replace ins block with real AdSense unit -->
+        <div class="ad-slot ad-slot--leaderboard" th:if="${adsEnabled}">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-dummy">
+                <i class="fas fa-rectangle-ad"></i>
+                <span>Your ad here · 728 × 90</span>
+            </div>
+            <!-- REPLACE BELOW WITH REAL ADSENSE:
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            -->
         </div>
 
         <!-- Currency Converter -->
@@ -264,6 +282,24 @@
             </div>
         </div>
 
+        <!-- Ad Slot: Rectangle (336×280) — replace ins block with real AdSense unit -->
+        <div class="ad-slot ad-slot--rectangle" th:if="${adsEnabled}">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-dummy">
+                <i class="fas fa-rectangle-ad"></i>
+                <span>Your ad here · 336 × 280</span>
+            </div>
+            <!-- REPLACE BELOW WITH REAL ADSENSE:
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="rectangle"
+                 data-ad-layout="in-article"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            -->
+        </div>
+
         <!-- Bank Rates -->
         <div class="rate-section" data-category="bank" th:if="${categorizedRates.bank != null and categorizedRates.bank.size() > 0}">
             <div class="section-header">
@@ -426,6 +462,24 @@
             </div>
         </div>
 
+        <!-- Ad Slot: Rectangle (336×280) — replace ins block with real AdSense unit -->
+        <div class="ad-slot ad-slot--rectangle" th:if="${adsEnabled}">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-dummy">
+                <i class="fas fa-rectangle-ad"></i>
+                <span>Your ad here · 336 × 280</span>
+            </div>
+            <!-- REPLACE BELOW WITH REAL ADSENSE:
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="rectangle"
+                 data-ad-layout="in-article"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            -->
+        </div>
+
         <!-- About rates -->
         <div class="info-card">
             <div class="info-icon">
@@ -505,6 +559,15 @@
     <div th:replace="layout :: footer"></div>
 
     <script>
+    // ── Fetch with timeout ───────────────────────────────────────────────────
+    function fetchWithTimeout(url, options, ms) {
+        var ctrl  = new AbortController();
+        var timer = setTimeout(function () { ctrl.abort(); }, ms || 5000);
+        return fetch(url, Object.assign({}, options || {}, { signal: ctrl.signal }))
+            .then(function (r)   { clearTimeout(timer); return r; },
+                  function (err) { clearTimeout(timer); throw err; });
+    }
+
     // ── Dark mode toggle ─────────────────────────────────────────────────────
     (function () {
         var toggle = document.getElementById('themeToggle');
@@ -628,19 +691,42 @@
 
         document.querySelectorAll('.copy-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
-                var val = this.dataset.copy;
-                if (!val || !navigator.clipboard) return;
+                var val  = this.dataset.copy;
                 var self = this;
-                navigator.clipboard.writeText(val).then(function () {
+                if (!val) return;
+
+                function onSuccess() {
                     var ic = self.querySelector('i');
                     if (ic) ic.className = 'fas fa-check';
                     self.classList.add('copied');
+                    toast.innerHTML = '<i class="fas fa-check"></i> Copied!';
                     showToast();
                     setTimeout(function () {
                         if (ic) ic.className = 'far fa-copy';
                         self.classList.remove('copied');
                     }, 1500);
-                });
+                }
+
+                function onFail() {
+                    toast.innerHTML = '<i class="fas fa-times"></i> Copy failed';
+                    showToast();
+                    setTimeout(function () { toast.innerHTML = '<i class="fas fa-check"></i> Copied!'; }, 2200);
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(val).then(onSuccess, onFail);
+                } else {
+                    // Fallback for insecure contexts or browsers without Clipboard API
+                    var ta = document.createElement('textarea');
+                    ta.value = val;
+                    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    var ok = false;
+                    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+                    document.body.removeChild(ta);
+                    ok ? onSuccess() : onFail();
+                }
             });
         });
     }());
@@ -701,8 +787,8 @@
             canvas.style.display = 'none';
 
             Promise.all([
-                fetch('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=' + days).then(function (r) { return r.json(); }),
-                fetch('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG_InformalLow&days=' + days).then(function (r) { return r.json(); })
+                fetchWithTimeout('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=' + days, {}, 5000).then(function (r) { return r.json(); }),
+                fetchWithTimeout('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG_InformalLow&days=' + days, {}, 5000).then(function (r) { return r.json(); })
             ]).then(function (results) {
                 var official    = results[0];
                 var blackMarket = results[1];
@@ -847,21 +933,37 @@
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 var btn = form.querySelector('button[type="submit"]');
-                btn.disabled = true;
                 feedback.className = 'alert-feedback';
 
+                var emailVal  = document.getElementById('alertEmail').value.trim();
+                var threshVal = parseFloat(document.getElementById('alertThreshold').value);
+
+                // Client-side validation
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                    feedback.className = 'alert-feedback error';
+                    feedback.textContent = 'Please enter a valid email address.';
+                    return;
+                }
+                if (isNaN(threshVal) || threshVal <= 0) {
+                    feedback.className = 'alert-feedback error';
+                    feedback.textContent = 'Threshold must be a positive number greater than 0.';
+                    return;
+                }
+
+                btn.disabled = true;
+
                 var payload = {
-                    email:        document.getElementById('alertEmail').value.trim(),
+                    email:        emailVal,
                     currencyPair: document.getElementById('alertPair').value,
-                    threshold:    parseFloat(document.getElementById('alertThreshold').value),
+                    threshold:    threshVal,
                     direction:    document.getElementById('alertDirection').value
                 };
 
-                fetch('/api/alerts/subscribe', {
+                fetchWithTimeout('/api/alerts/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                }).then(function (r) {
+                }, 8000).then(function (r) {
                     return r.json().then(function (d) { return { ok: r.ok, data: d }; });
                 }).then(function (res) {
                     if (res.ok) {
@@ -939,7 +1041,7 @@
     (function () {
         var el = document.querySelector('.stat-item:first-child .stat-value');
         if (el && el.textContent && el.textContent.trim() !== '—') {
-            document.title = '1 USD = ' + el.textContent.trim() + ' \u00B7 ForexZim';
+            document.title = '1 USD = ' + el.textContent.trim() + ' \u00B7 ZimRate';
         }
     }());
     </script>
