@@ -73,7 +73,7 @@
         </div>
 
         <!-- Ad Slot: Leaderboard (728×90) — replace ins block with real AdSense unit -->
-        <div class="ad-slot ad-slot--leaderboard">
+        <div class="ad-slot ad-slot--leaderboard" th:if="${adsEnabled}">
             <span class="ad-label">Advertisement</span>
             <div class="ad-dummy">
                 <i class="fas fa-rectangle-ad"></i>
@@ -283,7 +283,7 @@
         </div>
 
         <!-- Ad Slot: Rectangle (336×280) — replace ins block with real AdSense unit -->
-        <div class="ad-slot ad-slot--rectangle">
+        <div class="ad-slot ad-slot--rectangle" th:if="${adsEnabled}">
             <span class="ad-label">Advertisement</span>
             <div class="ad-dummy">
                 <i class="fas fa-rectangle-ad"></i>
@@ -463,7 +463,7 @@
         </div>
 
         <!-- Ad Slot: Rectangle (336×280) — replace ins block with real AdSense unit -->
-        <div class="ad-slot ad-slot--rectangle">
+        <div class="ad-slot ad-slot--rectangle" th:if="${adsEnabled}">
             <span class="ad-label">Advertisement</span>
             <div class="ad-dummy">
                 <i class="fas fa-rectangle-ad"></i>
