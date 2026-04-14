@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -53,8 +54,13 @@ public class ScheduledScraperService {
         scrapeAllActiveSources();
     }
 
-    /** Interval is configurable via forexzim.scrape.interval-ms (default 30 min). */
-    @Scheduled(fixedDelayString = "${forexzim.scrape.interval-ms:1800000}")
+    /**
+     * Interval is configurable via forexzim.scrape.interval-ms (default 30 min).
+     * initialDelay equals the interval so the startup scrape (scrapeOnStartup) runs first
+     * and the scheduler only kicks in after the full interval — preventing duplicate inserts.
+     */
+    @Scheduled(fixedDelayString  = "${forexzim.scrape.interval-ms:1800000}",
+               initialDelayString = "${forexzim.scrape.interval-ms:1800000}")
     public void scrapeAllActiveSources() {
         log.info("Scrape job started");
 
@@ -73,13 +79,22 @@ public class ScheduledScraperService {
             }
             try {
                 List<Rate> rates = scraper.scrape(source);
-                if (rates != null && !rates.isEmpty()) {
-                    rateRepository.saveAll(rates);
-                    totalRates += rates.size();
-                    log.info("Saved {} rates from '{}'", rates.size(), source.getName());
-                } else {
+                if (rates == null || rates.isEmpty()) {
                     log.warn("No rates returned from '{}'", source.getName());
+                    continue;
                 }
+                int saved = 0;
+                for (Rate rate : rates) {
+                    try {
+                        rateRepository.save(rate);
+                        saved++;
+                    } catch (DataIntegrityViolationException e) {
+                        log.debug("Skipping duplicate rate {}/{} — already exists",
+                                source.getName(), rate.getCurrencyPair());
+                    }
+                }
+                totalRates += saved;
+                log.info("Saved {}/{} rates from '{}'", saved, rates.size(), source.getName());
             } catch (Exception e) {
                 log.error("Error scraping '{}': {}", source.getName(), e.getMessage(), e);
             }

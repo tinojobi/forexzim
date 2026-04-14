@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Controller
 public class SitemapController {
@@ -20,6 +22,10 @@ public class SitemapController {
     private static final long[] CALCULATOR_AMOUNTS = {
         1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000
     };
+
+    private static final YearMonth LAUNCH_MONTH = YearMonth.of(2026, 4);
+    private static final DateTimeFormatter SLUG_FMT =
+            DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
 
     @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
@@ -39,6 +45,15 @@ public class SitemapController {
         for (long amount : CALCULATOR_AMOUNTS) {
             appendUrl(sb, baseUrl + "/convert/" + amount + "-usd-to-zig",
                       "daily", "0.8", today);
+        }
+
+        // Historical archive pages
+        YearMonth current = YearMonth.now();
+        YearMonth m = LAUNCH_MONTH;
+        while (!m.isAfter(current)) {
+            String slug = m.format(SLUG_FMT).toLowerCase();
+            appendUrl(sb, baseUrl + "/history/" + slug, "monthly", "0.7", today);
+            m = m.plusMonths(1);
         }
 
         sb.append("</urlset>\n");

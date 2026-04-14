@@ -1,5 +1,6 @@
 package com.forexzim.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,5 +27,10 @@ public class SeoAdvice {
     @ModelAttribute("searchConsoleVerification")
     public String searchConsoleVerification() {
         return searchConsoleVerification;
+    }
+
+    @ModelAttribute("currentPath")
+    public String currentPath(HttpServletRequest request) {
+        return request.getServletPath();
     }
 }

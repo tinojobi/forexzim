@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${monthLabel} + ' USD/ZiG Rates | ZimRate — Zimbabwe Forex History'">April 2026 USD/ZiG Rates | ZimRate</title>
+    <meta name="description"
+          th:content="'Daily USD to ZiG exchange rates for ' + ${monthLabel} + '. Official RBZ and black market rates — Zimbabwe forex history on ZimRate.'">
+    <link rel="canonical" th:href="${'https://zimrate.com/history/' + monthSlug}">
+    <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/history/' + monthSlug}">
+    <!-- Dark mode init — must run before CSS -->
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <meta name="theme-color" content="#14532d">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <th:block th:replace="~{layout :: header}"></th:block>
+
+    <main class="container">
+        <nav class="convert-breadcrumb" aria-label="Breadcrumb">
+            <a th:href="@{/}">Home</a>
+            <span class="convert-breadcrumb-sep">›</span>
+            <a th:href="@{/history}">History</a>
+            <span class="convert-breadcrumb-sep">›</span>
+            <span th:text="${monthLabel}">April 2026</span>
+        </nav>
+
+        <div class="history-page">
+
+            <!-- Hero -->
+            <div class="history-hero">
+                <h1 th:text="'USD/ZiG Rates — ' + ${monthLabel}">USD/ZiG Rates — April 2026</h1>
+                <p class="history-hero-sub">Daily official and black market exchange rates for Zimbabwe</p>
+
+                <!-- Month navigation -->
+                <div class="history-month-nav">
+                    <a th:if="${hasPrevMonth}" th:href="@{'/history/' + ${prevMonthSlug}}" class="history-nav-btn">
+                        <i class="fas fa-chevron-left"></i> Previous month
+                    </a>
+                    <span th:unless="${hasPrevMonth}" class="history-nav-disabled">
+                        <i class="fas fa-chevron-left"></i> Previous month
+                    </span>
+                    <span class="history-nav-current" th:text="${monthLabel}">April 2026</span>
+                    <a th:if="${hasNextMonth}" th:href="@{'/history/' + ${nextMonthSlug}}" class="history-nav-btn">
+                        Next month <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <span th:unless="${hasNextMonth}" class="history-nav-disabled">
+                        Next month <i class="fas fa-chevron-right"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- No data -->
+            <div th:if="${dailyRows.empty}" class="history-no-data">
+                <i class="fas fa-database"></i>
+                <p>No rate data available for <strong th:text="${monthLabel}">this month</strong>.</p>
+                <a th:href="@{/}">View current rates →</a>
+            </div>
+
+            <!-- Summary stats -->
+            <div th:unless="${dailyRows.empty}" class="history-stats-row">
+                <div class="history-stat">
+                    <span class="history-stat-label">Monthly Average</span>
+                    <span class="history-stat-value"
+                          th:text="${monthlyAvg != null ? #numbers.formatDecimal(monthlyAvg, 0, 'COMMA', 2, 'POINT') + ' ZiG' : '—'}">27.50 ZiG</span>
+                    <span class="history-stat-sub">Official rate</span>
+                </div>
+                <div class="history-stat">
+                    <span class="history-stat-label">Month High</span>
+                    <span class="history-stat-value history-stat-high"
+                          th:text="${monthlyHigh != null ? #numbers.formatDecimal(monthlyHigh, 0, 'COMMA', 2, 'POINT') + ' ZiG' : '—'}">28.00 ZiG</span>
+                    <span class="history-stat-sub">per 1 USD</span>
+                </div>
+                <div class="history-stat">
+                    <span class="history-stat-label">Month Low</span>
+                    <span class="history-stat-value history-stat-low"
+                          th:text="${monthlyLow != null ? #numbers.formatDecimal(monthlyLow, 0, 'COMMA', 2, 'POINT') + ' ZiG' : '—'}">27.00 ZiG</span>
+                    <span class="history-stat-sub">per 1 USD</span>
+                </div>
+                <div class="history-stat">
+                    <span class="history-stat-label">Data Points</span>
+                    <span class="history-stat-value" th:text="${dailyRows.size()}">30</span>
+                    <span class="history-stat-sub">trading days</span>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div th:unless="${dailyRows.empty}" class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-chart-line"></i> Rate Trend</h2>
+                <div class="history-chart-wrap">
+                    <canvas id="historyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Daily rates table -->
+            <div th:unless="${dailyRows.empty}" class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-table"></i> Daily Rates</h2>
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Official Rate (ZiG/USD)</th>
+                                <th>Black Market (ZiG/USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="row : ${dailyRows}">
+                                <td th:text="${row.dateDisplay}">Mon, 14 Apr</td>
+                                <td th:text="${row.official != null ? #numbers.formatDecimal(row.official, 0, 'COMMA', 2, 'POINT') : '—'}">27.50</td>
+                                <td th:text="${row.blackMarket != null ? #numbers.formatDecimal(row.blackMarket, 0, 'COMMA', 2, 'POINT') : '—'}">30.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <p class="convert-disclaimer">
+                All rates are daily averages sourced from public data. They are indicative only.
+                <a th:href="@{/}">View live rates →</a>
+            </p>
+        </div>
+    </main>
+
+    <th:block th:replace="~{layout :: footer}"></th:block>
+
+    <!-- Chart init -->
+    <script th:if="${!dailyRows.empty}" th:inline="javascript">
+    (function () {
+        var labels      = /*[[${chartLabels}]]*/ [];
+        var official    = /*[[${chartOfficial}]]*/ [];
+        var blackMarket = /*[[${chartBlackMarket}]]*/ [];
+        var dark        = document.documentElement.dataset.theme === 'dark';
+
+        var gridColor   = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+        var labelColor  = dark ? '#94a3b8' : '#6b7280';
+
+        var ctx = document.getElementById('historyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Official',
+                        data: official,
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22,163,74,0.08)',
+                        tension: 0.3,
+                        pointRadius: 3,
+                        fill: true,
+                        spanGaps: true
+                    },
+                    {
+                        label: 'Black Market',
+                        data: blackMarket,
+                        borderColor: '#d97706',
+                        backgroundColor: 'rgba(217,119,6,0.07)',
+                        tension: 0.3,
+                        pointRadius: 3,
+                        fill: true,
+                        spanGaps: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { labels: { color: labelColor, font: { family: 'Inter' } } },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    x: { grid: { color: gridColor }, ticks: { color: labelColor, maxTicksLimit: 10 } },
+                    y: {
+                        grid: { color: gridColor },
+                        ticks: { color: labelColor, callback: function(v) { return v + ' ZiG'; } }
+                    }
+                }
+            }
+        });
+    }());
+    </script>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (icon) icon.className = document.documentElement.dataset.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>

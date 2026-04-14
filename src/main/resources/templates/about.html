@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About ZimRate · Real-time Zimbabwe Forex Rates</title>
-    <meta name="description" content="ZimRate aggregates official, black market, and bank USD/ZiG exchange rates in real time for Zimbabweans.">
+    <title>About ZimRate | Zimbabwe USD/ZiG Forex Rate Tracker</title>
+    <meta name="description" content="ZimRate tracks official RBZ, black market, and bank USD/ZiG exchange rates for Zimbabwe — updated every 30 minutes, free to use, no registration required.">
+    <link rel="canonical" href="https://zimrate.com/about">
+    <link rel="alternate" hreflang="en-ZW" href="https://zimrate.com/about">
     <meta name="theme-color" content="#14532d">
-    <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.dataset.theme='dark';}());</script>
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZimRate - USD/ZiG Exchange Rates</title>
+    <title>ZimRate — Live USD/ZiG Rates | Zimbabwe Forex Today</title>
+    <meta name="description" content="Live USD to ZiG exchange rates for Zimbabwe — official RBZ rate, black market, and bank rates. Updated every 30 minutes. Free, no registration required.">
+    <link rel="canonical" href="https://zimrate.com/">
+    <link rel="alternate" hreflang="en-ZW" href="https://zimrate.com/">
+    <link rel="alternate" hreflang="x-default" href="https://zimrate.com/">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://zimrate.com/">
+    <meta property="og:title"       content="ZimRate — Live USD/ZiG Rates | Zimbabwe Forex Today">
+    <meta property="og:description" content="Live USD to ZiG exchange rates for Zimbabwe — official RBZ rate, black market, and bank rates. Updated every 30 minutes.">
     <meta name="theme-color" content="#14532d">
     <link rel="manifest" th:href="@{/manifest.json}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
@@ -191,6 +199,9 @@
                     Using <span id="rateTypeLabel">official</span> rate:
                     <strong id="rateDisplay">—</strong> ZiG per 1 USD
                 </p>
+                <a id="converterPageLink" href="/convert/1-usd-to-zig" class="converter-page-link">
+                    <i class="fas fa-arrow-up-right-from-square"></i> View full conversion page
+                </a>
             </div>
         </div>
 
@@ -510,6 +521,9 @@
                 <div class="chart-skeleton" id="chartSkeleton"></div>
                 <canvas id="rateChart" style="display:none"></canvas>
             </div>
+            <a th:href="@{/history}" class="history-archive-link">
+                <i class="fas fa-clock-rotate-left"></i> View full rate history
+            </a>
         </div>
 
         <!-- Ad Slot: Rectangle (336×280) — replace ins block with real AdSense unit -->
@@ -731,12 +745,21 @@
             });
         });
 
+        function updatePermalink(usd) {
+            var link = document.getElementById('converterPageLink');
+            if (!link) return;
+            var amt = Math.round(Math.abs(usd));
+            if (amt > 0 && amt <= 10000000) link.href = '/convert/' + amt + '-usd-to-zig';
+        }
+
         if (usdInput) {
             usdInput.addEventListener('input', function () {
                 var usd = parseFloat(this.value);
                 if (zigInput) zigInput.value = isNaN(usd) ? '' : (usd * currentRate).toFixed(2);
+                if (!isNaN(usd)) updatePermalink(usd);
             });
         }
+        updatePermalink(1);
 
         if (zigInput) {
             zigInput.addEventListener('input', function () {

@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -261,6 +265,101 @@ public class RateController {
         @GetMapping("/contact")
         public String contact() {
             return "contact";
+        }
+
+        private static final DateTimeFormatter SLUG_FMT =
+                DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
+        private static final DateTimeFormatter DISPLAY_FMT =
+                DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH);
+        private static final DateTimeFormatter TABLE_FMT =
+                DateTimeFormatter.ofPattern("EEE, dd MMM", Locale.ENGLISH);
+        private static final YearMonth LAUNCH_MONTH = YearMonth.of(2026, 4);
+
+        private String toSlug(YearMonth m) {
+            return m.format(SLUG_FMT).toLowerCase();
+        }
+
+        private YearMonth parseSlug(String slug) {
+            try {
+                String normalized = slug.substring(0, 1).toUpperCase() + slug.substring(1).toLowerCase();
+                return YearMonth.parse(normalized, SLUG_FMT);
+            } catch (DateTimeParseException | StringIndexOutOfBoundsException e) {
+                return null;
+            }
+        }
+
+        @GetMapping("/history")
+        public String historyRedirect() {
+            return "redirect:/history/" + toSlug(YearMonth.now());
+        }
+
+        @GetMapping("/history/{slug}")
+        public String history(@PathVariable String slug, Model model) {
+            YearMonth month = parseSlug(slug);
+            if (month == null || month.isAfter(YearMonth.now()) || month.isBefore(LAUNCH_MONTH)) {
+                return "redirect:/history/" + toSlug(YearMonth.now());
+            }
+
+            LocalDateTime start = month.atDay(1).atStartOfDay();
+            LocalDateTime end   = month.plusMonths(1).atDay(1).atStartOfDay();
+
+            List<Map<String, Object>> officialRaw =
+                    rateService.getDailyAveragesForMonth("ZimPriceCheck", "USD/ZiG", start, end);
+            List<Map<String, Object>> blackMarketRaw =
+                    rateService.getDailyAveragesForMonth("ZimPriceCheck", "USD/ZiG_InformalLow", start, end);
+
+            // Index by date string for quick lookup
+            Map<String, Double> officialByDate    = new LinkedHashMap<>();
+            Map<String, Double> blackMarketByDate = new LinkedHashMap<>();
+            officialRaw.forEach(r    -> officialByDate.put((String) r.get("day"),    (Double) r.get("rate")));
+            blackMarketRaw.forEach(r -> blackMarketByDate.put((String) r.get("day"), (Double) r.get("rate")));
+
+            // Merge all dates in sorted order
+            Set<String> allDates = new TreeSet<>();
+            allDates.addAll(officialByDate.keySet());
+            allDates.addAll(blackMarketByDate.keySet());
+
+            List<Map<String, Object>> dailyRows = new ArrayList<>();
+            List<String>  chartLabels      = new ArrayList<>();
+            List<Double>  chartOfficial    = new ArrayList<>();
+            List<Double>  chartBlackMarket = new ArrayList<>();
+
+            for (String dateStr : allDates) {
+                LocalDate date = LocalDate.parse(dateStr);
+                Double official    = officialByDate.get(dateStr);
+                Double blackMarket = blackMarketByDate.get(dateStr);
+
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("dateDisplay", date.format(TABLE_FMT));
+                row.put("official",    official);
+                row.put("blackMarket", blackMarket);
+                dailyRows.add(row);
+
+                chartLabels.add(date.format(DateTimeFormatter.ofPattern("dd MMM", Locale.ENGLISH)));
+                chartOfficial.add(official);
+                chartBlackMarket.add(blackMarket);
+            }
+
+            // Summary stats (official only)
+            OptionalDouble avg = officialByDate.values().stream().mapToDouble(Double::doubleValue).average();
+            OptionalDouble high = officialByDate.values().stream().mapToDouble(Double::doubleValue).max();
+            OptionalDouble low  = officialByDate.values().stream().mapToDouble(Double::doubleValue).min();
+
+            model.addAttribute("monthLabel",      month.format(DISPLAY_FMT));
+            model.addAttribute("monthSlug",        toSlug(month));
+            model.addAttribute("prevMonthSlug",    toSlug(month.minusMonths(1)));
+            model.addAttribute("nextMonthSlug",    toSlug(month.plusMonths(1)));
+            model.addAttribute("hasPrevMonth",     month.isAfter(LAUNCH_MONTH));
+            model.addAttribute("hasNextMonth",     month.isBefore(YearMonth.now()));
+            model.addAttribute("dailyRows",        dailyRows);
+            model.addAttribute("chartLabels",      chartLabels);
+            model.addAttribute("chartOfficial",    chartOfficial);
+            model.addAttribute("chartBlackMarket", chartBlackMarket);
+            if (avg.isPresent())  model.addAttribute("monthlyAvg",  avg.getAsDouble());
+            if (high.isPresent()) model.addAttribute("monthlyHigh", high.getAsDouble());
+            if (low.isPresent())  model.addAttribute("monthlyLow",  low.getAsDouble());
+
+            return "history";
         }
 
         @GetMapping("/convert/{amount:[0-9]+}-usd-to-zig")

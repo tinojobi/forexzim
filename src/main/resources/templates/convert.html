@@ -7,6 +7,10 @@
     <meta name="description"
           th:content="'Convert ' + ${amount} + ' USD to ZiG at today\'s official Zimbabwe rate. Live USD/ZiG rates updated every 30 minutes.'">
     <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
+    <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
+    <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <meta name="theme-color" content="#14532d">
 
     <th:block th:replace="~{layout :: head-meta}"></th:block>
 
@@ -126,6 +130,20 @@
             window.location.href = '/convert/' + val + '-usd-to-zig';
         }
     });
+
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (icon) icon.className = document.documentElement.dataset.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
     </script>
 </body>
 </html>

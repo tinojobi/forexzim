@@ -62,6 +62,24 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
                                       @Param("currencyPair") String currencyPair,
                                       @Param("days") int days);
 
+    /** Daily average buy rate for a specific date range — used for the history archive pages. */
+    @Query(value = """
+            SELECT DATE(r.scraped_at AT TIME ZONE 'Africa/Harare') AS day,
+                   ROUND(AVG(r.buy_rate)::numeric, 4)              AS avg_rate
+            FROM   rates  r
+            JOIN   sources s ON r.source_id = s.id
+            WHERE  s.name          = :sourceName
+              AND  r.currency_pair = :currencyPair
+              AND  r.scraped_at   >= :start
+              AND  r.scraped_at   <  :end
+            GROUP  BY DATE(r.scraped_at AT TIME ZONE 'Africa/Harare')
+            ORDER  BY day ASC
+            """, nativeQuery = true)
+    List<Object[]> findDailyAveragesForMonth(@Param("sourceName")   String sourceName,
+                                              @Param("currencyPair") String currencyPair,
+                                              @Param("start")        LocalDateTime start,
+                                              @Param("end")          LocalDateTime end);
+
     /** Delete all rows older than the given cutoff — called by the cleanup scheduler. */
     @Modifying
     @Transactional

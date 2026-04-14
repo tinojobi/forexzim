@@ -23,12 +23,16 @@
 
             gtag('config', 'G-XNK9RP5FBW');
         </script>
+        <!-- Google AdSense -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2279252465173643"
+                crossorigin="anonymous"></script>
     </th:block>
 </head>
 <body>
-    <header th:fragment="header">
+    <th:block th:fragment="header">
+    <header>
         <div class="header-inner">
-            <div class="header-brand">
+            <a th:href="@{/}" class="header-brand" aria-label="ZimRate home">
                 <div class="header-logo">
                     <i class="fas fa-chart-line"></i>
                 </div>
@@ -36,7 +40,7 @@
                     <h1>Zim<span class="gold">Rate</span></h1>
                     <p>Real-time USD/ZiG rates &middot; Zimbabwe</p>
                 </div>
-            </div>
+            </a>
             <div class="header-actions">
                 <div class="live-badge">
                     <span class="live-dot"></span>
@@ -51,6 +55,21 @@
             </div>
         </div>
     </header>
+    <nav class="site-nav" aria-label="Main navigation">
+        <div class="site-nav-inner">
+            <a th:href="@{/history}"
+               th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/history')} ? ' site-nav-active' : ''"
+               class="site-nav-link">
+                <i class="fas fa-clock-rotate-left"></i> History
+            </a>
+            <a th:href="@{/about}"
+               th:classappend="${currentPath == '/about'} ? ' site-nav-active' : ''"
+               class="site-nav-link">
+                <i class="fas fa-info-circle"></i> About
+            </a>
+        </div>
+    </nav>
+    </th:block>
 
     <main class="container">
         <div th:fragment="content">
@@ -64,6 +83,10 @@
             <p class="footer-meta">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">just now</span></p>
             <p class="footer-disclaimer">Rates are indicative and may differ at the point of transaction. Use at your own discretion.</p>
             <p class="footer-links">
+                <a th:href="@{/}"        class="footer-link">Home</a>
+                <span class="footer-link-sep">·</span>
+                <a th:href="@{/history}" class="footer-link">Rate History</a>
+                <span class="footer-link-sep">·</span>
                 <a th:href="@{/about}"   class="footer-link">About</a>
                 <span class="footer-link-sep">·</span>
                 <a th:href="@{/contact}" class="footer-link">Contact</a>

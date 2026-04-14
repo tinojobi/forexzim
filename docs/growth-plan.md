@@ -1,10 +1,10 @@
-# ZimRate.com Growth Plan
+ # ZimRate.com Growth Plan
 *Forex rate aggregator for Zimbabwe — Traffic & Revenue Growth Strategy*
 
 **Created:** April 14, 2026
 **Last Updated:** April 14, 2026
 **Target:** Increase traffic for AdSense, affiliate, and API revenue
-**Current State:** Step 0 foundations in progress — GA4, Search Console, About, Contact done; Telegram pending
+**Current State:** Phase 1 complete. Phase 2 in progress — historical archive done, affiliate signups + API tier next
 
 ---
 
@@ -374,29 +374,21 @@ These are prerequisites and blockers for everything else.
 4. ✅ **Contact page** (`/contact`) — required for AdSense approval (half a day) — **DONE**
 5. ⏳ **Telegram channel** — set up + bot that auto-posts rates after each scrape run (1 day) — **PENDING**
 
-### Phase 1: Foundation (Weeks 1–2)
+### Phase 1: Foundation (Weeks 1–2) — ✅ COMPLETE
 **Effort:** Medium | **Impact:** High
 
-1. **Technical SEO** (3 days)
-   - Create XML sitemap (`/sitemap.xml`) & robots.txt
-   - Implement correct structured data (`ExchangeRateSpecification` / `FAQPage`)
-   - Run Lighthouse audit & fix critical issues
+1. ✅ **Technical SEO** — XML sitemap (`/sitemap.xml`), robots.txt, ExchangeRateSpecification + FAQPage structured data — **DONE**
 
-2. **On-Page SEO** (2 days)
-   - Optimize title tags, meta descriptions, headers
-   - Add `hreflang="en-ZW"`
-   - Add internal links
+2. ✅ **On-Page SEO** — Title tags, meta descriptions, canonical, hreflang on all pages — **DONE**
 
-3. **WhatsApp MVP** (ongoing, API takes 2–4 weeks to approve)
+3. ⏳ **WhatsApp MVP** (ongoing, API takes 2–4 weeks to approve)
    - Apply for WhatsApp Business API (Twilio/360dialog) immediately
    - Start using WhatsApp Business App in the meantime (free, up to 256 contacts)
    - Add "Get rates on WhatsApp" CTA on homepage
 
-4. **Rate calculator pages** (2 days)
-   - Build `/convert/{amount}-usd-to-zig` template in Spring Boot
-   - Auto-generate for 20–50 common amounts
+4. ✅ **Rate calculator pages** — `/convert/{amount}-usd-to-zig` live for 11 common amounts, linked from homepage converter — **DONE**
 
-5. **Content creation** (ongoing)
+5. ⏳ **Content creation** (ongoing)
    - Write 5 foundational blog posts (education + analysis)
    - Schedule 1 post/week
 
@@ -408,7 +400,7 @@ These are prerequisites and blockers for everything else.
    - Post daily rate updates
    - Engage with relevant accounts and Zimbabwean finance communities
 
-7. **Remittance affiliate signup** (Week 3 — do this early, it's free money)
+7. ⏳ **Remittance affiliate signup** (Week 3 — do this early, it's free money)
    - Sign up for Mukuru, WorldRemit, MoneyGram affiliate programs
    - Add tracking links + banners to the site
 
@@ -420,9 +412,7 @@ These are prerequisites and blockers for everything else.
    - Build embeddable widget (`/widget.js`)
    - Pitch to TechZim, NewsDay, ZimLive
 
-10. **Historical rates pages** (Week 5–6)
-    - Build `/history/{month-year}` template
-    - Generate archive pages from existing DB data
+10. ✅ **Historical rates archive** — `/history/{month-year}` live with chart, daily table, monthly nav, sitemap entries — **DONE**
 
 11. **Partnership Outreach** (Week 6–7)
     - Pitch 5 media outlets for rate widget
@@ -494,11 +484,11 @@ Ranked by impact-to-effort ratio:
 | 1 | ✅ Google Analytics 4 + Search Console | Low | Critical | Step 0 |
 | 2 | ✅ About + Contact pages | Low | Critical (AdSense gate) | Step 0 |
 | 3 | ⏳ Telegram bot | Low | High | Step 0 |
-| 4 | XML sitemap + robots.txt | Low | High | Phase 1 |
-| 5 | Correct structured data | Low | High | Phase 1 |
-| 6 | Rate calculator pages (`/convert/...`) | Low | Very High | Phase 1 |
-| 7 | Remittance affiliate signups | Very Low | High | Phase 2 |
-| 8 | Historical rates archive | Low | High | Phase 2 |
+| 4 | ✅ XML sitemap + robots.txt | Low | High | Phase 1 |
+| 5 | ✅ Correct structured data (ExchangeRateSpecification + FAQPage) | Low | High | Phase 1 |
+| 6 | ✅ Rate calculator pages (`/convert/...`) | Low | Very High | Phase 1 |
+| 7 | ⏳ Remittance affiliate signups | Very Low | High | Phase 2 |
+| 8 | ✅ Historical rates archive (`/history/...`) | Low | High | Phase 2 |
 | 9 | Embeddable widget | Medium | High | Phase 2 |
 | 10 | Paid API tier | Low | High | Phase 3 |
 | 11 | WhatsApp Business API | Medium | Very High | Phase 2–3 |

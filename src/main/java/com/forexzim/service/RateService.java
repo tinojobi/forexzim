@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,9 +36,19 @@ public class RateService {
         // Triggered after every scrape run to ensure fresh data on next request
     }
 
+    /** Returns daily average buy rates for a specific calendar month. */
+    public List<Map<String, Object>> getDailyAveragesForMonth(String sourceName, String currencyPair,
+                                                               LocalDateTime start, LocalDateTime end) {
+        List<Object[]> rows = rateRepository.findDailyAveragesForMonth(sourceName, currencyPair, start, end);
+        return parseRows(rows);
+    }
+
     /** Returns daily average buy rates for the past {@code days} days for chart rendering. */
     public List<Map<String, Object>> getRateHistory(String sourceName, String currencyPair, int days) {
-        List<Object[]> rows = rateRepository.findDailyAverages(sourceName, currencyPair, days);
+        return parseRows(rateRepository.findDailyAverages(sourceName, currencyPair, days));
+    }
+
+    private List<Map<String, Object>> parseRows(List<Object[]> rows) {
         if (rows == null || rows.isEmpty()) return new ArrayList<>();
         List<Map<String, Object>> result = new ArrayList<>();
         for (Object[] row : rows) {
