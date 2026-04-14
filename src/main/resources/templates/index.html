@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ForexZim - USD/ZiG Exchange Rates</title>
+    <title>ZimRate - USD/ZiG Exchange Rates</title>
     <meta name="theme-color" content="#14532d">
     <link rel="manifest" th:href="@{/manifest.json}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
@@ -1041,7 +1041,7 @@
     (function () {
         var el = document.querySelector('.stat-item:first-child .stat-value');
         if (el && el.textContent && el.textContent.trim() !== '—') {
-            document.title = '1 USD = ' + el.textContent.trim() + ' \u00B7 ForexZim';
+            document.title = '1 USD = ' + el.textContent.trim() + ' \u00B7 ZimRate';
         }
     }());
     </script>

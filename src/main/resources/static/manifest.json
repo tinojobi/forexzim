@@ -1,6 +1,6 @@
 {
-  "name": "ForexZim — Zimbabwe Forex Rates",
-  "short_name": "ForexZim",
+  "name": "ZimRate — Zimbabwe Forex Rates",
+  "short_name": "ZimRate",
   "description": "Real-time USD/ZiG exchange rates — official, black market, banks, and business rates.",
   "start_url": "/",
   "display": "standalone",

@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.forexzim'
 version = '0.0.1-SNAPSHOT'
-description = 'ForexZim Forex Rate Aggregation'
+description = 'ZimRate — USD/ZiG Exchange Rate Aggregator'
 
 java {
 	toolchain {
