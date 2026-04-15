@@ -1,6 +1,9 @@
 package com.forexzim.controller;
 
+import com.forexzim.model.GoldCoinPrice;
 import com.forexzim.model.Rate;
+import com.forexzim.service.GoldCoinService;
+import com.forexzim.service.InflationScraperService;
 import com.forexzim.service.RateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -46,7 +49,7 @@ public class RateController {
             @RequestParam(defaultValue = "ZimPriceCheck") String source,
             @RequestParam(defaultValue = "USD/ZiG")       String pair,
             @RequestParam(defaultValue = "7")             int    days) {
-        int clampedDays = Math.max(1, Math.min(days, 90));
+        int clampedDays = Math.max(1, Math.min(days, 365));
         return rateService.getRateHistory(source, pair, clampedDays);
     }
 
@@ -59,12 +62,17 @@ public class RateController {
     public static class WebController {
 
         private final RateService rateService;
+        private final GoldCoinService goldCoinService;
+        private final InflationScraperService inflationScraperService;
 
         @Value("${zimrate.ads.enabled:true}")
         private boolean adsEnabled;
 
-        public WebController(RateService rateService) {
+        public WebController(RateService rateService, GoldCoinService goldCoinService,
+                             InflationScraperService inflationScraperService) {
             this.rateService = rateService;
+            this.goldCoinService = goldCoinService;
+            this.inflationScraperService = inflationScraperService;
         }
 
         @GetMapping
@@ -132,6 +140,18 @@ public class RateController {
                 bestBuyRates.put(cat, max);
             });
 
+            // ── Cross rates (international/regional from ExchangeRateAPI) ────
+            List<String> crossRateOrder = List.of(
+                    "USD/EUR", "USD/GBP", "USD/ZAR", "USD/BWP", "USD/ZMW");
+            List<Rate> crossRates = latestRates.stream()
+                    .filter(r -> r.getSource().getName().equals("Exchange Rate API"))
+                    .filter(r -> !r.getCurrencyPair().equals("USD/ZWG"))
+                    .sorted(Comparator.comparingInt(r -> {
+                        int idx = crossRateOrder.indexOf(r.getCurrencyPair());
+                        return idx == -1 ? Integer.MAX_VALUE : idx;
+                    }))
+                    .collect(Collectors.toList());
+
             // ── Display labels and currency units ────────────────────────────
             Map<Rate, String> displayLabels = new HashMap<>();
             Map<Rate, String> currencyUnits = new HashMap<>();
@@ -139,6 +159,10 @@ public class RateController {
                 displayLabels.put(r, getDisplayLabel(r));
                 currencyUnits.put(r, getCurrencyUnit(r));
             }));
+            crossRates.forEach(r -> {
+                displayLabels.put(r, getDisplayLabel(r));
+                currencyUnits.put(r, getCurrencyUnit(r));
+            });
 
             // ── Rate delta vs previous scrape ────────────────────────────────
             Map<String, Rate> previousByKey = previousRates.stream()
@@ -162,6 +186,21 @@ public class RateController {
                     }
                 }
             }));
+
+            crossRates.forEach(rate -> {
+                String key  = rate.getSource().getName() + ":" + rate.getCurrencyPair();
+                Rate   prev = previousByKey.get(key);
+                if (prev != null && prev.getBuyRate() != null && rate.getBuyRate() != null) {
+                    double prevVal = prev.getBuyRate().doubleValue();
+                    double currVal = rate.getBuyRate().doubleValue();
+                    if (prevVal != 0) {
+                        double pct = ((currVal - prevVal) / prevVal) * 100;
+                        if (Math.abs(pct) >= 0.01) {
+                            rateDeltas.put(rate, String.format("%+.1f%%", pct));
+                        }
+                    }
+                }
+            });
 
             // ── Stale section detection (>90 min since last scrape) ──────────
             LocalDateTime staleThreshold = LocalDateTime.now().minusMinutes(90);
@@ -247,7 +286,10 @@ public class RateController {
             model.addAttribute("currencyUnits",    currencyUnits);
             model.addAttribute("rateDeltas",       rateDeltas);
             model.addAttribute("staleSections",    staleSections);
+            model.addAttribute("crossRates",       crossRates);
             model.addAttribute("adsEnabled",       adsEnabled);
+            goldCoinService.getLatest().ifPresent(g -> model.addAttribute("goldCoin", g));
+            inflationScraperService.getLatest().ifPresent(i -> model.addAttribute("inflation", i));
 
             return "index";
         }
@@ -427,6 +469,12 @@ public class RateController {
             if (source.equals("ZimPriceCheck") && pair.contains("OKSuperm"))            return "OK Supermarket";
             if (source.equals("ZimPriceCheck") && pair.contains("PickNPay"))            return "Pick N Pay";
 
+            if (source.equals("Exchange Rate API") && pair.equals("USD/EUR")) return "Euro";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/GBP")) return "British Pound";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/ZAR")) return "South African Rand";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/BWP")) return "Botswana Pula";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/ZMW")) return "Zambian Kwacha";
+
             return source;
         }
 
@@ -434,6 +482,11 @@ public class RateController {
             String pair = rate.getCurrencyPair();
             if (pair.contains("ZiG")) return "ZiG";
             if (pair.contains("ZWG")) return "ZWG";
+            if (pair.contains("EUR")) return "EUR";
+            if (pair.contains("GBP")) return "GBP";
+            if (pair.contains("ZAR")) return "ZAR";
+            if (pair.contains("BWP")) return "BWP";
+            if (pair.contains("ZMW")) return "ZMW";
             return "";
         }
     }

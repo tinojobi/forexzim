@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 56" role="img" aria-label="ZimRate logo">
+
+  <!-- ── Icon: frosted glass box (matches old header style) ── -->
+  <rect width="56" height="56" rx="12"
+        fill="rgba(255,255,255,0.12)"
+        stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+
+  <!-- Subtle chart grid -->
+  <line x1="8" y1="40" x2="48" y2="40" stroke="#fff" stroke-width="0.5" opacity="0.2"/>
+  <line x1="8" y1="29" x2="48" y2="29" stroke="#fff" stroke-width="0.5" opacity="0.12"/>
+
+  <!-- Rising chart line (white) -->
+  <polyline points="8,40 15,31 24,34 33,22 48,16"
+            fill="none" stroke="#ffffff" stroke-width="2.8"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Endpoint glow + dot -->
+  <circle cx="48" cy="16" r="5.5" fill="#ffffff" opacity="0.2"/>
+  <circle cx="48" cy="16" r="3" fill="#ffffff"/>
+
+  <!-- ── Wordmark ── -->
+  <text font-family="Inter,system-ui,-apple-system,Arial,sans-serif"
+        font-weight="800" font-size="27" letter-spacing="-0.8">
+    <tspan x="70" y="37" fill="#ffffff">Zim</tspan><tspan fill="#ca8a04">Rate</tspan>
+  </text>
+
+</svg>

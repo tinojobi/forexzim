@@ -642,6 +642,63 @@ footer {
 }
 
 /* ═══════════════════════════════════════
+   GOLD COIN SECTION
+═══════════════════════════════════════ */
+
+.gold-coin-body {
+    padding: 1.25rem 1.5rem;
+}
+
+.gold-coin-price-row {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 0.875rem;
+}
+
+.gold-price-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.gold-price-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-500);
+}
+
+.gold-rate {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-700);
+}
+
+[data-theme="dark"] .gold-rate {
+    color: var(--primary-400);
+}
+
+.gold-coin-meta {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+@media (max-width: 600px) {
+    .gold-coin-price-row {
+        gap: 1.5rem;
+    }
+    .gold-rate {
+        font-size: 1.2rem;
+    }
+}
+
+/* ═══════════════════════════════════════
    CONVERTER CARD
 ═══════════════════════════════════════ */
 

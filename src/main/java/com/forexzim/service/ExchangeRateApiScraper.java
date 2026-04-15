@@ -22,7 +22,9 @@ public class ExchangeRateApiScraper extends BaseRateScraper {
             "ZWG", "USD/ZWG",
             "ZAR", "USD/ZAR",
             "BWP", "USD/BWP",
-            "ZMW", "USD/ZMW"
+            "ZMW", "USD/ZMW",
+            "EUR", "USD/EUR",
+            "GBP", "USD/GBP"
     );
 
     private final RestTemplate restTemplate;

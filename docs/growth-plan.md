@@ -2,9 +2,9 @@
 *Forex rate aggregator for Zimbabwe — Traffic & Revenue Growth Strategy*
 
 **Created:** April 14, 2026
-**Last Updated:** April 14, 2026
+**Last Updated:** April 15, 2026
 **Target:** Increase traffic for AdSense, affiliate, and API revenue
-**Current State:** Phase 1 complete. Phase 2 in progress — historical archive done, affiliate signups + API tier next
+**Current State:** Phase 1 complete. Phase 2 largely complete. Competitor feature backlog (items 15–18) done. Next: Telegram threshold alerts, embeddable widget, affiliate signups, paid API tier.
 
 ---
 
@@ -495,6 +495,44 @@ Ranked by impact-to-effort ratio:
 | 12 | SMS alerts (Econet) | Medium | High | Phase 3 |
 | 13 | PWA push notifications | Medium | Medium | Phase 2 |
 | 14 | Bank data partnerships | High | High | Phase 3 |
+| 15 | ✅ EUR/GBP/multi-currency rate display | Low | Medium | Phase 2 |
+| 16 | ✅ Gold coin (Mosi-oa-Tunya) prices | Medium | Medium | Phase 2 |
+| 17 | ✅ Inflation data (ZIMSTAT scraper) | Medium | Medium | Phase 3 |
+| 18 | ✅ Extended history to 1 year (cap lifted to 365 days, 1Y chart button) | Low | Low | Phase 3 |
+| 19 | Telegram/WhatsApp threshold alerts (personal, not just broadcast) | Medium | High | Phase 3 |
+
+---
+
+## Competitor Feature Backlog (from ZimRate analysis — April 2026)
+
+Features identified from competitor at zimrate.statotec.com not yet in our plan:
+
+### 15. ✅ EUR/GBP Multi-Currency Display — DONE (April 2026)
+EUR and GBP added to `ExchangeRateApiScraper`. New "International & Regional Rates" section on homepage shows EUR, GBP, ZAR, BWP, ZMW with copy buttons and delta arrows.
+
+### 16. ✅ Gold Coin (Mosi-oa-Tunya) Prices — DONE (April 2026)
+RBZ website is behind Radware + hCaptcha — automated scraping not possible. Implemented manual admin endpoint: `POST /api/admin/gold-coin` protected by `X-Admin-Token` header (set `ADMIN_TOKEN` env var). Homepage section shows USD price, ZiG price, and valid date. Update once daily with a curl command.
+
+### 17. ✅ Inflation Data — DONE (April 2026)
+`InflationScraperService` scrapes ZIMSTAT homepage (`zimstat.co.zw`) every 12 hours. Parses `div.et_pb_blurb_description h3 strong` for the rate and `p em` for the period label. Stores one row per monthly period (unique constraint). Homepage section shows current rate and period. Builds historical record over time.
+
+### 18. ✅ Extended History to 1 Year — DONE (April 2026)
+API cap lifted from 90 → 365 days. `1Y` button added to the trend chart period selector. Data was already being retained for 365 days (`forexzim.scrape.retention-days=365`).
+
+### 17. Inflation Data (M-o-M, Y-o-Y, CPI)
+**Priority:** Medium | **Effort:** Medium | **Phase:** 3
+
+Scrape ZIMSTAT or RBZ for monthly inflation figures. Display headline M-o-M and Y-o-Y numbers with a sparkline. Adds financial authority and SEO value for "Zimbabwe inflation" queries.
+
+### 18. Extended Historical Data (up to 1 year)
+**Priority:** Low | **Effort:** Low | **Phase:** 3
+
+Current history API clamps at 90 days. Increase the cap and add 1Y option to the trend chart period selector on the homepage. Data is already in the DB for any rate with sufficient history.
+
+### 19. Telegram/WhatsApp Threshold Alerts (Personal)
+**Priority:** High | **Effort:** Medium | **Phase:** 3
+
+Current alerts send email only. Add Telegram and WhatsApp as delivery channels for personal threshold alerts (e.g., "notify me when USD/ZiG crosses 30"). The Telegram bot in Step 0 handles broadcasting — this is the per-user alert layer on top of it.
 
 ---
 

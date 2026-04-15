@@ -128,6 +128,10 @@
             <button class="filter-pill" data-filter="blackMarket"><i class="fas fa-chart-line"></i> Black Market</button>
 <!--            <button class="filter-pill" data-filter="bank"><i class="fas fa-building-columns"></i> Banks</button>-->
             <button class="filter-pill" data-filter="business"><i class="fas fa-store"></i> Business</button>
+            <button class="filter-pill" data-filter="gold" th:if="${goldCoin != null}"  ><i class="fas fa-coins"></i> Gold Coin</button>
+            <button class="filter-pill" data-filter="inflation"><i class="fas fa-arrow-trend-up"></i> Inflation</button>
+            <button class="filter-pill" data-filter="international"><i class="fas fa-globe"></i> International</button>
+
         </div>
 
         <!-- Ad Slot: Leaderboard (728×90) — replace ins block with real AdSense unit -->
@@ -148,62 +152,7 @@
             -->
         </div>
 
-        <!-- Currency Converter -->
-        <div class="converter-card" th:if="${officialBuyRate != null}">
-            <div class="section-header">
-                <div class="section-icon icon-business">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <div class="section-info">
-                    <div class="section-title">Currency Converter</div>
-                    <div class="section-sub">Official &amp; black market rates</div>
-                </div>
-            </div>
-            <div class="converter-body"
-                 th:attr="data-official-rate=${officialBuyRate},
-                          data-informal-high-rate=${informalHighRate != null ? informalHighRate : officialBuyRate},
-                          data-informal-low-rate=${informalLowRate != null ? informalLowRate : officialBuyRate},
-                          data-cash-rate=${cashRate != null ? cashRate : officialBuyRate}">
 
-                <div class="rate-toggle">
-                    <button class="toggle-btn active" data-type="official">
-                        <span class="toggle-label">Official</span>
-                        <span class="toggle-rate" th:text="${officialBuyRate + ' ZiG'}">27.50 ZiG</span>
-                    </button>
-                    <button class="toggle-btn" data-type="informal-high" th:if="${informalHighRate != null}">
-                        <span class="toggle-label">Black Market Max</span>
-                        <span class="toggle-rate" th:text="${informalHighRate + ' ZiG'}">34.00 ZiG</span>
-                    </button>
-                    <button class="toggle-btn" data-type="informal-low" th:if="${informalLowRate != null}">
-                        <span class="toggle-label">Black Market Min</span>
-                        <span class="toggle-rate" th:text="${informalLowRate + ' ZiG'}">31.00 ZiG</span>
-                    </button>
-                    <button class="toggle-btn" data-type="cash" th:if="${cashRate != null}">
-                        <span class="toggle-label">Cash</span>
-                        <span class="toggle-rate" th:text="${cashRate + ' ZiG'}">33.00 ZiG</span>
-                    </button>
-                </div>
-
-                <div class="converter-row">
-                    <div class="converter-field">
-                        <label>USD</label>
-                        <input type="number" id="usdInput" placeholder="1" min="0" step="any">
-                    </div>
-                    <span class="converter-swap"><i class="fas fa-right-left"></i></span>
-                    <div class="converter-field">
-                        <label>ZiG</label>
-                        <input type="number" id="zigInput" placeholder="0.00" min="0" step="any">
-                    </div>
-                </div>
-                <p class="converter-note">
-                    Using <span id="rateTypeLabel">official</span> rate:
-                    <strong id="rateDisplay">—</strong> ZiG per 1 USD
-                </p>
-                <a id="converterPageLink" href="/convert/1-usd-to-zig" class="converter-page-link">
-                    <i class="fas fa-arrow-up-right-from-square"></i> View full conversion page
-                </a>
-            </div>
-        </div>
 
         <!-- Official Rates -->
         <div class="rate-section" data-category="official" th:if="${categorizedRates.official.size() > 0}">
@@ -499,6 +448,188 @@
             </div>
         </div>
 
+        <!-- Mosi-oa-Tunya Gold Coin -->
+        <div class="rate-section gold-coin-section" data-category="gold" th:if="${goldCoin != null}">
+            <div class="section-header">
+                <div class="section-icon icon-official">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="section-info">
+                    <div class="section-title">Mosi-oa-Tunya Gold Coin</div>
+                    <div class="section-sub">Official RBZ price · 1 troy oz</div>
+                </div>
+                <span class="section-badge badge-official">RBZ</span>
+            </div>
+            <div class="gold-coin-body">
+                <div class="gold-coin-price-row">
+                    <div class="gold-price-item">
+                        <span class="gold-price-label">USD Price</span>
+                        <div class="rate-cell">
+                            <span class="rate-num gold-rate" th:text="${'$' + #numbers.formatDecimal(goldCoin.priceUsd, 1, 2)}">$3,250.00</span>
+                            <button class="copy-btn" th:data-copy="${goldCoin.priceUsd}" title="Copy rate">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gold-price-item" th:if="${goldCoin.priceZig != null}">
+                        <span class="gold-price-label">ZiG Price</span>
+                        <div class="rate-cell">
+                            <span class="rate-num gold-rate" th:text="${#numbers.formatDecimal(goldCoin.priceZig, 1, 2) + ' ZiG'}">94,250.00 ZiG</span>
+                            <button class="copy-btn" th:data-copy="${goldCoin.priceZig}" title="Copy rate">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="gold-coin-meta">
+                    <i class="far fa-calendar"></i>
+                    Valid for
+                    <span th:text="${#temporals.format(goldCoin.validDate, 'dd MMM yyyy')}">15 Apr 2026</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zimbabwe Inflation -->
+        <div class="rate-section" data-category="inflation" th:if="${inflation != null}">
+            <div class="section-header">
+                <div class="section-icon icon-official">
+                    <i class="fas fa-arrow-trend-up"></i>
+                </div>
+                <div class="section-info">
+                    <div class="section-title">Zimbabwe Inflation Rate</div>
+<!--                    <div class="section-sub">Source: ZIMSTAT</div>-->
+                </div>
+                <span class="section-badge badge-official">INFLATION</span>
+            </div>
+            <div class="gold-coin-body">
+                <div class="gold-coin-price-row">
+                    <div class="gold-price-item">
+                        <span class="gold-price-label">Inflation Rate</span>
+                        <span class="rate-num gold-rate"
+                              th:text="${#numbers.formatDecimal(inflation.rate, 1, 2) + '%'}">0.51%</span>
+                    </div>
+                    <div class="gold-price-item">
+                        <span class="gold-price-label">Period</span>
+                        <span class="rate-num" style="font-size:1.1rem;"
+                              th:text="${inflation.period}">March 2026</span>
+                    </div>
+                </div>
+                <div class="gold-coin-meta">
+                    <i class="far fa-clock"></i>
+                    Updated
+                    <span th:text="${#temporals.format(inflation.scrapedAt, 'dd MMM yyyy')}">15 Apr 2026</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- International & Regional Rates -->
+        <div class="rate-section" data-category="international" th:if="${crossRates != null and !crossRates.isEmpty()}">
+            <div class="section-header">
+                <div class="section-icon icon-official">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="section-info">
+                    <div class="section-title">International &amp; Regional Rates</div>
+                    <div class="section-sub">1 USD expressed in each currency</div>
+                </div>
+                <span class="section-badge badge-official">Global</span>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Currency</th>
+                            <th>Rate</th>
+                            <th>Code</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rate : ${crossRates}">
+                            <td data-label="Currency">
+                                <span class="provider-name" th:text="${displayLabels.get(rate)}">Euro</span>
+                            </td>
+                            <td data-label="Rate">
+                                <div class="rate-cell">
+                                    <span class="rate-num" th:text="${rate.buyRate}">0.9200</span>
+                                    <button class="copy-btn" th:data-copy="${rate.buyRate}" title="Copy rate">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                    <span th:if="${rateDeltas.get(rate) != null}"
+                                          th:class="${rateDeltas.get(rate).startsWith('+') ? 'delta up' : 'delta down'}"
+                                          th:text="${rateDeltas.get(rate)}">+0.1%</span>
+                                </div>
+                            </td>
+                            <td data-label="Code"><span class="currency-pill" th:text="${currencyUnits.get(rate)}">EUR</span></td>
+                            <td data-label="Updated">
+                                <span class="time-cell">
+                                    <i class="far fa-clock"></i>
+                                    <span th:text="${#temporals.format(rate.scrapedAt, 'dd MMM HH:mm')}">12 Apr 20:30</span>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Currency Converter -->
+        <div class="converter-card" th:if="${officialBuyRate != null}">
+            <div class="section-header">
+                <div class="section-icon icon-business">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="section-info">
+                    <div class="section-title">Currency Converter</div>
+                    <div class="section-sub">Official &amp; black market rates</div>
+                </div>
+            </div>
+            <div class="converter-body"
+                 th:attr="data-official-rate=${officialBuyRate},
+                          data-informal-high-rate=${informalHighRate != null ? informalHighRate : officialBuyRate},
+                          data-informal-low-rate=${informalLowRate != null ? informalLowRate : officialBuyRate},
+                          data-cash-rate=${cashRate != null ? cashRate : officialBuyRate}">
+
+                <div class="rate-toggle">
+                    <button class="toggle-btn active" data-type="official">
+                        <span class="toggle-label">Official</span>
+                        <span class="toggle-rate" th:text="${officialBuyRate + ' ZiG'}">27.50 ZiG</span>
+                    </button>
+                    <button class="toggle-btn" data-type="informal-high" th:if="${informalHighRate != null}">
+                        <span class="toggle-label">Black Market Max</span>
+                        <span class="toggle-rate" th:text="${informalHighRate + ' ZiG'}">34.00 ZiG</span>
+                    </button>
+                    <button class="toggle-btn" data-type="informal-low" th:if="${informalLowRate != null}">
+                        <span class="toggle-label">Black Market Min</span>
+                        <span class="toggle-rate" th:text="${informalLowRate + ' ZiG'}">31.00 ZiG</span>
+                    </button>
+                    <button class="toggle-btn" data-type="cash" th:if="${cashRate != null}">
+                        <span class="toggle-label">Cash</span>
+                        <span class="toggle-rate" th:text="${cashRate + ' ZiG'}">33.00 ZiG</span>
+                    </button>
+                </div>
+
+                <div class="converter-row">
+                    <div class="converter-field">
+                        <label>USD</label>
+                        <input type="number" id="usdInput" placeholder="1" min="0" step="any">
+                    </div>
+                    <span class="converter-swap"><i class="fas fa-right-left"></i></span>
+                    <div class="converter-field">
+                        <label>ZiG</label>
+                        <input type="number" id="zigInput" placeholder="0.00" min="0" step="any">
+                    </div>
+                </div>
+                <p class="converter-note">
+                    Using <span id="rateTypeLabel">official</span> rate:
+                    <strong id="rateDisplay">—</strong> ZiG per 1 USD
+                </p>
+                <a id="converterPageLink" href="/convert/1-usd-to-zig" class="converter-page-link">
+                    <i class="fas fa-arrow-up-right-from-square"></i> View full conversion page
+                </a>
+            </div>
+        </div>
+
         <!-- Rate Trend Chart -->
         <div class="chart-card" id="chartCard">
             <div class="chart-header-row">
@@ -515,6 +646,7 @@
                     <button class="chart-period-btn active" data-days="7">7D</button>
                     <button class="chart-period-btn" data-days="30">30D</button>
                     <button class="chart-period-btn" data-days="90">90D</button>
+                    <button class="chart-period-btn" data-days="365">1Y</button>
                 </div>
             </div>
             <div class="chart-body">
