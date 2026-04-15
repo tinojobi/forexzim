@@ -126,7 +126,7 @@
             <button class="filter-pill active" data-filter="all"><i class="fas fa-border-all"></i> All</button>
             <button class="filter-pill" data-filter="official"><i class="fas fa-landmark"></i> Official</button>
             <button class="filter-pill" data-filter="blackMarket"><i class="fas fa-chart-line"></i> Black Market</button>
-            <button class="filter-pill" data-filter="bank"><i class="fas fa-building-columns"></i> Banks</button>
+<!--            <button class="filter-pill" data-filter="bank"><i class="fas fa-building-columns"></i> Banks</button>-->
             <button class="filter-pill" data-filter="business"><i class="fas fa-store"></i> Business</button>
         </div>
 
@@ -362,73 +362,73 @@
         </div>
 
         <!-- Bank Rates -->
-        <div class="rate-section" data-category="bank" th:if="${categorizedRates.bank != null and categorizedRates.bank.size() > 0}">
-            <div class="section-header">
-                <div class="section-icon icon-official">
-                    <i class="fas fa-building-columns"></i>
-                </div>
-                <div class="section-info">
-                    <div class="section-title">Bank Rates</div>
-                    <div class="section-sub">CBZ Bank &amp; FBC Bank</div>
-                </div>
-                <span class="section-badge badge-official">Banks</span>
-                <span class="stale-badge" th:if="${staleSections.containsKey('bank')}">
-                    <i class="fas fa-triangle-exclamation"></i> Stale
-                </span>
-            </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Bank</th>
-                            <th>Buy Rate</th>
-                            <th>Sell Rate</th>
-                            <th>Unit</th>
-                            <th>Updated</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="rate : ${categorizedRates.bank}"
-                            th:classappend="${rate.buyRate.doubleValue() == bestBuyRates.get('bank')} ? 'best-buy' : ''">
-                            <td data-label="Bank">
-                                <div class="provider-cell">
-                                    <span class="provider-name" th:text="${displayLabels.get(rate)}">CBZ Bank</span>
-                                    <span class="best-tag" th:if="${rate.buyRate.doubleValue() == bestBuyRates.get('bank')}">
-                                        <i class="fas fa-star"></i> Best
-                                    </span>
-                                </div>
-                            </td>
-                            <td data-label="Buy Rate">
-                                <div class="rate-cell">
-                                    <span class="rate-num" th:text="${rate.buyRate}">27.00</span>
-                                    <button class="copy-btn" th:data-copy="${rate.buyRate}" title="Copy rate">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                    <span th:if="${rateDeltas.get(rate) != null}"
-                                          th:class="${rateDeltas.get(rate).startsWith('+') ? 'delta up' : 'delta down'}"
-                                          th:text="${rateDeltas.get(rate)}">+0.5%</span>
-                                </div>
-                            </td>
-                            <td data-label="Sell Rate">
-                                <div class="rate-cell">
-                                    <span class="rate-num" th:text="${rate.sellRate}">27.00</span>
-                                    <button class="copy-btn" th:data-copy="${rate.sellRate}" title="Copy rate">
-                                        <i class="far fa-copy"></i>
-                                    </button>
-                                </div>
-                            </td>
-                            <td data-label="Unit"><span class="currency-pill" th:text="${currencyUnits.get(rate)}">ZWG</span></td>
-                            <td data-label="Updated">
-                                <span class="time-cell">
-                                    <i class="far fa-clock"></i>
-                                    <span th:text="${#temporals.format(rate.scrapedAt, 'dd MMM HH:mm')}">12 Apr 20:30</span>
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!--        <div class="rate-section" data-category="bank" th:if="${categorizedRates.bank != null and categorizedRates.bank.size() > 0}">-->
+<!--            <div class="section-header">-->
+<!--                <div class="section-icon icon-official">-->
+<!--                    <i class="fas fa-building-columns"></i>-->
+<!--                </div>-->
+<!--                <div class="section-info">-->
+<!--                    <div class="section-title">Bank Rates</div>-->
+<!--                    <div class="section-sub">CBZ Bank &amp; FBC Bank</div>-->
+<!--                </div>-->
+<!--                <span class="section-badge badge-official">Banks</span>-->
+<!--                <span class="stale-badge" th:if="${staleSections.containsKey('bank')}">-->
+<!--                    <i class="fas fa-triangle-exclamation"></i> Stale-->
+<!--                </span>-->
+<!--            </div>-->
+<!--            <div class="table-responsive">-->
+<!--                <table>-->
+<!--                    <thead>-->
+<!--                        <tr>-->
+<!--                            <th>Bank</th>-->
+<!--                            <th>Buy Rate</th>-->
+<!--                            <th>Sell Rate</th>-->
+<!--                            <th>Unit</th>-->
+<!--                            <th>Updated</th>-->
+<!--                        </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                        <tr th:each="rate : ${categorizedRates.bank}"-->
+<!--                            th:classappend="${rate.buyRate.doubleValue() == bestBuyRates.get('bank')} ? 'best-buy' : ''">-->
+<!--                            <td data-label="Bank">-->
+<!--                                <div class="provider-cell">-->
+<!--                                    <span class="provider-name" th:text="${displayLabels.get(rate)}">CBZ Bank</span>-->
+<!--                                    <span class="best-tag" th:if="${rate.buyRate.doubleValue() == bestBuyRates.get('bank')}">-->
+<!--                                        <i class="fas fa-star"></i> Best-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td data-label="Buy Rate">-->
+<!--                                <div class="rate-cell">-->
+<!--                                    <span class="rate-num" th:text="${rate.buyRate}">27.00</span>-->
+<!--                                    <button class="copy-btn" th:data-copy="${rate.buyRate}" title="Copy rate">-->
+<!--                                        <i class="far fa-copy"></i>-->
+<!--                                    </button>-->
+<!--                                    <span th:if="${rateDeltas.get(rate) != null}"-->
+<!--                                          th:class="${rateDeltas.get(rate).startsWith('+') ? 'delta up' : 'delta down'}"-->
+<!--                                          th:text="${rateDeltas.get(rate)}">+0.5%</span>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td data-label="Sell Rate">-->
+<!--                                <div class="rate-cell">-->
+<!--                                    <span class="rate-num" th:text="${rate.sellRate}">27.00</span>-->
+<!--                                    <button class="copy-btn" th:data-copy="${rate.sellRate}" title="Copy rate">-->
+<!--                                        <i class="far fa-copy"></i>-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </td>-->
+<!--                            <td data-label="Unit"><span class="currency-pill" th:text="${currencyUnits.get(rate)}">ZWG</span></td>-->
+<!--                            <td data-label="Updated">-->
+<!--                                <span class="time-cell">-->
+<!--                                    <i class="far fa-clock"></i>-->
+<!--                                    <span th:text="${#temporals.format(rate.scrapedAt, 'dd MMM HH:mm')}">12 Apr 20:30</span>-->
+<!--                                </span>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <!-- Business Rates -->
         <div class="rate-section" data-category="business" th:if="${categorizedRates.business.size() > 0}">
