@@ -33,13 +33,7 @@
     <header>
         <div class="header-inner">
             <a th:href="@{/}" class="header-brand" aria-label="ZimRate home">
-                <div class="header-logo">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="header-title">
-                    <h1>Zim<span class="gold">Rate</span></h1>
-                    <p>Real-time USD/ZiG rates &middot; Zimbabwe</p>
-                </div>
+                <img th:src="@{/logo.svg}" alt="ZimRate" class="header-logo-img">
             </a>
             <div class="header-actions">
                 <div class="live-badge">
@@ -84,7 +78,7 @@
 
     <footer th:fragment="footer">
         <div class="footer-inner">
-            <div class="footer-brand">Zim<span class="gold">Rate</span></div>
+            <img th:src="@{/logo.svg}" alt="ZimRate" class="footer-logo-img">
             <p class="footer-meta">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">just now</span></p>
             <p class="footer-disclaimer">Rates are indicative and may differ at the point of transaction. Use at your own discretion.</p>
             <p class="footer-links">
