@@ -1,5 +1,7 @@
 package com.forexzim.controller;
 
+import com.forexzim.model.BlogPost;
+import com.forexzim.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 @Controller
@@ -16,6 +19,12 @@ public class SitemapController {
 
     @Value("${zimrate.base-url:https://zimrate.com}")
     private String baseUrl;
+
+    private final BlogRepository blogRepository;
+
+    public SitemapController(BlogRepository blogRepository) {
+        this.blogRepository = blogRepository;
+    }
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -54,6 +63,16 @@ public class SitemapController {
             String slug = m.format(SLUG_FMT).toLowerCase();
             appendUrl(sb, baseUrl + "/history/" + slug, "monthly", "0.7", today);
             m = m.plusMonths(1);
+        }
+
+        // Blog index
+        appendUrl(sb, baseUrl + "/blog", "weekly", "0.6", today);
+
+        // Blog posts
+        List<BlogPost> posts = blogRepository.findByStatusOrderByPublishedAtDesc(BlogPost.Status.PUBLISHED);
+        for (BlogPost post : posts) {
+            String lastmod = post.getUpdatedAt().toLocalDate().format(DATE_FMT);
+            appendUrl(sb, baseUrl + "/blog/" + post.getSlug(), "monthly", "0.7", lastmod);
         }
 
         sb.append("</urlset>\n");

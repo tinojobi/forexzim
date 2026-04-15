@@ -62,6 +62,11 @@
                class="site-nav-link">
                 <i class="fas fa-clock-rotate-left"></i> History
             </a>
+            <a th:href="@{/blog}"
+               th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/blog')} ? ' site-nav-active' : ''"
+               class="site-nav-link">
+                <i class="fas fa-newspaper"></i> Blog
+            </a>
             <a th:href="@{/about}"
                th:classappend="${currentPath == '/about'} ? ' site-nav-active' : ''"
                class="site-nav-link">
@@ -86,6 +91,8 @@
                 <a th:href="@{/}"        class="footer-link">Home</a>
                 <span class="footer-link-sep">·</span>
                 <a th:href="@{/history}" class="footer-link">Rate History</a>
+                <span class="footer-link-sep">·</span>
+                <a th:href="@{/blog}"    class="footer-link">Blog</a>
                 <span class="footer-link-sep">·</span>
                 <a th:href="@{/about}"   class="footer-link">About</a>
                 <span class="footer-link-sep">·</span>
