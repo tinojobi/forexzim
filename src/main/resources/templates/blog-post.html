@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${post.title + ' | ZimRate'}">Post Title | ZimRate</title>
+    <meta name="description" th:if="${post.metaDescription}" th:content="${post.metaDescription}">
+    <link rel="canonical" th:href="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog/' + post.slug}">
+    <link rel="alternate" hreflang="en-ZW" th:href="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog/' + post.slug}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="ZimRate">
+    <meta property="og:title" th:content="${post.title}">
+    <meta property="og:description" th:if="${post.metaDescription}" th:content="${post.metaDescription}">
+    <meta property="og:description" th:unless="${post.metaDescription}" th:content="${post.excerpt}">
+    <meta property="og:url" th:content="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog/' + post.slug}">
+    <meta property="article:published_time" th:if="${post.publishedAt}" th:content="${#temporals.format(post.publishedAt, 'yyyy-MM-dd')}">
+    <meta property="article:author" th:content="${post.author}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" th:content="${post.title}">
+    <meta name="twitter:description" th:if="${post.metaDescription}" th:content="${post.metaDescription}">
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+    <script th:if="${structuredData}" type="application/ld+json" th:utext="${structuredData}"></script>
+    <script th:if="${breadcrumbData}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+        <article class="blog-post">
+
+            <header class="blog-post-header">
+                <div class="blog-post-meta">
+                    <span class="blog-card-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span th:text="${#temporals.format(post.publishedAt, 'dd MMM yyyy')}">14 Apr 2026</span>
+                    </span>
+                    <span class="blog-card-read-time">
+                        <i class="fas fa-clock"></i>
+                        <span th:text="${post.readTimeMinutes + ' min read'}">6 min read</span>
+                    </span>
+                    <span class="blog-card-author">
+                        <i class="fas fa-user-pen"></i>
+                        <span th:text="${post.author}">ZimRate Team</span>
+                    </span>
+                </div>
+                <h1 class="blog-post-title" th:text="${post.title}">Post Title</h1>
+                <p class="blog-post-excerpt" th:if="${post.excerpt}" th:text="${post.excerpt}">Excerpt</p>
+            </header>
+
+            <div class="blog-post-content" th:utext="${post.content}">
+                Post content goes here.
+            </div>
+
+            <footer class="blog-post-footer">
+                <a th:href="@{/blog}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Blog</a>
+                <a th:href="@{/}" class="btn-back" style="margin-left:0.75rem"><i class="fas fa-chart-line"></i> Live Rates</a>
+            </footer>
+
+        </article>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>

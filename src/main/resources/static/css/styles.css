@@ -2341,13 +2341,13 @@ footer {
     border-bottom: 1.5px solid var(--gray-200);
     margin-bottom: 1.75rem;
 }
-.blog-hero h2 {
+.blog-hero h1 {
     font-size: 1.6rem;
     font-weight: 800;
     color: var(--gray-900);
     margin-bottom: 0.4rem;
 }
-.blog-hero h2 i { color: var(--green-700); margin-right: 0.4rem; }
+.blog-hero h1 i { color: var(--green-700); margin-right: 0.4rem; }
 .blog-hero p { color: var(--gray-500); font-size: 1rem; }
 
 .blog-empty {
@@ -2504,7 +2504,7 @@ footer {
 }
 
 /* Dark mode — blog */
-[data-theme="dark"] .blog-hero h2         { color: #f1f5f9; }
+[data-theme="dark"] .blog-hero h1         { color: #f1f5f9; }
 [data-theme="dark"] .blog-hero p          { color: #94a3b8; }
 [data-theme="dark"] .blog-hero            { border-color: #1e293b; }
 [data-theme="dark"] .blog-card            { background: #1e293b; border-color: #334155; }

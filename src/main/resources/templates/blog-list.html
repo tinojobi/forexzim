@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | ZimRate — Zimbabwe Forex Rate Insights</title>
+    <meta name="description" content="Expert insights on Zimbabwe's forex market, USD/ZiG exchange rates, and financial news — from the ZimRate team.">
+    <link rel="canonical" th:href="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog'}">
+    <link rel="alternate" hreflang="en-ZW" th:href="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog'}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ZimRate">
+    <meta property="og:title" content="Blog | ZimRate — Zimbabwe Forex Rate Insights">
+    <meta property="og:description" content="Expert insights on Zimbabwe's forex market, USD/ZiG exchange rates, and financial news — from the ZimRate team.">
+    <meta property="og:url" th:content="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog'}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Blog | ZimRate — Zimbabwe Forex Rate Insights">
+    <meta name="twitter:description" content="Expert insights on Zimbabwe's forex market, USD/ZiG exchange rates, and financial news.">
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+    <script th:if="${structuredData}" type="application/ld+json" th:utext="${structuredData}"></script>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+        <div class="blog-hero">
+            <h1><i class="fas fa-newspaper"></i> ZimRate Blog</h1>
+            <p>Insights on Zimbabwe's forex market, USD/ZiG rates, and financial news.</p>
+        </div>
+
+        <div th:if="${posts.empty}" class="blog-empty">
+            <i class="fas fa-file-pen"></i>
+            <p>No posts yet — check back soon.</p>
+        </div>
+
+        <div th:unless="${posts.empty}" class="blog-list">
+            <article th:each="post : ${posts}" class="blog-card">
+                <div class="blog-card-body">
+                    <div class="blog-card-meta">
+                        <span class="blog-card-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span th:text="${#temporals.format(post.publishedAt, 'dd MMM yyyy')}">14 Apr 2026</span>
+                        </span>
+                        <span class="blog-card-read-time">
+                            <i class="fas fa-clock"></i>
+                            <span th:text="${post.readTimeMinutes + ' min read'}">6 min read</span>
+                        </span>
+                    </div>
+                    <h3 class="blog-card-title">
+                        <a th:href="@{/blog/{slug}(slug=${post.slug})}" th:text="${post.title}">Post title</a>
+                    </h3>
+                    <p class="blog-card-excerpt" th:if="${post.excerpt}" th:text="${post.excerpt}">Excerpt goes here.</p>
+                </div>
+                <div class="blog-card-footer">
+                    <span class="blog-card-author">
+                        <i class="fas fa-user-pen"></i>
+                        <span th:text="${post.author}">ZimRate Team</span>
+                    </span>
+                    <a th:href="@{/blog/{slug}(slug=${post.slug})}" class="blog-read-more">
+                        Read more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>
