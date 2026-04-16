@@ -641,6 +641,27 @@ footer {
     margin-top: 0.05rem;
 }
 
+.stat-bid-ask {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.25rem;
+    font-size: 0.67rem;
+}
+.bid-ask-label {
+    color: var(--gray-400);
+    font-weight: 500;
+}
+.bid-ask-value {
+    color: var(--gray-600);
+    font-weight: 600;
+}
+.bid-ask-sep { color: var(--gray-300); }
+
+[data-theme="dark"] .bid-ask-label { color: #475569; }
+[data-theme="dark"] .bid-ask-value { color: #94a3b8; }
+[data-theme="dark"] .bid-ask-sep   { color: #334155; }
+
 /* ═══════════════════════════════════════
    GOLD COIN SECTION
 ═══════════════════════════════════════ */

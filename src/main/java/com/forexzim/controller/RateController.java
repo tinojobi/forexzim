@@ -216,6 +216,8 @@ public class RateController {
             if (!official.isEmpty()) {
                 double officialBuy = official.get(0).getBuyRate().doubleValue();
                 model.addAttribute("officialBuyRate", String.format("%.2f", officialBuy));
+                if (official.get(0).getSellRate() != null)
+                    model.addAttribute("officialSellRate", String.format("%.2f", official.get(0).getSellRate().doubleValue()));
 
                 // Stat bar delta — official rate vs previous scrape
                 Rate officialCurr = official.get(0);
