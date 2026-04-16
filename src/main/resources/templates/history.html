@@ -135,7 +135,7 @@
         var el = document.getElementById('historyChart');
         if (!el || typeof ApexCharts === 'undefined') return;
 
-        new ApexCharts(el, {
+        var histChart = new ApexCharts(el, {
             chart: {
                 type: 'area', height: 260,
                 toolbar: { show: false }, zoom: { enabled: false },
@@ -179,7 +179,15 @@
                 borderColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
                 strokeDashArray: 3
             }
-        }).render();
+        });
+        histChart.render();
+        window._updateHistoryChartTheme = function () {
+            var d = document.documentElement.dataset.theme === 'dark';
+            histChart.updateOptions({
+                theme: { mode: d ? 'dark' : 'light' },
+                grid:  { borderColor: d ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', strokeDashArray: 3 }
+            });
+        };
     }());
     </script>
 
@@ -191,6 +199,7 @@
             document.documentElement.dataset.theme = theme;
             localStorage.setItem('theme', theme);
             if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            if (typeof window._updateHistoryChartTheme === 'function') window._updateHistoryChartTheme();
         }
         if (icon) icon.className = document.documentElement.dataset.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         if (toggle) toggle.addEventListener('click', function () {
