@@ -116,6 +116,10 @@
                     <button class="refresh-btn" onclick="location.reload()" title="Refresh rates now">
                         <i class="fas fa-rotate-right"></i>
                     </button>
+                    <a id="waShareBtn" href="#" target="_blank" rel="noopener noreferrer"
+                       class="wa-share-btn" title="Share rates on WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
                 </div>
                 <span class="stat-sub">Next: <span id="refreshCountdown">—</span></span>
             </div>
@@ -978,6 +982,22 @@
         }
 
         tick();
+    }());
+
+    // ── WhatsApp share ───────────────────────────────────────────────────────
+    (function () {
+        var btn = document.getElementById('waShareBtn');
+        if (!btn) return;
+        var statItems = document.querySelectorAll('.stat-item');
+        var official    = statItems[0] ? statItems[0].querySelector('.stat-value') : null;
+        var blackMarket = statItems[1] ? statItems[1].querySelector('.stat-value') : null;
+        var premium     = statItems[2] ? statItems[2].querySelector('.stat-value') : null;
+        var msg = '\uD83D\uDCCA USD/ZiG Rates \u2014 ZimRate\n' +
+                  '\u2022 Official: '     + (official    ? official.textContent.trim()    : '\u2014') + '\n' +
+                  '\u2022 Black Market: ' + (blackMarket ? blackMarket.textContent.trim() : '\u2014') + '\n' +
+                  '\u2022 Premium: '      + (premium     ? premium.textContent.trim()     : '\u2014') + '\n' +
+                  'zimrate.com';
+        btn.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
     }());
 
     // ── Rate Trend Chart (with period selector + skeleton) ───────────────────

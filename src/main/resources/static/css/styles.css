@@ -1026,6 +1026,25 @@ footer {
 [data-theme="dark"] .refresh-btn         { border-color: #243048; color: #475569; }
 [data-theme="dark"] .refresh-btn:hover   { background: #243048; color: #4ade80; border-color: #334155; }
 
+.wa-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    background: rgba(37,211,102,0.1);
+    color: #25d166;
+    font-size: 1rem;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+.wa-share-btn:hover { background: rgba(37,211,102,0.22); color: #1aab54; }
+
+[data-theme="dark"] .wa-share-btn       { background: rgba(37,211,102,0.12); color: #4ade80; }
+[data-theme="dark"] .wa-share-btn:hover { background: rgba(37,211,102,0.22); color: #86efac; }
+
 /* ═══════════════════════════════════════
    TOAST NOTIFICATION
 ═══════════════════════════════════════ */
@@ -2592,6 +2611,7 @@ footer {
     .chart-card,
     .copy-btn,
     .refresh-btn,
+    .wa-share-btn,
     .delta,
     .stat-delta,
     .ad-slot,
