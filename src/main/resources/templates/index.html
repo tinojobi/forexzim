@@ -20,7 +20,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
     <th:block th:replace="~{layout :: head-meta}"></th:block>
     <script th:if="${structuredData != null}" type="application/ld+json" th:utext="${structuredData}"></script>
     <script type="application/ld+json">
@@ -651,7 +651,7 @@
             </div>
             <div class="chart-body">
                 <div class="chart-skeleton" id="chartSkeleton"></div>
-                <canvas id="rateChart" style="display:none"></canvas>
+                <div id="rateChart" style="display:none"></div>
             </div>
             <a th:href="@{/history}" class="history-archive-link">
                 <i class="fas fa-clock-rotate-left"></i> View full rate history
@@ -982,35 +982,74 @@
 
     // ── Rate Trend Chart (with period selector + skeleton) ───────────────────
     (function () {
-        var canvas   = document.getElementById('rateChart');
+        var el       = document.getElementById('rateChart');
         var skeleton = document.getElementById('chartSkeleton');
         var card     = document.getElementById('chartCard');
-        if (!canvas || typeof Chart === 'undefined') return;
+        if (!el || typeof ApexCharts === 'undefined') return;
 
         var chartInstance = null;
 
-        function getColors() {
-            var dark = document.documentElement.dataset.theme === 'dark';
+        function isDark() { return document.documentElement.dataset.theme === 'dark'; }
+
+        function themeOpts() {
+            var dark = isDark();
             return {
-                grid: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-                text: dark ? '#94a3b8' : '#6b7280'
+                theme: { mode: dark ? 'dark' : 'light' },
+                grid:  { borderColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', strokeDashArray: 3 }
             };
         }
 
         window._updateRateChartTheme = function () {
             if (!chartInstance) return;
-            var c = getColors();
-            ['x', 'y'].forEach(function (axis) {
-                chartInstance.options.scales[axis].grid.color  = c.grid;
-                chartInstance.options.scales[axis].ticks.color = c.text;
-            });
-            chartInstance.options.plugins.legend.labels.color = c.text;
-            chartInstance.update('none');
+            chartInstance.updateOptions(themeOpts());
         };
+
+        function buildOptions(labels, officialSeries, blackMarketSeries) {
+            return Object.assign({
+                chart: {
+                    type: 'area', height: 260,
+                    toolbar: { show: false }, zoom: { enabled: false },
+                    fontFamily: 'Inter, sans-serif', background: 'transparent',
+                    animations: { enabled: true, easing: 'easeinout', speed: 400 }
+                },
+                series: [
+                    { name: 'Official Rate',    data: officialSeries },
+                    { name: 'Black Market Max', data: blackMarketSeries }
+                ],
+                colors: ['#2563eb', '#d97706'],
+                fill: {
+                    type: 'gradient',
+                    gradient: { shadeIntensity: 1, opacityFrom: 0.28, opacityTo: 0.02, stops: [0, 100] }
+                },
+                stroke: { curve: 'smooth', width: 2 },
+                dataLabels: { enabled: false },
+                markers: { size: 0, hover: { size: 5 } },
+                xaxis: {
+                    categories: labels,
+                    axisBorder: { show: false }, axisTicks: { show: false },
+                    labels: { style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' } }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (v) { return v != null ? v.toFixed(1) : ''; },
+                        style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' }
+                    }
+                },
+                tooltip: {
+                    shared: true, intersect: false,
+                    y: { formatter: function (v) { return v != null ? v.toFixed(2) + ' ZiG' : '—'; } }
+                },
+                legend: {
+                    position: 'top', horizontalAlign: 'left',
+                    fontSize: '11px', fontFamily: 'Inter, sans-serif',
+                    markers: { width: 8, height: 8, radius: 4 }
+                }
+            }, themeOpts());
+        }
 
         function loadChart(days) {
             if (skeleton) skeleton.style.display = 'block';
-            canvas.style.display = 'none';
+            el.style.display = 'none';
 
             Promise.all([
                 fetchWithTimeout('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=' + days, {}, 5000).then(function (r) { return r.json(); }),
@@ -1036,56 +1075,22 @@
                     return labels.map(function (l) { return idx[l] != null ? +Number(idx[l]).toFixed(2) : null; });
                 }
 
-                var c = getColors();
                 var officialSeries    = toSeries(official);
                 var blackMarketSeries = toSeries(blackMarket);
 
+                el.style.display = 'block';
                 if (chartInstance) {
-                    chartInstance.data.labels           = labels;
-                    chartInstance.data.datasets[0].data = officialSeries;
-                    chartInstance.data.datasets[1].data = blackMarketSeries;
-                    chartInstance.update();
+                    chartInstance.updateOptions({ xaxis: { categories: labels } }, false, false);
+                    chartInstance.updateSeries([
+                        { name: 'Official Rate',    data: officialSeries },
+                        { name: 'Black Market Max', data: blackMarketSeries }
+                    ]);
                 } else {
-                    chartInstance = new Chart(canvas, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Official Rate',
-                                    data: officialSeries,
-                                    borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.07)',
-                                    fill: true, tension: 0.4,
-                                    pointRadius: 3, pointHoverRadius: 5, borderWidth: 2, spanGaps: true
-                                },
-                                {
-                                    label: 'Black Market Max',
-                                    data: blackMarketSeries,
-                                    borderColor: '#d97706', backgroundColor: 'rgba(217,119,6,0.07)',
-                                    fill: true, tension: 0.4,
-                                    pointRadius: 3, pointHoverRadius: 5, borderWidth: 2, spanGaps: true
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true, maintainAspectRatio: true,
-                            interaction: { mode: 'index', intersect: false },
-                            plugins: {
-                                legend: { labels: { color: c.text, font: { family: 'Inter', size: 11 }, boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } },
-                                tooltip: { callbacks: { label: function (ctx) {
-                                    return ' ' + ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toFixed(2) + ' ZiG' : '—');
-                                }}}
-                            },
-                            scales: {
-                                x: { grid: { color: c.grid }, ticks: { color: c.text, font: { family: 'Inter', size: 10 } } },
-                                y: { grid: { color: c.grid }, ticks: { color: c.text, font: { family: 'Inter', size: 10 }, callback: function (v) { return v.toFixed(1); } } }
-                            }
-                        }
-                    });
+                    chartInstance = new ApexCharts(el, buildOptions(labels, officialSeries, blackMarketSeries));
+                    chartInstance.render();
                 }
 
                 if (skeleton) skeleton.style.display = 'none';
-                canvas.style.display = 'block';
             }).catch(function () {
                 if (skeleton) skeleton.style.display = 'none';
                 if (card) card.style.display = 'none';

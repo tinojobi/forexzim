@@ -520,7 +520,7 @@ footer {
     height: 28px;
     width: auto;
     display: block;
-    margin-bottom: 0.3rem;
+    margin: 0 auto 0.3rem;
 }
 
 .footer-meta {
@@ -950,8 +950,8 @@ footer {
     padding: 1rem 1.5rem 1.25rem;
 }
 
-.chart-body canvas {
-    max-height: 260px;
+.chart-body .apexcharts-canvas {
+    max-width: 100%;
 }
 
 /* ═══════════════════════════════════════
@@ -2100,7 +2100,7 @@ footer {
 .history-stat-high  { color: var(--green-700); }
 .history-stat-low   { color: var(--amber-700); }
 
-.history-chart-wrap { position: relative; height: 260px; }
+.history-chart-wrap { position: relative; }
 
 .history-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 .history-table th {
@@ -2133,7 +2133,7 @@ footer {
     .history-hero h1 { font-size: 1.2rem; }
     .history-month-nav { justify-content: space-between; }
     .history-nav-current { display: none; }
-    .history-chart-wrap { height: 200px; }
+    .history-chart-wrap { } /* height controlled by ApexCharts chart.height option */
 }
 
 .history-archive-link {

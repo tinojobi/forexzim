@@ -16,7 +16,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
 </head>
 <body>
     <th:block th:replace="~{layout :: header}"></th:block>
@@ -88,7 +88,7 @@
             <div th:unless="${dailyRows.empty}" class="convert-card">
                 <h2 class="convert-card-title"><i class="fas fa-chart-line"></i> Rate Trend</h2>
                 <div class="history-chart-wrap">
-                    <canvas id="historyChart"></canvas>
+                    <div id="historyChart"></div>
                 </div>
             </div>
 
@@ -132,53 +132,54 @@
         var blackMarket = /*[[${chartBlackMarket}]]*/ [];
         var dark        = document.documentElement.dataset.theme === 'dark';
 
-        var gridColor   = dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
-        var labelColor  = dark ? '#94a3b8' : '#6b7280';
+        var el = document.getElementById('historyChart');
+        if (!el || typeof ApexCharts === 'undefined') return;
 
-        var ctx = document.getElementById('historyChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Official',
-                        data: official,
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(22,163,74,0.08)',
-                        tension: 0.3,
-                        pointRadius: 3,
-                        fill: true,
-                        spanGaps: true
-                    },
-                    {
-                        label: 'Black Market',
-                        data: blackMarket,
-                        borderColor: '#d97706',
-                        backgroundColor: 'rgba(217,119,6,0.07)',
-                        tension: 0.3,
-                        pointRadius: 3,
-                        fill: true,
-                        spanGaps: true
-                    }
-                ]
+        new ApexCharts(el, {
+            chart: {
+                type: 'area', height: 260,
+                toolbar: { show: false }, zoom: { enabled: false },
+                fontFamily: 'Inter, sans-serif', background: 'transparent',
+                animations: { enabled: true, easing: 'easeinout', speed: 400 }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { labels: { color: labelColor, font: { family: 'Inter' } } },
-                    tooltip: { mode: 'index', intersect: false }
-                },
-                scales: {
-                    x: { grid: { color: gridColor }, ticks: { color: labelColor, maxTicksLimit: 10 } },
-                    y: {
-                        grid: { color: gridColor },
-                        ticks: { color: labelColor, callback: function(v) { return v + ' ZiG'; } }
-                    }
+            theme: { mode: dark ? 'dark' : 'light' },
+            series: [
+                { name: 'Official',     data: official },
+                { name: 'Black Market', data: blackMarket }
+            ],
+            colors: ['#16a34a', '#d97706'],
+            fill: {
+                type: 'gradient',
+                gradient: { shadeIntensity: 1, opacityFrom: 0.28, opacityTo: 0.02, stops: [0, 100] }
+            },
+            stroke: { curve: 'smooth', width: 2 },
+            dataLabels: { enabled: false },
+            markers: { size: 0, hover: { size: 5 } },
+            xaxis: {
+                categories: labels,
+                axisBorder: { show: false }, axisTicks: { show: false },
+                labels: { style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' } }
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (v) { return v + ' ZiG'; },
+                    style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' }
                 }
+            },
+            tooltip: {
+                shared: true, intersect: false,
+                y: { formatter: function (v) { return v != null ? v + ' ZiG' : '—'; } }
+            },
+            legend: {
+                position: 'top', horizontalAlign: 'left',
+                fontSize: '11px', fontFamily: 'Inter, sans-serif',
+                markers: { width: 8, height: 8, radius: 4 }
+            },
+            grid: {
+                borderColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                strokeDashArray: 3
             }
-        });
+        }).render();
     }());
     </script>
 
