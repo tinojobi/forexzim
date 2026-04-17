@@ -142,7 +142,8 @@ public class RateController {
 
             // ── Cross rates (international/regional from ExchangeRateAPI) ────
             List<String> crossRateOrder = List.of(
-                    "USD/EUR", "USD/GBP", "USD/ZAR", "USD/BWP", "USD/ZMW");
+                    "USD/ZAR", "USD/BWP", "USD/ZMW", "USD/MZN", "USD/NAD",
+                    "USD/EUR", "USD/GBP", "USD/CNY", "USD/AED");
             List<Rate> crossRates = latestRates.stream()
                     .filter(r -> r.getSource().getName().equals("Exchange Rate API"))
                     .filter(r -> !r.getCurrencyPair().equals("USD/ZWG"))
@@ -433,6 +434,11 @@ public class RateController {
             model.addAttribute("result",       result);
             model.addAttribute("scrapedAt",    officialOpt.get().getScrapedAt());
 
+            if (officialOpt.get().getSellRate() != null) {
+                model.addAttribute("officialSellRate",
+                        officialOpt.get().getSellRate().doubleValue());
+            }
+
             rates.stream()
                     .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
                               && "USD/ZiG_InformalLow".equals(r.getCurrencyPair()))
@@ -441,6 +447,26 @@ public class RateController {
                         double bmRate = bm.getBuyRate().doubleValue();
                         model.addAttribute("blackMarketRate",   bmRate);
                         model.addAttribute("blackMarketResult", amount * bmRate);
+                    });
+
+            rates.stream()
+                    .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
+                              && "USD/ZiG_InformalHigh".equals(r.getCurrencyPair()))
+                    .findFirst()
+                    .ifPresent(r -> {
+                        double bmMin = r.getBuyRate().doubleValue();
+                        model.addAttribute("blackMarketMinRate",   bmMin);
+                        model.addAttribute("blackMarketMinResult", amount * bmMin);
+                    });
+
+            rates.stream()
+                    .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
+                              && "USD/ZiG_Cash".equals(r.getCurrencyPair()))
+                    .findFirst()
+                    .ifPresent(r -> {
+                        double cashR = r.getBuyRate().doubleValue();
+                        model.addAttribute("cashRateConvert", cashR);
+                        model.addAttribute("cashResult",      amount * cashR);
                     });
 
             model.addAttribute("commonAmounts",
@@ -476,6 +502,10 @@ public class RateController {
             if (source.equals("Exchange Rate API") && pair.equals("USD/ZAR")) return "South African Rand";
             if (source.equals("Exchange Rate API") && pair.equals("USD/BWP")) return "Botswana Pula";
             if (source.equals("Exchange Rate API") && pair.equals("USD/ZMW")) return "Zambian Kwacha";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/MZN")) return "Mozambican Metical";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/NAD")) return "Namibian Dollar";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/CNY")) return "Chinese Yuan";
+            if (source.equals("Exchange Rate API") && pair.equals("USD/AED")) return "UAE Dirham";
 
             return source;
         }
@@ -489,6 +519,10 @@ public class RateController {
             if (pair.contains("ZAR")) return "ZAR";
             if (pair.contains("BWP")) return "BWP";
             if (pair.contains("ZMW")) return "ZMW";
+            if (pair.contains("MZN")) return "MZN";
+            if (pair.contains("NAD")) return "NAD";
+            if (pair.contains("CNY")) return "CNY";
+            if (pair.contains("AED")) return "AED";
             return "";
         }
     }

@@ -41,7 +41,12 @@ public class TelegramService {
     @Value("${zimrate.telegram.channel-id:}")
     private String channelId;
 
+    private static final double CHANGE_THRESHOLD = 0.01; // 1%
+
     private final RestTemplate restTemplate = new RestTemplate();
+
+    // Tracks the official rate at last post — volatile for safe cross-thread reads
+    private volatile double lastPostedOfficialRate = 0;
 
     public boolean isConfigured() {
         return botToken != null && !botToken.isBlank()
@@ -49,8 +54,8 @@ public class TelegramService {
     }
 
     /**
-     * Builds a formatted message from the latest rates and posts it to the channel.
-     * Silently skips if Telegram is not configured or if key rates are unavailable.
+     * Posts only when the official rate has moved ≥1% since the last post.
+     * Silently skips if Telegram is not configured or key rates are unavailable.
      */
     public void postRateUpdate(List<Rate> rates) {
         if (!isConfigured()) {
@@ -58,36 +63,74 @@ public class TelegramService {
             return;
         }
         try {
-            String message = buildMessage(rates);
-            if (message == null) {
-                log.warn("Telegram: could not build message — key rates missing");
+            Optional<Rate> official = findOfficial(rates);
+            if (official.isEmpty()) {
+                log.warn("Telegram: official rate missing — skipping");
                 return;
             }
+            double currentRate = official.get().getBuyRate().doubleValue();
+            if (lastPostedOfficialRate > 0) {
+                double change = Math.abs((currentRate - lastPostedOfficialRate) / lastPostedOfficialRate);
+                if (change < CHANGE_THRESHOLD) {
+                    log.debug("Telegram: rate change {}% below threshold — skipping",
+                            String.format("%.2f", change * 100));
+                    return;
+                }
+            }
+            String message = buildMessage(rates, currentRate, false);
+            if (message == null) return;
             sendMessage(message);
-            log.info("Telegram rate update posted to {}", channelId);
+            lastPostedOfficialRate = currentRate;
+            log.info("Telegram rate update posted (rate: {})", currentRate);
         } catch (Exception e) {
             log.error("Telegram post failed: {}", e.getMessage());
         }
     }
 
-    private String buildMessage(List<Rate> rates) {
-        Optional<Rate> official = rates.stream()
+    /**
+     * Posts a daily morning summary regardless of rate movement.
+     */
+    public void postDailySummary(List<Rate> rates) {
+        if (!isConfigured()) return;
+        try {
+            Optional<Rate> official = findOfficial(rates);
+            if (official.isEmpty()) {
+                log.warn("Telegram: official rate missing — skipping daily summary");
+                return;
+            }
+            double currentRate = official.get().getBuyRate().doubleValue();
+            String message = buildMessage(rates, currentRate, true);
+            if (message == null) return;
+            sendMessage(message);
+            lastPostedOfficialRate = currentRate;
+            log.info("Telegram daily summary posted");
+        } catch (Exception e) {
+            log.error("Telegram daily summary failed: {}", e.getMessage());
+        }
+    }
+
+    private Optional<Rate> findOfficial(List<Rate> rates) {
+        return rates.stream()
                 .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
                           && "USD/ZiG".equals(r.getCurrencyPair()))
                 .findFirst();
+    }
 
+    private String buildMessage(List<Rate> rates, double officialRate, boolean isDailySummary) {
         Optional<Rate> blackMarket = rates.stream()
                 .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
                           && "USD/ZiG_InformalLow".equals(r.getCurrencyPair()))
                 .findFirst();
 
-        if (official.isEmpty()) return null;
-
-        double officialRate = official.get().getBuyRate().doubleValue();
         String timestamp = ZonedDateTime.now(HARARE).format(FMT);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\uD83D\uDCCA <b>ZimRate Update</b> — ").append(timestamp).append("\n\n");
+        if (isDailySummary) {
+            sb.append("\u2600\uFE0F <b>Good morning — ZimRate Daily Summary</b>\n");
+        } else {
+            sb.append("\uD83D\uDEA8 <b>ZimRate — Rate Move Alert</b>\n");
+        }
+        sb.append("<i>").append(timestamp).append("</i>\n\n");
         sb.append("\uD83C\uDFDB <b>Official Rate:</b> ")
           .append(String.format("%.2f", officialRate)).append(" ZiG/USD\n");
 

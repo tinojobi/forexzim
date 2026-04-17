@@ -136,6 +136,20 @@
             </div>
         </div>
 
+        <!-- Regional currency quick-view strip -->
+        <div class="currency-strip" th:if="${crossRates != null and !crossRates.isEmpty()}">
+            <div th:each="rate : ${crossRates}" class="currency-strip-card">
+                <div class="currency-strip-top">
+                    <span class="currency-strip-code" th:text="${currencyUnits.get(rate)}">ZAR</span>
+                    <span th:if="${rateDeltas.get(rate) != null}"
+                          th:class="${rateDeltas.get(rate).startsWith('+') ? 'currency-strip-delta up' : 'currency-strip-delta down'}"
+                          th:text="${rateDeltas.get(rate)}">+0.1%</span>
+                </div>
+                <span class="currency-strip-rate" th:text="${#numbers.formatDecimal(rate.buyRate, 1, 4, 'POINT')}">18.5000</span>
+                <span class="currency-strip-label">per 1 USD</span>
+            </div>
+        </div>
+
         <!-- Category filter bar -->
         <div class="filter-bar">
             <button class="filter-pill active" data-filter="all"><i class="fas fa-border-all"></i> All</button>

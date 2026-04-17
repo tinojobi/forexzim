@@ -70,7 +70,8 @@
                     <thead>
                         <tr>
                             <th>Market</th>
-                            <th>Rate (ZiG / USD)</th>
+                            <th>Buy (ZiG)</th>
+                            <th>Sell (ZiG)</th>
                             <th th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD ='">100 USD =</th>
                         </tr>
                     </thead>
@@ -78,14 +79,30 @@
                         <tr class="convert-table-official">
                             <td><span class="convert-badge convert-badge-official">Official</span></td>
                             <td th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')}">27.50</td>
+                            <td th:text="${officialSellRate != null ? #numbers.formatDecimal(officialSellRate, 0, 'COMMA', 2, 'POINT') : '—'}">27.80</td>
                             <td class="convert-table-result"
                                 th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">2,750.00 ZiG</td>
                         </tr>
                         <tr th:if="${blackMarketRate != null}" class="convert-table-bm">
-                            <td><span class="convert-badge convert-badge-bm">Black Market</span></td>
-                            <td th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">30.00</td>
+                            <td><span class="convert-badge convert-badge-bm">Black Market Max</span></td>
+                            <td th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">34.00</td>
+                            <td>—</td>
                             <td class="convert-table-result"
-                                th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">3,000.00 ZiG</td>
+                                th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">3,400.00 ZiG</td>
+                        </tr>
+                        <tr th:if="${blackMarketMinRate != null}" class="convert-table-bm">
+                            <td><span class="convert-badge convert-badge-bm-min">Black Market Min</span></td>
+                            <td th:text="${#numbers.formatDecimal(blackMarketMinRate, 0, 'COMMA', 2, 'POINT')}">31.00</td>
+                            <td>—</td>
+                            <td class="convert-table-result"
+                                th:text="${#numbers.formatDecimal(blackMarketMinResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">3,100.00 ZiG</td>
+                        </tr>
+                        <tr th:if="${cashRateConvert != null}" class="convert-table-cash">
+                            <td><span class="convert-badge convert-badge-cash">Cash</span></td>
+                            <td th:text="${#numbers.formatDecimal(cashRateConvert, 0, 'COMMA', 2, 'POINT')}">33.00</td>
+                            <td>—</td>
+                            <td class="convert-table-result"
+                                th:text="${#numbers.formatDecimal(cashResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">3,300.00 ZiG</td>
                         </tr>
                         <tr class="convert-table-custom">
                             <td><span class="convert-badge convert-badge-custom">Custom</span></td>
@@ -93,6 +110,7 @@
                                 <input type="number" id="customRateInput" class="convert-rate-input"
                                        placeholder="Your rate" min="0.01" step="0.01">
                             </td>
+                            <td>—</td>
                             <td class="convert-table-result" id="customRateResult">—</td>
                         </tr>
                     </tbody>

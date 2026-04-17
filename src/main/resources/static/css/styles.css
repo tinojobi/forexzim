@@ -522,6 +522,14 @@ footer {
     width: 110px;
     display: inline-block;
     margin-bottom: 0.3rem;
+    background: var(--green-900);
+    border-radius: 8px;
+    padding: 4px 8px;
+    box-sizing: content-box;
+}
+
+[data-theme="dark"] .footer-logo-img {
+    background: transparent;
 }
 
 .footer-meta {
@@ -2714,6 +2722,82 @@ footer {
     .blog-post-title { font-size: 1.35rem; }
     .blog-card { padding: 1.25rem 1rem; }
 }
+
+/* ─── Regional currency strip ───────────────────────────────────────────────── */
+
+.currency-strip {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    margin: -1rem 0 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.currency-strip::-webkit-scrollbar { display: none; }
+
+.currency-strip-card {
+    flex: 0 0 auto;
+    background: white;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.15s;
+}
+.currency-strip-card:hover { border-color: var(--green-700); }
+
+.currency-strip-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+}
+
+.currency-strip-code {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-500);
+}
+
+.currency-strip-rate {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1.2;
+}
+
+.currency-strip-label {
+    font-size: 0.62rem;
+    color: var(--gray-400);
+}
+
+.currency-strip-delta {
+    font-size: 0.65rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.currency-strip-delta.up   { color: var(--green-600); }
+.currency-strip-delta.down { color: #dc2626; }
+
+[data-theme="dark"] .currency-strip-card       { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .currency-strip-card:hover { border-color: #10b981; }
+[data-theme="dark"] .currency-strip-code       { color: #475569; }
+[data-theme="dark"] .currency-strip-rate       { color: #f1f5f9; }
+[data-theme="dark"] .currency-strip-label      { color: #334155; }
+
+/* ─── Extra convert-table badge variants ────────────────────────────────────── */
+
+.convert-badge-bm-min { background: #fef9c3; color: #a16207; }
+.convert-badge-cash   { background: #ccfbf1; color: #0f766e; }
+
+[data-theme="dark"] .convert-badge-bm-min { background: #422006; color: #fcd34d; }
+[data-theme="dark"] .convert-badge-cash   { background: #042f2e; color: #5eead4; }
 
 @media print {
     body::before,

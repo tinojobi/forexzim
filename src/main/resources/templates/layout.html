@@ -121,6 +121,15 @@
     </div>
 
     <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js')
+                .catch(function (err) { console.warn('SW registration failed:', err); });
+        });
+    }
+    </script>
+
+    <script>
     (function () {
         var banner = document.getElementById('cookieBanner');
         var consent = localStorage.getItem('cookieConsent');

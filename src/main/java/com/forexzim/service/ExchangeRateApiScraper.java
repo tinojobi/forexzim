@@ -18,13 +18,17 @@ public class ExchangeRateApiScraper extends BaseRateScraper {
     private static final String API_URL = "https://api.exchangerate-api.com/v4/latest/USD";
 
     // Currency codes we care about → display pair
-    private static final Map<String, String> CURRENCY_PAIRS = Map.of(
-            "ZWG", "USD/ZWG",
-            "ZAR", "USD/ZAR",
-            "BWP", "USD/BWP",
-            "ZMW", "USD/ZMW",
-            "EUR", "USD/EUR",
-            "GBP", "USD/GBP"
+    private static final Map<String, String> CURRENCY_PAIRS = Map.ofEntries(
+            Map.entry("ZWG", "USD/ZWG"),
+            Map.entry("ZAR", "USD/ZAR"),
+            Map.entry("BWP", "USD/BWP"),
+            Map.entry("ZMW", "USD/ZMW"),
+            Map.entry("MZN", "USD/MZN"),
+            Map.entry("NAD", "USD/NAD"),
+            Map.entry("EUR", "USD/EUR"),
+            Map.entry("GBP", "USD/GBP"),
+            Map.entry("CNY", "USD/CNY"),
+            Map.entry("AED", "USD/AED")
     );
 
     private final RestTemplate restTemplate;

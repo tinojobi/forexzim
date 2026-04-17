@@ -28,6 +28,7 @@ public class ScheduledScraperService {
     private final RateService rateService;
     private final AlertService alertService;
     private final TelegramService telegramService;
+    private final TelegramBotService telegramBotService;
 
     private final Map<String, RateScraper> scraperMap;
 
@@ -36,13 +37,15 @@ public class ScheduledScraperService {
                                    RateRepository rateRepository,
                                    RateService rateService,
                                    AlertService alertService,
-                                   TelegramService telegramService) {
+                                   TelegramService telegramService,
+                                   TelegramBotService telegramBotService) {
         this.scrapers = scrapers;
         this.sourceRepository = sourceRepository;
         this.rateRepository = rateRepository;
         this.rateService = rateService;
         this.alertService = alertService;
         this.telegramService = telegramService;
+        this.telegramBotService = telegramBotService;
         this.scraperMap = scrapers.stream()
                 .collect(Collectors.toMap(sc -> sc.getClass().getSimpleName(), Function.identity()));
         log.info("Loaded {} scrapers: {}", scrapers.size(), scraperMap.keySet());
@@ -112,11 +115,28 @@ public class ScheduledScraperService {
             log.error("Alert check failed: {}", e.getMessage(), e);
         }
 
-        // Post rate update to Telegram channel
+        // Post rate update to Telegram channel (only if rate moved ≥1%)
         try {
             telegramService.postRateUpdate(rateService.getLatestRates());
         } catch (Exception e) {
             log.error("Telegram notification failed: {}", e.getMessage(), e);
+        }
+
+        // Check per-user Telegram alert thresholds
+        try {
+            telegramBotService.checkAndNotify(rateService.getLatestRates());
+        } catch (Exception e) {
+            log.error("Telegram personal alert check failed: {}", e.getMessage(), e);
+        }
+    }
+
+    @Scheduled(cron = "0 0 8 * * *", zone = "Africa/Harare")
+    public void postDailyTelegramSummary() {
+        log.info("Posting daily Telegram morning summary");
+        try {
+            telegramService.postDailySummary(rateService.getLatestRates());
+        } catch (Exception e) {
+            log.error("Telegram daily summary failed: {}", e.getMessage(), e);
         }
     }
 
