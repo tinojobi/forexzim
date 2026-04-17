@@ -17,7 +17,7 @@
     <meta property="article:author" th:content="${post.author}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" th:content="${post.title}">
-    <meta name="twitter:description" th:if="${post.metaDescription}" th:content="${post.metaDescription}">
+    <meta name="twitter:description" th:content="${post.metaDescription != null ? post.metaDescription : post.excerpt}">
     <meta name="theme-color" content="#14532d">
     <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
