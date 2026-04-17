@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.annotation.PostConstruct;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -40,6 +42,25 @@ public class TelegramBotService {
 
     public boolean isConfigured() {
         return botToken != null && !botToken.isBlank();
+    }
+
+    // Discard any messages queued before this deployment so they aren't replayed
+    @PostConstruct
+    @SuppressWarnings("unchecked")
+    public void drainPendingUpdates() {
+        if (!isConfigured()) return;
+        try {
+            String url = API_BASE + botToken + "/getUpdates?offset=-1&limit=1";
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+            if (response == null || !Boolean.TRUE.equals(response.get("ok"))) return;
+            List<Map<String, Object>> updates = (List<Map<String, Object>>) response.get("result");
+            if (updates != null && !updates.isEmpty()) {
+                lastUpdateId = ((Number) updates.get(0).get("update_id")).longValue();
+                log.info("Telegram: drained pending updates, starting from update_id {}", lastUpdateId);
+            }
+        } catch (Exception e) {
+            log.debug("Telegram drain error: {}", e.getMessage());
+        }
     }
 
     // ── Polling ───────────────────────────────────────────────────────────────
