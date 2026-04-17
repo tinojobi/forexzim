@@ -6,6 +6,13 @@
     <title th:text="${monthLabel} + ' USD/ZiG Rates | ZimRate — Zimbabwe Forex History'">April 2026 USD/ZiG Rates | ZimRate</title>
     <meta name="description"
           th:content="'Daily USD to ZiG exchange rates for ' + ${monthLabel} + '. Official RBZ and black market rates — Zimbabwe forex history on ZimRate.'">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         th:content="${'https://zimrate.com/history/' + monthSlug}">
+    <meta property="og:title"       th:content="${monthLabel + ' USD/ZiG Rates | ZimRate — Zimbabwe Forex History'}">
+    <meta property="og:description" th:content="${'Daily USD to ZiG exchange rates for ' + monthLabel + '. Official RBZ and black market rates — Zimbabwe forex history on ZimRate.'}">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       th:content="${monthLabel + ' USD/ZiG Rates | ZimRate'}">
+    <meta name="twitter:description" th:content="${'Daily official and black market USD/ZiG rates for ' + monthLabel + '.'}">
     <link rel="canonical" th:href="${'https://zimrate.com/history/' + monthSlug}">
     <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/history/' + monthSlug}">
     <!-- Dark mode init — must run before CSS -->

@@ -6,6 +6,13 @@
     <title th:text="${amount} + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'">100 USD to ZiG Today | ZimRate</title>
     <meta name="description"
           th:content="'Convert ' + ${amount} + ' USD to ZiG at today\'s official Zimbabwe rate. Live USD/ZiG rates updated every 30 minutes.'">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         th:content="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
+    <meta property="og:title"       th:content="${amount + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'}">
+    <meta property="og:description" th:content="${'Convert ' + amount + ' USD to ZiG at today\'s official Zimbabwe rate. Live USD/ZiG rates updated every 30 minutes.'}">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       th:content="${amount + ' USD to ZiG Today | ZimRate'}">
+    <meta name="twitter:description" th:content="${'Convert ' + amount + ' USD to ZiG at today\'s official Zimbabwe rate.'}">
     <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
     <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->

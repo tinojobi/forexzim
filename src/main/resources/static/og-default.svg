@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#052e16"/>
+    </linearGradient>
+    <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle dot grid -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1.5" fill="#ffffff" opacity="0.06"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Background chart fill -->
+  <polygon points="200,480 320,380 480,420 640,300 800,260 960,200 1100,140 1100,520 200,520"
+           fill="url(#chartFill)"/>
+
+  <!-- Background chart line -->
+  <polyline points="200,480 320,380 480,420 640,300 800,260 960,200 1100,140"
+            fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.15"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Icon box -->
+  <rect x="100" y="220" width="130" height="130" rx="28"
+        fill="rgba(255,255,255,0.10)"
+        stroke="rgba(255,255,255,0.20)" stroke-width="2"/>
+
+  <!-- Icon chart grid -->
+  <line x1="118" y1="318" x2="212" y2="318" stroke="#fff" stroke-width="1" opacity="0.25"/>
+  <line x1="118" y1="296" x2="212" y2="296" stroke="#fff" stroke-width="1" opacity="0.15"/>
+
+  <!-- Icon chart line -->
+  <polyline points="118,318 136,298 158,305 178,280 212,262"
+            fill="none" stroke="#ffffff" stroke-width="6"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Icon endpoint -->
+  <circle cx="212" cy="262" r="12" fill="#ffffff" opacity="0.18"/>
+  <circle cx="212" cy="262" r="7" fill="#ffffff"/>
+
+  <!-- Wordmark -->
+  <text font-family="Inter,system-ui,-apple-system,Arial,sans-serif"
+        font-weight="800" font-size="108" letter-spacing="-3"
+        x="260" y="330">
+    <tspan fill="#ffffff">Zim</tspan><tspan fill="#ca8a04">Rate</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text font-family="Inter,system-ui,-apple-system,Arial,sans-serif"
+        font-weight="400" font-size="36" letter-spacing="0.5"
+        x="100" y="400" fill="#ffffff" opacity="0.75">Live USD/ZiG Rates · Official, Black Market &amp; Banks</text>
+
+  <!-- Divider -->
+  <line x1="100" y1="440" x2="560" y2="440" stroke="#ffffff" stroke-width="1.5" opacity="0.2"/>
+
+  <!-- URL -->
+  <text font-family="Inter,system-ui,-apple-system,Arial,sans-serif"
+        font-weight="500" font-size="30" letter-spacing="1"
+        x="100" y="492" fill="#ffffff" opacity="0.45">zimrate.com</text>
+
+  <!-- Live badge -->
+  <rect x="870" y="450" width="140" height="48" rx="24"
+        fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <circle cx="904" cy="474" r="7" fill="#4ade80"/>
+  <circle cx="904" cy="474" r="7" fill="#4ade80" opacity="0.4">
+    <animate attributeName="r" values="7;12;7" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text font-family="Inter,system-ui,-apple-system,Arial,sans-serif"
+        font-weight="600" font-size="26"
+        x="922" y="483" fill="#ffffff">LIVE</text>
+</svg>

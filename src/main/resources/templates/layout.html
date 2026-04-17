@@ -10,6 +10,13 @@
 
     <!-- ── SEO / Analytics fragment (included by every page) ── -->
     <th:block th:fragment="head-meta">
+        <!-- Open Graph defaults (pages override og:title/description/url before this fragment) -->
+        <meta property="og:site_name" content="ZimRate">
+        <meta property="og:image"        content="https://zimrate.com/og-default.png">
+        <meta property="og:image:width"  content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt"    content="ZimRate — Live USD/ZiG Rates for Zimbabwe">
+        <meta name="twitter:image"       content="https://zimrate.com/og-default.png">
         <!-- Google Search Console ownership verification -->
         <meta th:if="${searchConsoleVerification != null and !#strings.isEmpty(searchConsoleVerification)}"
               name="google-site-verification"
