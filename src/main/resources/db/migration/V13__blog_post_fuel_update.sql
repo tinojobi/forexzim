@@ -35,12 +35,12 @@ VALUES (
 
 <p>If you run a business, budget for fuel costs staying above US$2.00 for the foreseeable future. The E20 switch might create a slight price cushion for petrol, but the underlying cost structure, monopoly pricing, heavy taxation, and the replacement cost pricing model, has not changed.</p>
 
-<p>If you are tracking the ZiG/USD exchange rate alongside fuel costs, check the <a href="https://www.zimrate.com">ZimRate dashboard</a> for the latest parallel and official rates. Fuel is priced in USD, but the ripple effects hit ZiG-denominated wages and prices fast.</p>
+<p>If you are tracking the ZiG/USD exchange rate alongside fuel costs, check the <a href="https://www.zimrate.com">ZimRate dashboard</a> for the latest parallel and official rates. You can also <a href="https://www.zimrate.com/convert/100-usd-to-zig">convert USD to ZiG</a> to see what your fuel budget is worth in local currency, or <a href="https://www.zimrate.com/history">check the exchange rate history</a> to see how the ZiG has moved against the dollar over time.</p>
 
 <p><em>This article is for informational purposes only and does not constitute financial advice.</em></p>$$,
     'ZimRate Team',
     NOW(),
     'PUBLISHED',
-    'ZERA cut fuel prices April 17, diesel down 2 cents, petrol down 15 cents. But the switch from E5 to E20 ethanol blending is the real story.',
+    'ZERA cut Zimbabwe fuel prices April 2026: diesel down to US$2.09/litre, new E20 ethanol blend at US$2.08/litre. What it means for your wallet.',
     5
 );
