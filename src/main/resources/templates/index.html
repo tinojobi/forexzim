@@ -767,6 +767,21 @@
         </div>
     </div>
 
+    <!-- Email alert capture -->
+    <div class="alert-capture-card">
+        <div class="alert-capture-icon-wrap"><i class="fas fa-bell"></i></div>
+        <div class="alert-capture-body">
+            <div class="alert-capture-title">Get Rate Alerts</div>
+            <div class="alert-capture-sub">We'll email you when USD/ZiG moves significantly.</div>
+        </div>
+        <form class="alert-capture-form" id="alertCaptureForm" novalidate>
+            <input type="email" id="alertCaptureEmail" class="alert-capture-input"
+                   placeholder="your@email.com" required autocomplete="email">
+            <button type="submit" class="alert-capture-btn">Set Alert</button>
+        </form>
+        <p class="alert-capture-note">Free &middot; No spam &middot; Unsubscribe any time</p>
+    </div>
+
     <div th:replace="layout :: footer"></div>
 
     <script>
@@ -945,7 +960,7 @@
                     setTimeout(function () {
                         if (ic) ic.className = 'far fa-copy';
                         self.classList.remove('copied');
-                    }, 1500);
+                    }, 2000);
                 }
 
                 function onFail() {
@@ -1173,6 +1188,8 @@
         function openModal()  { modal.classList.add('open');    document.body.style.overflow = 'hidden'; }
         function closeModal() { modal.classList.remove('open'); document.body.style.overflow = ''; }
 
+        window._openAlertModal = openModal;
+
         bellBtn.addEventListener('click', openModal);
         closeBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
@@ -1230,9 +1247,22 @@
                 }).then(function (res) {
                     if (res.ok) {
                         feedback.className = 'alert-feedback success';
-                        feedback.textContent = '\u2713 Alert set! You\'ll be emailed when ' +
-                            payload.currencyPair + ' goes ' + payload.direction + ' ' + payload.threshold + ' ZiG.';
+                        feedback.textContent = '\u2713 Alert set!';
                         form.reset();
+                        setTimeout(function () {
+                            // Switch to My Alerts tab and load the user's alerts
+                            tabs.forEach(function (t) { t.classList.remove('active'); });
+                            panels.forEach(function (p) { p.classList.remove('active'); });
+                            document.querySelector('.modal-tab[data-tab="tab-manage"]').classList.add('active');
+                            document.getElementById('tab-manage').classList.add('active');
+                            loadAlerts(payload.email);
+                            // Auto-close after 3s
+                            setTimeout(function () {
+                                closeModal();
+                                feedback.className = 'alert-feedback';
+                                feedback.textContent = '';
+                            }, 3000);
+                        }, 1500);
                     } else {
                         var msg = res.data.error || Object.values(res.data).join('. ') || 'Something went wrong.';
                         feedback.className = 'alert-feedback error';
@@ -1297,6 +1327,21 @@
         function esc(s) {
             return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
+    }());
+
+    // ── Alert capture card ───────────────────────────────────────────────────
+    (function () {
+        var captureForm  = document.getElementById('alertCaptureForm');
+        var captureEmail = document.getElementById('alertCaptureEmail');
+        if (!captureForm || !captureEmail) return;
+        captureForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var email = captureEmail.value.trim();
+            if (!email) return;
+            var modalEmail = document.getElementById('alertEmail');
+            if (modalEmail) modalEmail.value = email;
+            if (typeof window._openAlertModal === 'function') window._openAlertModal();
+        });
     }());
 
     // ── Dynamic page title ───────────────────────────────────────────────────

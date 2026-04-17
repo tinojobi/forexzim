@@ -1827,6 +1827,78 @@ footer {
 }
 
 /* ═══════════════════════════════════════
+   ALERT CAPTURE CARD
+═══════════════════════════════════════ */
+
+.alert-capture-card {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+}
+.alert-capture-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.alert-capture-body { flex: 1; min-width: 140px; }
+.alert-capture-title { font-weight: 700; font-size: 1rem; color: #fff; }
+.alert-capture-sub   { font-size: 0.825rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.alert-capture-form  { display: flex; gap: 0.5rem; flex-shrink: 0; }
+.alert-capture-input {
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.875rem;
+    font-family: 'Inter', sans-serif;
+    width: 220px;
+    outline: none;
+    background: rgba(255,255,255,0.95);
+    color: #1e293b;
+}
+.alert-capture-input::placeholder { color: #94a3b8; }
+.alert-capture-input:focus { background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
+.alert-capture-btn {
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background: #fff;
+    color: #14532d;
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+}
+.alert-capture-btn:hover  { background: #f0fdf4; }
+.alert-capture-btn:active { transform: scale(0.97); }
+.alert-capture-note {
+    width: 100%;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+    padding-left: calc(48px + 1.5rem);
+}
+@media (max-width: 640px) {
+    .alert-capture-card   { padding: 1.25rem; }
+    .alert-capture-form   { width: 100%; }
+    .alert-capture-input  { flex: 1; width: auto; }
+    .alert-capture-note   { padding-left: 0; }
+}
+
+/* ═══════════════════════════════════════
    COOKIE CONSENT BANNER
 ═══════════════════════════════════════ */
 
