@@ -1,5 +1,6 @@
 package com.forexzim.service;
 
+import com.forexzim.model.BlogPost;
 import com.forexzim.model.Rate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +146,22 @@ public class TelegramService {
 
         sb.append("\n\uD83D\uDD17 <a href=\"https://zimrate.com\">zimrate.com</a> — full rates & history");
         return sb.toString();
+    }
+
+    public void postBlogNotification(BlogPost post, String baseUrl) {
+        if (!isConfigured()) return;
+        try {
+            String excerpt = post.getExcerpt() != null && !post.getExcerpt().isBlank()
+                    ? "\n" + post.getExcerpt() : "";
+            String msg = "\uD83D\uDCF0 <b>New article on ZimRate</b>\n\n"
+                    + "<b>" + post.getTitle() + "</b>"
+                    + excerpt + "\n\n"
+                    + "\uD83D\uDD17 <a href=\"" + baseUrl + "/blog/" + post.getSlug() + "\">Read on zimrate.com</a>";
+            sendMessage(msg);
+            log.info("Telegram blog notification posted for '{}'", post.getSlug());
+        } catch (Exception e) {
+            log.error("Telegram blog notification failed: {}", e.getMessage());
+        }
     }
 
     private void sendMessage(String text) {

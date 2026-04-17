@@ -1,7 +1,9 @@
 package com.forexzim.service;
 
+import com.forexzim.model.BlogPost;
 import com.forexzim.model.Rate;
 import com.forexzim.model.TelegramAlert;
+import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.TelegramAlertRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +31,24 @@ public class TelegramBotService {
     @Value("${zimrate.telegram.bot-token:}")
     private String botToken;
 
+    @Value("${zimrate.base-url:https://zimrate.com}")
+    private String baseUrl;
+
     private final TelegramAlertRepository alertRepository;
+    private final BlogRepository blogRepository;
+    private final TelegramService telegramService;
     private final RateService rateService;
     private final RestTemplate restTemplate = new RestTemplate();
 
     private volatile long lastUpdateId = 0;
 
-    public TelegramBotService(TelegramAlertRepository alertRepository, RateService rateService) {
+    public TelegramBotService(TelegramAlertRepository alertRepository,
+                               BlogRepository blogRepository,
+                               TelegramService telegramService,
+                               RateService rateService) {
         this.alertRepository = alertRepository;
+        this.blogRepository = blogRepository;
+        this.telegramService = telegramService;
         this.rateService = rateService;
     }
 
@@ -254,6 +266,40 @@ public class TelegramBotService {
             send(chatId, "✅ Alert #" + id + " cancelled.");
         } catch (NumberFormatException e) {
             send(chatId, "⚠️ Invalid ID. Use /myalerts to see your alert IDs.");
+        }
+    }
+
+    // ── Blog notification (polls every 5 minutes) ─────────────────────────────
+
+    @Scheduled(fixedDelay = 300_000)
+    public void checkAndNotifyNewPosts() {
+        if (!isConfigured()) return;
+        List<BlogPost> unnotified = blogRepository
+                .findByStatusAndTelegramNotifiedFalse(BlogPost.Status.PUBLISHED);
+        if (unnotified.isEmpty()) return;
+
+        List<Long> subscribers = alertRepository.findDistinctChatIds();
+
+        for (BlogPost post : unnotified) {
+            // Channel broadcast
+            telegramService.postBlogNotification(post, baseUrl);
+
+            // DM to every bot user who has set an alert
+            if (!subscribers.isEmpty()) {
+                String excerpt = post.getExcerpt() != null && !post.getExcerpt().isBlank()
+                        ? "\n" + post.getExcerpt() : "";
+                String dm = "\uD83D\uDCF0 <b>New on ZimRate</b>\n\n"
+                        + "<b>" + esc(post.getTitle()) + "</b>"
+                        + excerpt + "\n\n"
+                        + "\uD83D\uDD17 <a href=\"" + baseUrl + "/blog/" + post.getSlug() + "\">Read the article</a>";
+                for (Long chatId : subscribers) {
+                    send(chatId, dm);
+                }
+            }
+
+            post.setTelegramNotified(true);
+            blogRepository.save(post);
+            log.info("Blog notification sent for '{}'", post.getSlug());
         }
     }
 

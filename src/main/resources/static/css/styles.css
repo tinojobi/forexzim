@@ -1075,6 +1075,25 @@ footer {
 [data-theme="dark"] .wa-share-btn       { background: rgba(37,211,102,0.12); color: #4ade80; }
 [data-theme="dark"] .wa-share-btn:hover { background: rgba(37,211,102,0.22); color: #86efac; }
 
+.tg-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: rgba(41,182,246,0.1);
+    color: #0088cc;
+    font-size: 0.85rem;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+.tg-share-btn:hover { background: rgba(41,182,246,0.22); color: #0077b5; }
+
+[data-theme="dark"] .tg-share-btn       { background: rgba(41,182,246,0.12); color: #38bdf8; }
+[data-theme="dark"] .tg-share-btn:hover { background: rgba(41,182,246,0.22); color: #7dd3fc; }
+
 /* ═══════════════════════════════════════
    TOAST NOTIFICATION
 ═══════════════════════════════════════ */
@@ -1904,6 +1923,92 @@ footer {
     .alert-capture-form   { width: 100%; }
     .alert-capture-input  { flex: 1; width: auto; }
     .alert-capture-note   { padding-left: 0; }
+}
+
+/* ─── Telegram CTA card ─────────────────────────────────────────────────────── */
+
+.tg-cta-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    border: 1.5px solid #bae6fd;
+    border-radius: var(--radius-md);
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.tg-cta-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0088cc;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.tg-cta-body { flex: 1; min-width: 160px; }
+
+.tg-cta-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.15rem;
+}
+
+.tg-cta-sub {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    line-height: 1.4;
+}
+
+.tg-cta-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.tg-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.tg-cta-btn--channel {
+    background: #0088cc;
+    color: white;
+}
+.tg-cta-btn--channel:hover { background: #0077b5; }
+
+.tg-cta-btn--bot {
+    background: white;
+    color: #0088cc;
+    border: 1.5px solid #bae6fd;
+}
+.tg-cta-btn--bot:hover { background: #e0f2fe; }
+
+[data-theme="dark"] .tg-cta-card        { background: #0c1929; border-color: #0c3a5e; }
+[data-theme="dark"] .tg-cta-title       { color: #f1f5f9; }
+[data-theme="dark"] .tg-cta-sub         { color: #64748b; }
+[data-theme="dark"] .tg-cta-btn--bot    { background: #0f2236; color: #38bdf8; border-color: #0c3a5e; }
+[data-theme="dark"] .tg-cta-btn--bot:hover { background: #0c1929; }
+
+@media (max-width: 600px) {
+    .tg-cta-card    { padding: 1rem 1.25rem; }
+    .tg-cta-actions { width: 100%; }
+    .tg-cta-btn     { flex: 1; justify-content: center; }
 }
 
 /* ═══════════════════════════════════════

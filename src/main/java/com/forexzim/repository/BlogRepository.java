@@ -11,4 +11,6 @@ public interface BlogRepository extends JpaRepository<BlogPost, Long> {
     List<BlogPost> findByStatusOrderByPublishedAtDesc(BlogPost.Status status);
 
     Optional<BlogPost> findBySlugAndStatus(String slug, BlogPost.Status status);
+
+    List<BlogPost> findByStatusAndTelegramNotifiedFalse(BlogPost.Status status);
 }

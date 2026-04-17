@@ -51,4 +51,7 @@ public class BlogPost {
 
     @Column(name = "read_time_minutes")
     private Integer readTimeMinutes = 5;
+
+    @Column(name = "telegram_notified", nullable = false)
+    private Boolean telegramNotified = false;
 }
