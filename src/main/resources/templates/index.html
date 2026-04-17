@@ -103,7 +103,11 @@
                           th:class="${blackMarketDeltaUp ? 'stat-delta up' : 'stat-delta down'}"
                           th:text="${blackMarketDelta}">+1.20</span>
                 </div>
-                <span class="stat-sub">per 1 USD</span>
+                <div class="stat-bid-ask" th:if="${informalHighRate != null}">
+                    <span class="bid-ask-item"><span class="bid-ask-label">Low</span> <span class="bid-ask-value" th:text="${informalLowRate != null ? informalLowRate : '—'}">31.00</span></span>
+                    <span class="bid-ask-sep">·</span>
+                    <span class="bid-ask-item"><span class="bid-ask-label">High</span> <span class="bid-ask-value" th:text="${informalHighRate}">34.00</span></span>
+                </div>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Market Premium</span>

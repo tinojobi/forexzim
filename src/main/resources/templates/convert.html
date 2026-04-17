@@ -17,6 +17,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
 </head>
 <body>
     <th:block th:replace="~{layout :: header}"></th:block>
@@ -58,7 +59,7 @@
             <!-- Rate comparison table -->
             <div class="convert-card">
                 <h2 class="convert-card-title"><i class="fas fa-table"></i> Rate Breakdown</h2>
-                <table class="convert-table">
+                <table class="convert-table" th:attr="data-amount=${amount}">
                     <thead>
                         <tr>
                             <th>Market</th>
@@ -79,6 +80,14 @@
                             <td class="convert-table-result"
                                 th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">3,000.00 ZiG</td>
                         </tr>
+                        <tr class="convert-table-custom">
+                            <td><span class="convert-badge convert-badge-custom">Custom</span></td>
+                            <td>
+                                <input type="number" id="customRateInput" class="convert-rate-input"
+                                       placeholder="Your rate" min="0.01" step="0.01">
+                            </td>
+                            <td class="convert-table-result" id="customRateResult">—</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -98,6 +107,14 @@
                         <button type="submit" class="convert-go-btn">Convert</button>
                     </div>
                 </form>
+            </div>
+
+            <!-- Rate trend chart -->
+            <div class="convert-card" id="convertChartCard" style="display:none">
+                <h2 class="convert-card-title"><i class="fas fa-chart-line"></i> 7-Day Rate Trend</h2>
+                <div class="history-chart-wrap">
+                    <div id="convertChart"></div>
+                </div>
             </div>
 
             <!-- Popular conversions -->
@@ -123,6 +140,19 @@
     <th:block th:replace="~{layout :: footer}"></th:block>
 
     <script>
+    (function () {
+        var table  = document.querySelector('.convert-table');
+        var input  = document.getElementById('customRateInput');
+        var result = document.getElementById('customRateResult');
+        if (!table || !input || !result) return;
+        var amount = parseFloat(table.dataset.amount) || 0;
+        input.addEventListener('input', function () {
+            var rate = parseFloat(input.value);
+            if (!rate || rate <= 0) { result.textContent = '—'; return; }
+            result.textContent = (amount * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ZiG';
+        });
+    }());
+
     document.getElementById('convertForm').addEventListener('submit', function (e) {
         e.preventDefault();
         var val = parseInt(document.getElementById('customAmount').value, 10);
@@ -138,11 +168,96 @@
             document.documentElement.dataset.theme = theme;
             localStorage.setItem('theme', theme);
             if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            if (typeof window._updateConvertChartTheme === 'function') window._updateConvertChartTheme();
         }
         if (icon) icon.className = document.documentElement.dataset.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         if (toggle) toggle.addEventListener('click', function () {
             applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
         });
+    }());
+
+    (function () {
+        var el   = document.getElementById('convertChart');
+        var card = document.getElementById('convertChartCard');
+        if (!el || typeof ApexCharts === 'undefined') return;
+
+        var chartInstance = null;
+
+        function themeOpts() {
+            var d = document.documentElement.dataset.theme === 'dark';
+            return {
+                theme: { mode: d ? 'dark' : 'light' },
+                grid:  { borderColor: d ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', strokeDashArray: 3 }
+            };
+        }
+
+        window._updateConvertChartTheme = function () {
+            if (!chartInstance) return;
+            chartInstance.updateOptions(themeOpts());
+        };
+
+        Promise.all([
+            fetch('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=7').then(function (r) { return r.json(); }),
+            fetch('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG_InformalLow&days=7').then(function (r) { return r.json(); })
+        ]).then(function (results) {
+            var official    = results[0];
+            var blackMarket = results[1];
+            if (!official.length && !blackMarket.length) return;
+
+            var daySet = {};
+            official.forEach(function (d) { daySet[d.day] = true; });
+            blackMarket.forEach(function (d) { daySet[d.day] = true; });
+            var labels = Object.keys(daySet).sort();
+
+            function toSeries(data) {
+                var idx = {};
+                data.forEach(function (d) { idx[d.day] = d.rate; });
+                return labels.map(function (l) { return idx[l] != null ? +Number(idx[l]).toFixed(2) : null; });
+            }
+
+            card.style.display = 'block';
+            chartInstance = new ApexCharts(el, Object.assign({
+                chart: {
+                    type: 'area', height: 220,
+                    toolbar: { show: false }, zoom: { enabled: false },
+                    fontFamily: 'Inter, sans-serif', background: 'transparent',
+                    animations: { enabled: true, easing: 'easeinout', speed: 400 }
+                },
+                series: [
+                    { name: 'Official',     data: toSeries(official) },
+                    { name: 'Black Market', data: toSeries(blackMarket) }
+                ],
+                colors: ['#16a34a', '#d97706'],
+                fill: {
+                    type: 'gradient',
+                    gradient: { shadeIntensity: 1, opacityFrom: 0.28, opacityTo: 0.02, stops: [0, 100] }
+                },
+                stroke: { curve: 'smooth', width: 2 },
+                dataLabels: { enabled: false },
+                markers: { size: 0, hover: { size: 5 } },
+                xaxis: {
+                    categories: labels,
+                    axisBorder: { show: false }, axisTicks: { show: false },
+                    labels: { style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' } }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (v) { return v + ' ZiG'; },
+                        style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' }
+                    }
+                },
+                tooltip: {
+                    shared: true, intersect: false,
+                    y: { formatter: function (v) { return v != null ? v + ' ZiG' : '—'; } }
+                },
+                legend: {
+                    position: 'top', horizontalAlign: 'left',
+                    fontSize: '11px', fontFamily: 'Inter, sans-serif',
+                    markers: { width: 8, height: 8, radius: 4 }
+                }
+            }, themeOpts()));
+            chartInstance.render();
+        }).catch(function () {});
     }());
     </script>
 </body>
