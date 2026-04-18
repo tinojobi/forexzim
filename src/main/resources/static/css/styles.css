@@ -2094,6 +2094,9 @@ footer {
 .footer-link { color: var(--gray-400); font-size: 0.8rem; text-decoration: underline; }
 .footer-link:hover { color: var(--gold-400); }
 .footer-link-sep { color: var(--gray-600); font-size: 0.75rem; margin: 0 0.3rem; }
+.footer-social { margin: 0.5rem 0 0.25rem; }
+.footer-social-link { color: var(--gray-400); font-size: 0.8rem; text-decoration: none; }
+.footer-social-link:hover { color: var(--gold-400); }
 
 /* ═══════════════════════════════════════
    PRIVACY PAGE

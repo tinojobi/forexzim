@@ -17,6 +17,7 @@
         <meta property="og:image:height" content="630">
         <meta property="og:image:alt"    content="ZimRate — Live USD/ZiG Rates for Zimbabwe">
         <meta name="twitter:image"       content="https://zimrate.com/og-default.png">
+        <meta name="twitter:site"        content="@zim_rate">
         <!-- Google Search Console ownership verification -->
         <meta th:if="${searchConsoleVerification != null and !#strings.isEmpty(searchConsoleVerification)}"
               name="google-site-verification"
@@ -100,6 +101,11 @@
                 <a th:href="@{/contact}" class="footer-link">Contact</a>
                 <span class="footer-link-sep">·</span>
                 <a th:href="@{/privacy}" class="footer-link">Privacy Policy</a>
+            </p>
+            <p class="footer-social">
+                <a href="https://x.com/zim_rate" target="_blank" rel="noopener" class="footer-social-link" aria-label="ZimRate on X">
+                    <i class="fa-brands fa-x-twitter"></i> @zim_rate
+                </a>
             </p>
             <p class="footer-copy">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> ZimRate</p>
         </div>
