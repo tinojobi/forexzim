@@ -1,1 +1,0 @@
-ALTER TABLE blog_posts ADD COLUMN telegram_notified BOOLEAN NOT NULL DEFAULT FALSE;
