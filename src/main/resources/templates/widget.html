@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed ZimRate on Your Site | ZimRate</title>
+    <meta name="description" content="Add a live USD/ZiG rate widget to your website with one line of code. Free to embed, always up to date.">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" th:href="@{/widget}">
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+        <div class="widget-demo">
+
+            <div class="widget-demo-hero">
+                <h1>Embed ZimRate on your site</h1>
+                <p>One line of code. Live USD&nbsp;/&nbsp;ZiG rates on any page — official and parallel market.</p>
+            </div>
+
+            <div class="widget-demo-body">
+
+                <div class="widget-demo-preview-col">
+                    <p class="widget-demo-label">Live preview</p>
+                    <div class="widget-demo-preview">
+                        <script th:src="@{/widget.js}"></script>
+                    </div>
+                </div>
+
+                <div class="widget-demo-code-col">
+                    <p class="widget-demo-label">Embed code</p>
+                    <div class="widget-demo-code-block">
+                        <code id="embedCode" th:text="${embedCode}"></code>
+                        <button class="widget-copy-btn" onclick="copyEmbed()" title="Copy to clipboard">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <span class="widget-copy-confirm" id="copyConfirm">Copied!</span>
+                    </div>
+                    <ol class="widget-demo-steps">
+                        <li>Copy the code above.</li>
+                        <li>Paste it into your page's HTML wherever you want the widget to appear — a sidebar, article footer, or currency page.</li>
+                        <li>The widget loads asynchronously and won't slow your page down.</li>
+                    </ol>
+                    <p class="widget-demo-note">
+                        Rates update every 30 minutes. The widget links back to
+                        <a th:href="@{/}" target="_blank">zimrate.com</a> so your readers can always get the full picture.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+
+    function copyEmbed() {
+        var code = document.getElementById('embedCode').textContent;
+        navigator.clipboard.writeText(code).then(function() {
+            var c = document.getElementById('copyConfirm');
+            c.classList.add('visible');
+            setTimeout(function() { c.classList.remove('visible'); }, 2000);
+        });
+    }
+    </script>
+</body>
+</html>

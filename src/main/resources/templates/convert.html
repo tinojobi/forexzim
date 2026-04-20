@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${amount} + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'">100 USD to ZiG Today | ZimRate</title>
     <meta name="description"
-          th:content="'Convert ' + ${amount} + ' USD to ZiG at today\'s official Zimbabwe rate. Live USD/ZiG rates updated every 30 minutes.'">
+          th:content="${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD. Compare official, parallel market and cash rates. Updated every 30 min.'">
     <meta property="og:type"        content="website">
     <meta property="og:url"         th:content="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
     <meta property="og:title"       th:content="${amount + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'}">
-    <meta property="og:description" th:content="${'Convert ' + amount + ' USD to ZiG at today\'s official Zimbabwe rate. Live USD/ZiG rates updated every 30 minutes.'}">
+    <meta property="og:description" th:content="${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD. Live rates updated every 30 minutes.'">
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       th:content="${amount + ' USD to ZiG Today | ZimRate'}">
-    <meta name="twitter:description" th:content="${'Convert ' + amount + ' USD to ZiG at today\'s official Zimbabwe rate.'}">
+    <meta name="twitter:description" th:content="${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG today (official rate: ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD).'">
     <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
     <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
@@ -20,6 +20,7 @@
     <meta name="theme-color" content="#14532d">
 
     <th:block th:replace="~{layout :: head-meta}"></th:block>
+    <script th:if="${breadcrumbData}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
 
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -62,6 +63,23 @@
                     </span>
                 </p>
             </div>
+
+            <!-- SEO summary paragraph -->
+            <p class="convert-summary">
+                At today's official Zimbabwe exchange rate,
+                <strong th:text="${#numbers.formatInteger(amount, 0, 'COMMA') + ' US dollars'}">100 US dollars</strong>
+                equals
+                <strong th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">2,750 ZiG</strong>.
+                The Reserve Bank of Zimbabwe (RBZ) sets the official USD/ZiG rate at
+                <span th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')}">27.5000</span> ZiG per US dollar.
+                <span th:if="${blackMarketRate != null}">
+                    The parallel market rate is
+                    <span th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">34.00</span> ZiG/USD,
+                    giving <strong th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">3,400 ZiG</strong>
+                    for the same amount.
+                </span>
+                Rates are scraped every 30 minutes.
+            </p>
 
             <!-- Rate comparison table -->
             <div class="convert-card">

@@ -1,6 +1,7 @@
 package com.forexzim.controller;
 
 import com.forexzim.dto.BlogPostRequest;
+import com.forexzim.dto.FaqItem;
 import com.forexzim.model.BlogPost;
 import com.forexzim.repository.BlogRepository;
 import jakarta.validation.Valid;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -21,8 +24,9 @@ public class BlogApiController {
 
     private final BlogRepository blogRepository;
 
-    /** Strip HTML script tags for basic sanitization */
     private static final Pattern SCRIPT_TAG = Pattern.compile("<script[^>]*>.*?</script>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+    private static final Pattern INTERNAL_LINK = Pattern.compile(
+            "href=[\"'](/[^\"']*|https://zimrate\\.com[^\"']*)[\"']", Pattern.CASE_INSENSITIVE);
 
     public BlogApiController(BlogRepository blogRepository) {
         this.blogRepository = blogRepository;
@@ -51,6 +55,15 @@ public class BlogApiController {
 
         // Sanitize content (strip script tags)
         String safeContent = SCRIPT_TAG.matcher(request.getContent()).replaceAll("");
+
+        // Require at least 2 internal links per article
+        Matcher linkMatcher = INTERNAL_LINK.matcher(safeContent);
+        int internalLinkCount = 0;
+        while (linkMatcher.find()) internalLinkCount++;
+        if (internalLinkCount < 2) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\":\"Content must include at least 2 internal links (href starting with / or https://zimrate.com). Found: " + internalLinkCount + "\"}");
+        }
 
         // Build entity
         BlogPost post = new BlogPost();
@@ -85,15 +98,27 @@ public class BlogApiController {
         }
 
         post.setTelegramNotified(false);
+        post.setFaqJson(buildFaqJsonLd(request.getFaqItems()));
 
         BlogPost saved = blogRepository.save(post);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    /**
-     * Generate a URL-safe slug from a title.
-     * Lowercase, hyphens for spaces, strip special chars.
-     */
+    private String buildFaqJsonLd(List<FaqItem> items) {
+        if (items == null || items.isEmpty()) return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[");
+        for (int i = 0; i < items.size(); i++) {
+            if (i > 0) sb.append(",");
+            String q = items.get(i).getQuestion().replace("\\", "\\\\").replace("\"", "\\\"");
+            String a = items.get(i).getAnswer().replace("\\", "\\\\").replace("\"", "\\\"");
+            sb.append("{\"@type\":\"Question\",\"name\":\"").append(q)
+              .append("\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"").append(a).append("\"}}");
+        }
+        sb.append("]}");
+        return sb.toString();
+    }
+
     private String generateSlug(String title) {
         return title.toLowerCase()
                 .replaceAll("[^a-z0-9\\s-]", "")

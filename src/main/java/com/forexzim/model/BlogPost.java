@@ -54,4 +54,7 @@ public class BlogPost {
 
     @Column(name = "telegram_notified", nullable = false)
     private Boolean telegramNotified = false;
+
+    @Column(name = "faq_json", columnDefinition = "TEXT")
+    private String faqJson;
 }

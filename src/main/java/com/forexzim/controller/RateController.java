@@ -68,6 +68,9 @@ public class RateController {
         @Value("${zimrate.ads.enabled:true}")
         private boolean adsEnabled;
 
+        @Value("${zimrate.base-url:https://zimrate.com}")
+        private String baseUrl;
+
         public WebController(RateService rateService, GoldCoinService goldCoinService,
                              InflationScraperService inflationScraperService) {
             this.rateService = rateService;
@@ -470,7 +473,16 @@ public class RateController {
                     });
 
             model.addAttribute("commonAmounts",
-                    new long[]{1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000});
+                    new long[]{1, 5, 10, 20, 25, 50, 75, 100, 150, 200, 250,
+                               300, 500, 750, 1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000});
+
+            model.addAttribute("breadcrumbData",
+                    "{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\","
+                    + "\"itemListElement\":["
+                    + "{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"" + baseUrl + "\"},"
+                    + "{\"@type\":\"ListItem\",\"position\":2,\"name\":\"" + amount + " USD to ZiG\","
+                    + "\"item\":\"" + baseUrl + "/convert/" + amount + "-usd-to-zig\"}"
+                    + "]}");
 
             return "convert";
         }

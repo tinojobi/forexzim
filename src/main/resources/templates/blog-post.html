@@ -27,6 +27,7 @@
     <th:block th:replace="~{layout :: head-meta}"></th:block>
     <script th:if="${structuredData}" type="application/ld+json" th:utext="${structuredData}"></script>
     <script th:if="${breadcrumbData}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
+    <script th:if="${faqData}" type="application/ld+json" th:utext="${faqData}"></script>
 </head>
 <body>
     <div th:replace="~{layout :: header}"></div>
@@ -63,6 +64,36 @@
             </footer>
 
         </article>
+
+        <section th:if="${relatedPosts != null and !#lists.isEmpty(relatedPosts)}" class="related-posts">
+            <h2 class="related-posts-heading">Related Articles</h2>
+            <div class="blog-list">
+                <article th:each="rp : ${relatedPosts}" class="blog-card">
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">
+                            <span class="blog-card-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span th:text="${#temporals.format(rp.publishedAt, 'dd MMM yyyy')}"></span>
+                            </span>
+                            <span class="blog-card-read-time">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${rp.readTimeMinutes + ' min read'}"></span>
+                            </span>
+                        </div>
+                        <h3 class="blog-card-title">
+                            <a th:href="@{/blog/{slug}(slug=${rp.slug})}" th:text="${rp.title}"></a>
+                        </h3>
+                        <p th:if="${rp.excerpt}" class="blog-card-excerpt" th:text="${rp.excerpt}"></p>
+                        <div class="blog-card-footer">
+                            <a th:href="@{/blog/{slug}(slug=${rp.slug})}" class="blog-card-read-more">
+                                Read more <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
     </main>
 
     <div th:replace="~{layout :: footer}"></div>

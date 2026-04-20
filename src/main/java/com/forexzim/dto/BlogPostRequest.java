@@ -1,9 +1,11 @@
 package com.forexzim.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * Request DTO for creating a new blog post via POST /api/blog.
@@ -27,8 +29,12 @@ public class BlogPostRequest {
     @NotBlank(message = "Content is required")
     private String content;
 
-    @Size(max = 160, message = "Meta description must be under 160 characters")
+    @NotBlank(message = "Meta description is required")
+    @Size(min = 140, max = 160, message = "Meta description must be 140–160 characters")
     private String metaDescription;
+
+    @Valid
+    private List<FaqItem> faqItems;
 
     private Integer readTimeMinutes;
     private String status; // "DRAFT" or "PUBLISHED", defaults to PUBLISHED

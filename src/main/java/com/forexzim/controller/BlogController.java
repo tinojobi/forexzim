@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/blog")
@@ -49,9 +50,16 @@ public class BlogController {
         BlogPost post = blogRepository.findBySlugAndStatus(slug, BlogPost.Status.PUBLISHED)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+        List<BlogPost> related = blogRepository.findTop3ByStatusAndIdNotOrderByPublishedAtDesc(
+                BlogPost.Status.PUBLISHED, post.getId());
+
         model.addAttribute("post", post);
+        model.addAttribute("relatedPosts", related);
         model.addAttribute("structuredData", buildPostJsonLd(post));
         model.addAttribute("breadcrumbData", buildBreadcrumbJsonLd(post));
+        if (post.getFaqJson() != null) {
+            model.addAttribute("faqData", post.getFaqJson());
+        }
         return "blog-post";
     }
 
