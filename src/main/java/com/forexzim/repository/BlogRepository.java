@@ -13,4 +13,6 @@ public interface BlogRepository extends JpaRepository<BlogPost, Long> {
     Optional<BlogPost> findBySlugAndStatus(String slug, BlogPost.Status status);
 
     List<BlogPost> findByStatusAndTelegramNotifiedFalse(BlogPost.Status status);
+
+    boolean existsBySlug(String slug);
 }
