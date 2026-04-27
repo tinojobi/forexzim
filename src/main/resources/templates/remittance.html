@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Money to Zimbabwe — Best Rates Compared | ZimRate</title>
+    <!-- noindex until affiliate links are live -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Compare the best services to send money to Zimbabwe. See fees, exchange rates and how much ZiG your recipient gets — Mukuru, WorldRemit, Western Union, MoneyGram and more.">
+    <link rel="canonical" href="https://zimrate.com/send-money-to-zimbabwe">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://zimrate.com/send-money-to-zimbabwe">
+    <meta property="og:title"       content="Send Money to Zimbabwe — Best Rates Compared | ZimRate">
+    <meta property="og:description" content="Compare fees and ZiG exchange rates across Mukuru, WorldRemit, Western Union and more. Find the best deal before you send.">
+    <meta name="twitter:card"       content="summary_large_image">
+    <meta name="twitter:title"      content="Send Money to Zimbabwe — Compare Rates | ZimRate">
+    <meta name="twitter:description" content="Fees, exchange rates and recipient totals for every major remittance service to Zimbabwe. Updated regularly.">
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <meta name="theme-color" content="#14532d">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- BreadcrumbList -->
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://zimrate.com"},{"@type":"ListItem","position":2,"name":"Send Money to Zimbabwe","item":"https://zimrate.com/send-money-to-zimbabwe"}]}
+    </script>
+
+    <!-- FAQPage -->
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What is the cheapest way to send money to Zimbabwe?","acceptedAnswer":{"@type":"Answer","text":"Services with the lowest combined fee and best exchange rate give your recipient the most ZiG. Mama Money and Mukuru typically offer competitive rates for transfers from South Africa, while Remitly is strong for US and UK senders. Always compare the total your recipient receives, not just the fee."}},
+      {"@type":"Question","name":"How long does it take to send money to Zimbabwe?","acceptedAnswer":{"@type":"Answer","text":"Most major remittance services including Mukuru, WorldRemit, and Remitly offer near-instant or same-day transfers to Zimbabwe. Mobile money and cash pickup options are typically fastest."}},
+      {"@type":"Question","name":"Can I send USD directly to Zimbabwe?","acceptedAnswer":{"@type":"Answer","text":"Yes. Most services allow you to send USD which is converted to ZiG at their exchange rate. Some services also support direct USD delivery for cash pickup."}},
+      {"@type":"Question","name":"What exchange rate do remittance services use for Zimbabwe?","acceptedAnswer":{"@type":"Answer","text":"Remittance services use their own exchange rates which are based on the official USD/ZiG rate but include a margin. The official rate is set by the Reserve Bank of Zimbabwe. You can track live USD/ZiG rates at zimrate.com."}}
+    ]}
+    </script>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+
+        <!-- Draft notice — remove when affiliate links are live -->
+        <div class="rm-draft-notice">
+            <i class="fas fa-flask"></i>
+            <strong>Draft page</strong> — rates shown are indicative placeholders. Links will be activated once affiliate programmes are confirmed.
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav class="convert-breadcrumb" aria-label="Breadcrumb">
+            <a th:href="@{/}">Home</a>
+            <span class="convert-breadcrumb-sep">›</span>
+            <span>Send Money to Zimbabwe</span>
+        </nav>
+
+        <!-- Hero -->
+        <div class="rm-hero">
+            <h1>Send Money to Zimbabwe</h1>
+            <p>Compare fees and exchange rates across the major services. See exactly how much ZiG your recipient gets.</p>
+        </div>
+
+        <!-- Calculator -->
+        <div class="rm-calculator">
+            <label class="rm-calc-label" for="rmAmount">I want to send</label>
+            <div class="rm-calc-row">
+                <span class="rm-calc-prefix">USD</span>
+                <input type="number" id="rmAmount" class="rm-calc-input"
+                       th:value="${defaultAmount}" min="1" max="10000" step="1">
+                <span class="rm-calc-suffix">→ ZiG</span>
+            </div>
+        </div>
+
+        <!-- Comparison table -->
+        <div class="rm-table-wrap">
+            <table class="rm-table" id="rmTable">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Fee</th>
+                        <th>Rate (ZiG/USD)</th>
+                        <th>Recipient gets</th>
+                        <th>Time</th>
+                        <th class="rm-th-from">Send from</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p, stat : ${providers}"
+                        th:data-fee="${p.fee}"
+                        th:data-rate="${p.rate}"
+                        th:data-gets="${p.recipientGets(defaultAmount)}">
+                        <td>
+                            <div class="rm-provider-cell">
+                                <span class="rm-logo" th:style="'background:' + ${p.accentColor}"
+                                      th:text="${p.initials}">MK</span>
+                                <span class="rm-name" th:text="${p.name}">Mukuru</span>
+                                <span class="rm-best" th:if="${stat.first}">Best value</span>
+                            </div>
+                        </td>
+                        <td th:text="'$' + ${#numbers.formatDecimal(p.fee, 1, 'COMMA', 2, 'POINT')}">$3.50</td>
+                        <td th:text="${#numbers.formatDecimal(p.rate, 1, 'COMMA', 2, 'POINT')}">26.80</td>
+                        <td class="rm-gets rm-gets-highlight"
+                            th:text="${#numbers.formatDecimal(p.recipientGets(defaultAmount), 0, 'COMMA', 0, 'POINT')} + ' ZiG'">2,555 ZiG</td>
+                        <td th:text="${p.transferTime}">Minutes</td>
+                        <td class="rm-from" th:text="${p.sendFrom}">SA · UK · US</td>
+                        <td>
+                            <a th:href="${p.affiliateUrl}" class="rm-cta"
+                               target="_blank" rel="noopener sponsored">
+                                Send now <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="rm-rates-note">
+            <i class="fas fa-circle-info"></i>
+            Rates and fees are indicative and updated periodically. Always confirm the final amount on the provider's site before sending.
+            Live USD/ZiG rates: <a th:href="@{/}">zimrate.com</a>
+        </p>
+
+        <!-- About the services -->
+        <div class="rm-about">
+            <h2>About these services</h2>
+            <div class="rm-about-grid">
+                <div class="rm-about-card">
+                    <div class="rm-about-logo" style="background:#e87722">MK</div>
+                    <div>
+                        <strong>Mukuru</strong>
+                        <p>Africa-focused remittance service. Strong network in Zimbabwe with cash pickup and mobile money options. Popular for transfers from South Africa, UK, and Australia.</p>
+                    </div>
+                </div>
+                <div class="rm-about-card">
+                    <div class="rm-about-logo" style="background:#00a0e3">WR</div>
+                    <div>
+                        <strong>WorldRemit</strong>
+                        <p>Digital-first service covering 130+ countries. Good rates from UK and Europe. Supports mobile money, bank transfer and cash pickup in Zimbabwe.</p>
+                    </div>
+                </div>
+                <div class="rm-about-card">
+                    <div class="rm-about-logo" style="background:#ff6b35">RM</div>
+                    <div>
+                        <strong>Remitly</strong>
+                        <p>US and UK focused. Competitive exchange rates with low fees on standard transfers. Express transfers available for a higher fee.</p>
+                    </div>
+                </div>
+                <div class="rm-about-card">
+                    <div class="rm-about-logo" style="background:#cc0000">MG</div>
+                    <div>
+                        <strong>MoneyGram</strong>
+                        <p>Global network with extensive cash pickup locations. Available from virtually every country. Fees higher than digital-first alternatives.</p>
+                    </div>
+                </div>
+                <div class="rm-about-card">
+                    <div class="rm-about-logo" style="background:#ffb800">WU</div>
+                    <div>
+                        <strong>Western Union</strong>
+                        <p>The largest remittance network in the world. Widest reach for cash pickup. Fees tend to be higher — best for senders in countries not served by other providers.</p>
+                    </div>
+                </div>
+                <div class="rm-about-card">
+                    <div class="rm-about-logo" style="background:#00c853">MM</div>
+                    <div>
+                        <strong>Mama Money</strong>
+                        <p>South Africa focused with very competitive fees. Ideal for the large Zimbabwean diaspora in South Africa. Fast transfers, low minimums.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="rm-faq">
+            <h2>Frequently asked questions</h2>
+
+            <details class="rm-faq-item">
+                <summary>What is the cheapest way to send money to Zimbabwe?</summary>
+                <p>The cheapest option depends on where you're sending from and how much you're sending. Services with the lowest combined fee and best exchange rate give your recipient the most ZiG. Mama Money and Mukuru are typically strong for transfers from South Africa, while Remitly is competitive from the US and UK. Always compare the total your recipient receives, not just the fee.</p>
+            </details>
+
+            <details class="rm-faq-item">
+                <summary>How long does it take to send money to Zimbabwe?</summary>
+                <p>Most major services — Mukuru, WorldRemit, Remitly — offer near-instant or same-day transfers to Zimbabwe. Mobile money delivery is usually fastest. Bank transfers can take 1–2 business days.</p>
+            </details>
+
+            <details class="rm-faq-item">
+                <summary>Can I send USD directly to Zimbabwe?</summary>
+                <p>Yes. Most services allow you to send USD which is converted to ZiG at their exchange rate. Some services also support direct USD cash pickup, which is popular for recipients who prefer to hold dollars.</p>
+            </details>
+
+            <details class="rm-faq-item">
+                <summary>What exchange rate do remittance services use?</summary>
+                <p>Remittance services set their own rates, based on the official USD/ZiG rate but with a built-in margin. This margin is how they make money even on low-fee transfers. The official rate is set by the Reserve Bank of Zimbabwe — you can track it live on <a th:href="@{/}">ZimRate</a>.</p>
+            </details>
+
+            <details class="rm-faq-item">
+                <summary>Is it safe to send money to Zimbabwe online?</summary>
+                <p>All services listed here are licensed, regulated money transfer operators. Look for FCA (UK), FinCEN (US), or SARB (South Africa) licensing. Never send money via informal channels or unregulated apps.</p>
+            </details>
+        </div>
+
+    </main>
+
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var input   = document.getElementById('rmAmount');
+        var table   = document.getElementById('rmTable');
+        if (!input || !table) return;
+
+        function fmt(n) {
+            return Math.round(n).toLocaleString('en-US') + ' ZiG';
+        }
+
+        function recalculate() {
+            var amount = parseFloat(input.value);
+            if (!amount || amount <= 0) return;
+
+            var rows = Array.from(table.querySelectorAll('tbody tr'));
+            var best = -1;
+
+            rows.forEach(function (row) {
+                var fee  = parseFloat(row.dataset.fee);
+                var rate = parseFloat(row.dataset.rate);
+                var gets = Math.max(0, amount - fee) * rate;
+                row.dataset.gets = gets;
+                row.querySelector('.rm-gets').textContent = fmt(gets);
+                if (gets > best) best = gets;
+            });
+
+            // Sort rows by gets descending
+            var tbody = table.querySelector('tbody');
+            rows.sort(function (a, b) {
+                return parseFloat(b.dataset.gets) - parseFloat(a.dataset.gets);
+            });
+            rows.forEach(function (row) {
+                tbody.appendChild(row);
+                var badge = row.querySelector('.rm-best');
+                if (badge) badge.style.display = 'none';
+            });
+            var topBadge = rows[0] && rows[0].querySelector('.rm-best');
+            if (topBadge) topBadge.style.display = 'inline-flex';
+        }
+
+        input.addEventListener('input', recalculate);
+        recalculate();
+    }());
+
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(t) {
+            document.documentElement.dataset.theme = t;
+            localStorage.setItem('theme', t);
+            if (icon) icon.className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (icon) icon.className = document.documentElement.dataset.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>

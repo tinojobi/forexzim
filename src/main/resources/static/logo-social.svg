@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="ZimRate">
+
+  <!-- Background -->
+  <rect width="400" height="400" rx="80" fill="#15803d"/>
+
+  <!-- Icon container -->
+  <rect x="130" y="80" width="140" height="140" rx="28"
+        fill="rgba(255,255,255,0.12)"
+        stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+
+  <!-- Chart grid lines -->
+  <line x1="146" y1="185" x2="254" y2="185" stroke="#fff" stroke-width="1" opacity="0.2"/>
+  <line x1="146" y1="158" x2="254" y2="158" stroke="#fff" stroke-width="1" opacity="0.12"/>
+
+  <!-- Rising chart line -->
+  <polyline points="146,193 164,168 186,175 210,148 254,126"
+            fill="none" stroke="#ffffff" stroke-width="6.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Endpoint glow + dot -->
+  <circle cx="254" cy="126" r="13" fill="#ffffff" opacity="0.2"/>
+  <circle cx="254" cy="126" r="7" fill="#ffffff"/>
+
+  <!-- Wordmark -->
+  <text font-family="Inter,system-ui,-apple-system,Arial,sans-serif"
+        font-weight="800" font-size="72" letter-spacing="-2"
+        text-anchor="middle" x="200" y="310">
+    <tspan fill="#ffffff">Zim</tspan><tspan fill="#fbbf24">Rate</tspan>
+  </text>
+
+</svg>
