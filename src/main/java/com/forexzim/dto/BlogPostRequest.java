@@ -30,7 +30,7 @@ public class BlogPostRequest {
     private String content;
 
     @NotBlank(message = "Meta description is required")
-    @Size(min = 140, max = 160, message = "Meta description must be 140–160 characters")
+    @Size(min = 80, max = 160, message = "Meta description must be 80-160 characters")
     private String metaDescription;
 
     @Valid

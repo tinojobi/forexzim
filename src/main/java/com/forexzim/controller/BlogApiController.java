@@ -26,7 +26,7 @@ public class BlogApiController {
 
     private static final Pattern SCRIPT_TAG = Pattern.compile("<script[^>]*>.*?</script>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
     private static final Pattern INTERNAL_LINK = Pattern.compile(
-            "href=[\"'](/[^\"']*|https://zimrate\\.com[^\"']*)[\"']", Pattern.CASE_INSENSITIVE);
+            "href=[\"'](/[^\"']*|https://(www\\.)?zimrate\\.com[^\"']*)[\"']", Pattern.CASE_INSENSITIVE);
 
     public BlogApiController(BlogRepository blogRepository) {
         this.blogRepository = blogRepository;
