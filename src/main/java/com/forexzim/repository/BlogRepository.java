@@ -16,5 +16,7 @@ public interface BlogRepository extends JpaRepository<BlogPost, Long> {
 
     boolean existsBySlug(String slug);
 
+    Optional<BlogPost> findBySlug(String slug);
+
     List<BlogPost> findTop3ByStatusAndIdNotOrderByPublishedAtDesc(BlogPost.Status status, Long id);
 }
