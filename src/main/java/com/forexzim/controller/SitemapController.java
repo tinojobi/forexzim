@@ -51,8 +51,8 @@ public class SitemapController {
         appendUrl(sb, baseUrl + "/contact", "monthly", "0.4", today);
         appendUrl(sb, baseUrl + "/privacy", "yearly",  "0.3", today);
 
-        // Remittance comparison (noindex until affiliate links live — excluded from sitemap for now)
-        // appendUrl(sb, baseUrl + "/send-money-to-zimbabwe", "weekly", "0.9", today);
+        // Remittance comparison
+        appendUrl(sb, baseUrl + "/send-money-to-zimbabwe", "weekly", "0.9", today);
 
         // Rate calculator pages
         for (long amount : CALCULATOR_AMOUNTS) {

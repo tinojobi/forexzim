@@ -710,14 +710,45 @@
         </div>
 
         <!-- About rates -->
-        <div class="info-card">
-            <div class="info-icon">
-                <i class="fas fa-info-circle"></i>
+        <div class="explainer-section">
+            <h2 class="explainer-title">Understanding Zimbabwe's Exchange Rates</h2>
+
+            <div class="explainer-grid">
+                <div class="explainer-block">
+                    <h3><i class="fas fa-landmark"></i> What is the official rate?</h3>
+                    <p>The official USD/ZiG rate is set and published daily by the Reserve Bank of Zimbabwe (RBZ). It is the rate used by commercial banks, licensed forex bureaus, and for government transactions. The RBZ determines this rate through an interbank foreign exchange market and periodic auctions. You will see it labelled as the RBZ rate or official rate on ZimRate.</p>
+                </div>
+
+                <div class="explainer-block">
+                    <h3><i class="fas fa-chart-line"></i> What is the black market rate?</h3>
+                    <p>The parallel market (commonly called the black market) rate reflects what USD actually trades for in informal transactions: cash exchanges between individuals, street dealers, and informal money changers. This rate is driven purely by supply and demand. Because official channels often have limited USD availability, the parallel rate is typically higher than the official rate. ZimRate tracks the reported high, low, and cash variants of the parallel rate.</p>
+                </div>
+
+                <div class="explainer-block">
+                    <h3><i class="fas fa-percent"></i> What is the market premium?</h3>
+                    <p>The market premium shows how much more expensive USD is on the parallel market compared to the official rate, expressed as a percentage. A 20% premium means $100 bought informally costs the equivalent of $120 at the official rate. This number matters for businesses, importers, and anyone converting remittances, as it reveals how much the official rate undervalues real dollar demand. ZimRate displays the premium prominently so you can track it daily.</p>
+                </div>
+
+                <div class="explainer-block">
+                    <h3><i class="fas fa-coins"></i> What is ZiG (ZWG)?</h3>
+                    <p>ZiG (short for Zimbabwe Gold) is Zimbabwe's domestic currency, launched by the RBZ in April 2024. Its ISO 4217 code is ZWG; both names refer to the same currency. ZiG replaced the Zimbabwe Dollar (ZWL) and is designed to be backed by gold and foreign currency reserves held by the RBZ. The ZWL conversion rate was 2,498:1 when ZiG launched. Unlike previous currency attempts, ZiG is intended to have hard limits on money printing, though its long-term stability depends on how strictly those limits are maintained.</p>
+                </div>
+
+                <div class="explainer-block">
+                    <h3><i class="fas fa-rotate-right"></i> How often are rates updated?</h3>
+                    <p>ZimRate fetches rates from all sources every 30 minutes, around the clock. The "Last Updated" timestamp at the top of the page shows when the most recent data was collected. If a source goes temporarily offline or returns stale data, a warning badge appears next to that rate category. You can also refresh the page at any time using the refresh button next to the timestamp.</p>
+                </div>
+
+                <div class="explainer-block">
+                    <h3><i class="fas fa-globe"></i> Regional and international rates</h3>
+                    <p>The currency strip above the rate tables shows how USD compares to major regional currencies: South African rand (ZAR), Botswana pula (BWP), Zambian kwacha (ZMW), Mozambican metical (MZN), Namibian dollar (NAD), plus international currencies including EUR, GBP, CNY, and AED. These help Zimbabwean businesses and travellers assess cross-border costs without switching between multiple sites.</p>
+                </div>
             </div>
-            <div class="info-text">
-                <h4>About these rates</h4>
-                <p>Rates are sourced from the Reserve Bank of Zimbabwe, local banks (CBZ, FBC), and market tracking sites (ZimPriceCheck).</p>
-                <p><strong>ZiG</strong> is the common name and <strong>ZWG</strong> is the ISO 4217 code for the same currency — Zimbabwe Gold, introduced in April 2024.</p>
+
+            <div class="explainer-links">
+                <a th:href="@{/convert/100-usd-to-zig}" class="explainer-link-pill"><i class="fas fa-calculator"></i> Convert USD to ZiG</a>
+<a th:href="@{/history}" class="explainer-link-pill"><i class="fas fa-clock-rotate-left"></i> View rate history</a>
+                <a th:href="@{/blog}" class="explainer-link-pill"><i class="fas fa-newspaper"></i> Zimbabwe forex articles</a>
             </div>
         </div>
 

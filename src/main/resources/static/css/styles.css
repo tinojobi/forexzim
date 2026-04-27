@@ -501,6 +501,120 @@ tbody tr:hover {
 }
 
 /* ═══════════════════════════════════════
+   EXPLAINER SECTION
+═══════════════════════════════════════ */
+
+.explainer-section {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.75rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+}
+
+.explainer-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 1.25rem;
+}
+
+.explainer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 2rem;
+    margin-bottom: 1.25rem;
+}
+
+.explainer-block h3 {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--green-700);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.explainer-block h3 i {
+    font-size: 0.75rem;
+}
+
+.explainer-block p {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    line-height: 1.65;
+}
+
+.explainer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-100);
+}
+
+.explainer-link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--green-50);
+    color: var(--green-700);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--green-100);
+    transition: background 0.15s, color 0.15s;
+}
+
+.explainer-link-pill:hover {
+    background: var(--green-100);
+    color: var(--green-800);
+}
+
+@media (max-width: 640px) {
+    .explainer-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+[data-theme="dark"] .explainer-section {
+    background: #1a2535;
+    border-color: #243048;
+}
+
+[data-theme="dark"] .explainer-title {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .explainer-block h3 {
+    color: #4ade80;
+}
+
+[data-theme="dark"] .explainer-block p {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .explainer-links {
+    border-top-color: #243048;
+}
+
+[data-theme="dark"] .explainer-link-pill {
+    background: rgba(74, 222, 128, 0.08);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.15);
+}
+
+[data-theme="dark"] .explainer-link-pill:hover {
+    background: rgba(74, 222, 128, 0.15);
+    color: #86efac;
+}
+
+/* ═══════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════ */
 
