@@ -13,11 +13,14 @@
     <meta property="og:description" th:if="${post.metaDescription}" th:content="${post.metaDescription}">
     <meta property="og:description" th:unless="${post.metaDescription}" th:content="${post.excerpt}">
     <meta property="og:url" th:content="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog/' + post.slug}">
+    <meta property="og:image" th:content="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/logo-social.svg'}">
     <meta property="article:published_time" th:if="${post.publishedAt}" th:content="${#temporals.format(post.publishedAt, 'yyyy-MM-dd')}">
+    <meta property="article:modified_time" th:content="${#temporals.format(post.updatedAt, 'yyyy-MM-dd')}">
     <meta property="article:author" th:content="${post.author}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" th:content="${post.title}">
     <meta name="twitter:description" th:content="${post.metaDescription != null ? post.metaDescription : post.excerpt}">
+    <meta name="twitter:image" th:content="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/logo-social.svg'}">
     <meta name="theme-color" content="#14532d">
     <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
