@@ -2,7 +2,7 @@ INSERT INTO blog_posts (title, slug, excerpt, content, author, published_at, sta
 VALUES (
     'Zimbabwe Ships Africa''s First Lithium Sulphate: What This Means for Jobs and the ZiG',
     'zimbabwe-ships-africas-first-lithium-sulphate',
-    'China''s Huayou Cobalt shipped Africa''s first lithium sulphate from Zimbabwe. Here''s why this matters for local jobs, export revenue, and Zimbabwe''s economic future.',
+    'Huayou Cobalt shipped Africa''s first lithium sulphate from Zimbabwe. What local beneficiation means for jobs, exports, and the Zi.',
     $$<h1>Zimbabwe Ships Africa''s First Lithium Sulphate: What This Means for Jobs and the ZiG</h1>
 <p>Here''s something you might have missed in the business news: a Chinese mining company just shipped Africa''s first ever batch of lithium sulphate from Zimbabwe.</p>
 <p>Why should you care? Because this small milestone could mean more jobs for Zimbabweans, more money staying in the country, and potentially more stability for the ZiG currency.</p>
@@ -53,6 +53,6 @@ VALUES (
     'ZimRate Team',
     NOW(),
     'PUBLISHED',
-    'China''s Huayou Cobalt shipped Africa''s first lithium sulphate from Zimbabwe. Here''s why this matters for local jobs, export revenue, and Zimbabwe''s economic future.',
+    'Huayou Cobalt shipped Africa''s first lithium sulphate from Zimbabwe. What local beneficiation means for jobs, exports, and the Zi.',
     5
 );
