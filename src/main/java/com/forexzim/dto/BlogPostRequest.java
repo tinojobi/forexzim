@@ -38,4 +38,10 @@ public class BlogPostRequest {
 
     private Integer readTimeMinutes;
     private String status; // "DRAFT" or "PUBLISHED", defaults to PUBLISHED
+
+    /** Optional: schedule this draft to auto-publish at a future time. */
+    private java.time.LocalDateTime publishAt;
+
+    /** Optional: URL of a featured image for OG/social sharing. */
+    private String imageUrl;
 }

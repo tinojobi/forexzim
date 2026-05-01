@@ -1,7 +1,9 @@
 package com.forexzim.service;
 
+import com.forexzim.model.BlogPost;
 import com.forexzim.model.Rate;
 import com.forexzim.model.Source;
+import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.RateRepository;
 import com.forexzim.repository.SourceRepository;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -25,6 +28,7 @@ public class ScheduledScraperService {
     private final List<RateScraper> scrapers;
     private final SourceRepository sourceRepository;
     private final RateRepository rateRepository;
+    private final BlogRepository blogRepository;
     private final RateService rateService;
     private final AlertService alertService;
     private final TelegramService telegramService;
@@ -35,6 +39,7 @@ public class ScheduledScraperService {
     public ScheduledScraperService(List<RateScraper> scrapers,
                                    SourceRepository sourceRepository,
                                    RateRepository rateRepository,
+                                   BlogRepository blogRepository,
                                    RateService rateService,
                                    AlertService alertService,
                                    TelegramService telegramService,
@@ -42,6 +47,7 @@ public class ScheduledScraperService {
         this.scrapers = scrapers;
         this.sourceRepository = sourceRepository;
         this.rateRepository = rateRepository;
+        this.blogRepository = blogRepository;
         this.rateService = rateService;
         this.alertService = alertService;
         this.telegramService = telegramService;
@@ -127,6 +133,19 @@ public class ScheduledScraperService {
             telegramBotService.checkAndNotify(rateService.getLatestRates());
         } catch (Exception e) {
             log.error("Telegram personal alert check failed: {}", e.getMessage(), e);
+        }
+    }
+
+    /** Checks every 5 minutes for DRAFT posts whose publishAt time has arrived and publishes them. */
+    @Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 60 * 1000)
+    public void autoPublishScheduledPosts() {
+        List<BlogPost> due = blogRepository.findScheduledPostsReady(BlogPost.Status.DRAFT, LocalDateTime.now());
+        for (BlogPost post : due) {
+            post.setStatus(BlogPost.Status.PUBLISHED);
+            if (post.getPublishedAt() == null) post.setPublishedAt(LocalDateTime.now());
+            post.setUpdatedAt(LocalDateTime.now());
+            blogRepository.save(post);
+            log.info("Auto-published scheduled post '{}'", post.getSlug());
         }
     }
 

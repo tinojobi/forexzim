@@ -42,6 +42,9 @@ public class TelegramService {
     @Value("${zimrate.telegram.channel-id:}")
     private String channelId;
 
+    @Value("${zimrate.telegram.owner-chat-id:}")
+    private String ownerChatId;
+
     private static final double CHANGE_THRESHOLD = 0.01; // 1%
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -148,6 +151,27 @@ public class TelegramService {
         return sb.toString();
     }
 
+    public void notifyOwnerDraftReady(BlogPost post) {
+        if (!isConfigured() || ownerChatId == null || ownerChatId.isBlank()) {
+            log.debug("Owner chat ID not configured — skipping draft notification");
+            return;
+        }
+        try {
+            String excerpt = post.getExcerpt() != null && !post.getExcerpt().isBlank()
+                    ? post.getExcerpt() + "\n\n" : "\n";
+            String msg = "✏️ <b>Draft ready for review</b>\n\n"
+                    + "<b>" + post.getTitle() + "</b>\n"
+                    + excerpt
+                    + "Slug: <code>" + post.getSlug() + "</code>\n"
+                    + "Publish: <code>PATCH /api/blog/" + post.getSlug() + "/publish</code>\n"
+                    + "Reject: <code>PATCH /api/blog/" + post.getSlug() + "/reject</code>";
+            sendToChat(ownerChatId, msg);
+            log.info("Owner notified of draft '{}'", post.getSlug());
+        } catch (Exception e) {
+            log.error("Failed to notify owner of draft '{}': {}", post.getSlug(), e.getMessage());
+        }
+    }
+
     public void postBlogNotification(BlogPost post, String baseUrl) {
         if (!isConfigured()) return;
         try {
@@ -165,9 +189,13 @@ public class TelegramService {
     }
 
     private void sendMessage(String text) {
+        sendToChat(channelId, text);
+    }
+
+    private void sendToChat(String chatId, String text) {
         String url = API_BASE + botToken + "/sendMessage";
         Map<String, Object> body = new HashMap<>();
-        body.put("chat_id", channelId);
+        body.put("chat_id", chatId);
         body.put("text", text);
         body.put("parse_mode", "HTML");
         body.put("disable_web_page_preview", true);

@@ -305,6 +305,12 @@ curl http://localhost:8090/api/blog/what-is-zimbabwe-gold-zig
 | status | string | `"DRAFT"` | `"DRAFT"` or `"PUBLISHED"` |
 | readTimeMinutes | integer | Auto-calculated | Estimated at 200 words/minute |
 | faqItems | array | null | FAQ structured data (see below) |
+| publishAt | string (ISO datetime) | null | Schedule auto-publish e.g. `"2026-05-05T08:00:00"` |
+| imageUrl | string | null | Featured image URL for OG/social sharing |
+
+#### Similarity check
+
+On POST, the API checks if any existing post has ≥50% word overlap with the new title (ignoring common words). If a match is found, a 409 is returned with a `similarPosts` list. To bypass: append `?force=true` to the URL.
 
 #### Example — Create a draft
 
@@ -382,6 +388,48 @@ curl -X PATCH http://localhost:8090/api/blog/rbz-holds-rate-at-20-percent/publis
 
 ---
 
+### PATCH /api/blog/{slug}/reject — Reject a draft
+
+**Requires `X-Admin-Token` header.**
+
+Marks a DRAFT as REJECTED without deleting it. Use when Tino has reviewed and does not want the article published. Rejected posts remain searchable via `GET /api/blog?status=REJECTED`.
+
+```bash
+curl -X PATCH http://localhost:8090/api/blog/rbz-holds-rate-at-20-percent/reject \
+  -H "X-Admin-Token: YOUR_ADMIN_TOKEN"
+```
+
+**Response codes:**
+
+| Code | Meaning |
+|------|---------|
+| 200 | Rejected (or already was) |
+| 403 | Missing or invalid token |
+| 404 | No post with that slug |
+
+---
+
+### DELETE /api/blog/{slug} — Permanently delete a post
+
+**Requires `X-Admin-Token` header.**
+
+Permanently removes the post from the database. Use only for drafts that are completely unusable. Prefer PATCH /reject for posts you may want to reference later.
+
+```bash
+curl -X DELETE http://localhost:8090/api/blog/rbz-holds-rate-at-20-percent \
+  -H "X-Admin-Token: YOUR_ADMIN_TOKEN"
+```
+
+**Response codes:**
+
+| Code | Meaning |
+|------|---------|
+| 200 | Deleted |
+| 403 | Missing or invalid token |
+| 404 | No post with that slug |
+
+---
+
 ### PATCH /api/blog/{slug}/unpublish — Retract a published post
 
 **Requires `X-Admin-Token` header.**
@@ -422,6 +470,7 @@ The API enforces all of these server-side and returns a 400 with a descriptive e
 7. Script tags are automatically stripped
 8. Slug must be unique (409 Conflict if duplicate)
 9. Status defaults to DRAFT if not specified
+10. On POST, title is checked against existing posts for ≥50% word similarity (409 if match; bypass with `?force=true`)
 
 ---
 
@@ -434,20 +483,20 @@ The API enforces all of these server-side and returns a 400 with a descriptive e
 4. Nova researches (3+ sources per claim)
 5. Nova writes article in HTML format
 6. Nova runs humanizer checklist
-7. Nova saves draft to /opt/forexzim/blog/drafts/YYYY-MM-DD-slug.md
-8. Nova calls POST /api/blog with status "DRAFT"
+7. Nova calls POST /api/blog with status "DRAFT"
+8. API automatically sends Tino a Telegram DM with the slug and review commands
 9. Nova sends the returned slug to Tony for review
 10. Tony calls GET /api/blog/{slug} to review the saved draft
 11. Tony checks: sources, SEO, humanization, internal links
 12. Tony sends draft to Tino for approval
-13. Tino approves (or requests changes via PUT)
+13. Tino approves (or requests changes via PUT) OR rejects via PATCH /{slug}/reject
 14. Tony calls PATCH /api/blog/{slug}/publish
 15. Article is live immediately — no restart needed
 ```
 
 ### Making Changes After Saving
 
-If Tino requests edits after step 8, use PUT:
+If Tino requests edits after step 7, use PUT:
 
 ```bash
 curl -X PUT http://localhost:8090/api/blog/{slug} \
@@ -460,7 +509,9 @@ Never edit blog posts by writing Flyway migrations or raw SQL.
 ### Status Flow
 
 ```
-POST (DRAFT) → review → PATCH /{slug}/publish → PUBLISHED
+POST (DRAFT) → review → PATCH /{slug}/publish  → PUBLISHED
+                      → PATCH /{slug}/reject   → REJECTED
+                      → DELETE /{slug}          → (gone)
 ```
 
 ---
@@ -519,8 +570,9 @@ Before calling PATCH to publish, verify:
 | Publishing without Tino's approval | Always get approval first, then call PATCH /publish |
 | Forgetting the disclaimer | Every article ends with the disclaimer |
 | Editing via raw SQL | Use PUT /api/blog/{slug} instead |
-| Writing a duplicate topic | Call GET /api/blog before starting research |
+| Writing a duplicate topic | API will return 409 with similar posts listed |
 | Not saving as DRAFT first | POST always as DRAFT, publish only after approval |
+| Deleting instead of rejecting | Use PATCH /reject for articles worth keeping for reference; DELETE only for junk |
 
 ---
 
@@ -552,6 +604,8 @@ Before calling PATCH to publish, verify:
 | Update post | `PUT /api/blog/{slug}` (auth required) |
 | Publish draft | `PATCH /api/blog/{slug}/publish` (auth required) |
 | Unpublish post | `PATCH /api/blog/{slug}/unpublish` (auth required) |
+| Reject draft | `PATCH /api/blog/{slug}/reject` (auth required) |
+| Delete post | `DELETE /api/blog/{slug}` (auth required) |
 | Content format | HTML (not markdown) |
 | Default status | DRAFT |
 | Min sources per claim | 3 |

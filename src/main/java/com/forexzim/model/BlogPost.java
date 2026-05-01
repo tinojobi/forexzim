@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BlogPost {
 
-    public enum Status { DRAFT, PUBLISHED }
+    public enum Status { DRAFT, PUBLISHED, REJECTED }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,4 +57,11 @@ public class BlogPost {
 
     @Column(name = "faq_json", columnDefinition = "TEXT")
     private String faqJson;
+
+    /** When to auto-publish this draft. Null means no scheduled publish. */
+    @Column(name = "publish_at")
+    private LocalDateTime publishAt;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 }

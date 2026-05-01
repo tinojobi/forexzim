@@ -2,13 +2,19 @@ package com.forexzim.repository;
 
 import com.forexzim.model.BlogPost;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<BlogPost, Long> {
 
     List<BlogPost> findByStatusOrderByPublishedAtDesc(BlogPost.Status status);
+
+    @Query("SELECT p FROM BlogPost p WHERE p.status = :status AND p.publishAt IS NOT NULL AND p.publishAt <= :now")
+    List<BlogPost> findScheduledPostsReady(@Param("status") BlogPost.Status status, @Param("now") LocalDateTime now);
 
     Optional<BlogPost> findBySlugAndStatus(String slug, BlogPost.Status status);
 
