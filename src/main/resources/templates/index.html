@@ -162,7 +162,7 @@
 <!--            <button class="filter-pill" data-filter="bank"><i class="fas fa-building-columns"></i> Banks</button>-->
             <button class="filter-pill" data-filter="business"><i class="fas fa-store"></i> Business</button>
             <button class="filter-pill" data-filter="gold" th:if="${goldCoin != null}"  ><i class="fas fa-coins"></i> Gold Coin</button>
-            <button class="filter-pill" data-filter="inflation"><i class="fas fa-arrow-trend-up"></i> Inflation</button>
+            <button class="filter-pill" data-filter="inflation" th:if="${inflation != null}"><i class="fas fa-arrow-trend-up"></i> Inflation</button>
             <button class="filter-pill" data-filter="international"><i class="fas fa-globe"></i> International</button>
 
         </div>
