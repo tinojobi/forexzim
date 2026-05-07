@@ -45,6 +45,9 @@ public class TelegramService {
     @Value("${zimrate.telegram.owner-chat-id:}")
     private String ownerChatId;
 
+    @Value("${zimrate.base-url:https://zimrate.com}")
+    private String baseUrl;
+
     private static final double CHANGE_THRESHOLD = 0.01; // 1%
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -159,9 +162,12 @@ public class TelegramService {
         try {
             String excerpt = post.getExcerpt() != null && !post.getExcerpt().isBlank()
                     ? post.getExcerpt() + "\n\n" : "\n";
+            String previewUrl = baseUrl + "/blog/" + post.getSlug()
+                    + "?preview=" + post.getPreviewToken();
             String msg = "✏️ <b>Draft ready for review</b>\n\n"
                     + "<b>" + post.getTitle() + "</b>\n"
                     + excerpt
+                    + "👁 <a href=\"" + previewUrl + "\">Preview article</a>\n\n"
                     + "Slug: <code>" + post.getSlug() + "</code>\n"
                     + "Publish: <code>PATCH /api/blog/" + post.getSlug() + "/publish</code>\n"
                     + "Reject: <code>PATCH /api/blog/" + post.getSlug() + "/reject</code>";

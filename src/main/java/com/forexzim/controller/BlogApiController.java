@@ -130,6 +130,7 @@ public class BlogApiController {
 
         BlogPost post = buildPost(new BlogPost(), request, slug, safeContent);
         post.setCreatedAt(LocalDateTime.now());
+        post.setPreviewToken(UUID.randomUUID().toString());
         blogRepository.save(post);
 
         if (post.getStatus() == BlogPost.Status.DRAFT) {
@@ -413,6 +414,7 @@ public class BlogApiController {
         m.put("updatedAt", post.getUpdatedAt());
         m.put("content", post.getContent());
         m.put("faqJson", post.getFaqJson());
+        m.put("previewToken", post.getPreviewToken());
         return m;
     }
 

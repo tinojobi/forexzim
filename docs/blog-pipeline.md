@@ -263,6 +263,8 @@ curl "http://localhost:8090/api/blog?status=PUBLISHED&q=ZiG"
 
 **Response fields:** `id`, `slug`, `title`, `status`, `excerpt`, `metaDescription`, `wordCount`, `readTimeMinutes`, `publishedAt`, `updatedAt`
 
+> **Note:** The list endpoint does not return `previewToken`. Use `GET /api/blog/{slug}` to get the token for a specific draft.
+
 ---
 
 ### GET /api/blog/{slug} — Get a single post
@@ -272,6 +274,14 @@ Returns the full post including content. No auth required.
 ```bash
 curl http://localhost:8090/api/blog/what-is-zimbabwe-gold-zig
 ```
+
+The response includes the full post content plus `previewToken` for drafts. Use this to construct the preview URL:
+
+```
+https://zimrate.com/blog/{slug}?preview={previewToken}
+```
+
+Opening this URL renders the article exactly as it will look when published, with a "Draft preview" banner at the top. The page is tagged `noindex` so search engines will not index it.
 
 **Response codes:**
 
@@ -484,11 +494,11 @@ The API enforces all of these server-side and returns a 400 with a descriptive e
 5. Nova writes article in HTML format
 6. Nova runs humanizer checklist
 7. Nova calls POST /api/blog with status "DRAFT"
-8. API automatically sends Tino a Telegram DM with the slug and review commands
-9. Nova sends the returned slug to Tony for review
+8. API automatically sends Tino a Telegram DM with the slug, review commands, and a clickable preview link
+9. Nova sends the returned slug and previewToken to Tony for review
 10. Tony calls GET /api/blog/{slug} to review the saved draft
 11. Tony checks: sources, SEO, humanization, internal links
-12. Tony sends draft to Tino for approval
+12. Tony sends Tino the preview URL (`https://zimrate.com/blog/{slug}?preview={previewToken}`) so he can read the article on the live site before approving
 13. Tino approves (or requests changes via PUT) OR rejects via PATCH /{slug}/reject
 14. Tony calls PATCH /api/blog/{slug}/publish
 15. Article is live immediately — no restart needed
@@ -602,6 +612,7 @@ Before calling PATCH to publish, verify:
 | Get post | `GET /api/blog/{slug}` (public) |
 | Create post | `POST /api/blog` (auth required) |
 | Update post | `PUT /api/blog/{slug}` (auth required) |
+| Preview draft | `GET /api/blog/{slug}` → use `previewToken` → open `https://zimrate.com/blog/{slug}?preview={token}` |
 | Publish draft | `PATCH /api/blog/{slug}/publish` (auth required) |
 | Unpublish post | `PATCH /api/blog/{slug}/unpublish` (auth required) |
 | Reject draft | `PATCH /api/blog/{slug}/reject` (auth required) |

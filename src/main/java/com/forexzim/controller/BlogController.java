@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.format.DateTimeFormatter;
@@ -46,15 +47,36 @@ public class BlogController {
     }
 
     @GetMapping("/{slug}")
-    public String post(@PathVariable String slug, Model model) {
-        BlogPost post = blogRepository.findBySlugAndStatus(slug, BlogPost.Status.PUBLISHED)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public String post(@PathVariable String slug,
+                       @RequestParam(required = false) String preview,
+                       Model model) {
+        BlogPost post;
+        boolean isPreview = false;
 
-        List<BlogPost> related = blogRepository.findTop3ByStatusAndIdNotOrderByPublishedAtDesc(
-                BlogPost.Status.PUBLISHED, post.getId());
+        if (preview != null && !preview.isBlank()) {
+            post = blogRepository.findBySlug(slug)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            if (post.getStatus() == BlogPost.Status.PUBLISHED) {
+                // Published — preview param is irrelevant, serve normally
+            } else if (post.getPreviewToken() != null && post.getPreviewToken().equals(preview)) {
+                isPreview = true;
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+        } else {
+            post = blogRepository.findBySlugAndStatus(slug, BlogPost.Status.PUBLISHED)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        }
+
+        List<BlogPost> related = Collections.emptyList();
+        if (!isPreview) {
+            related = blogRepository.findTop3ByStatusAndIdNotOrderByPublishedAtDesc(
+                    BlogPost.Status.PUBLISHED, post.getId());
+        }
 
         model.addAttribute("post", post);
         model.addAttribute("relatedPosts", related);
+        model.addAttribute("isPreview", isPreview);
         model.addAttribute("structuredData", buildPostJsonLd(post));
         model.addAttribute("breadcrumbData", buildBreadcrumbJsonLd(post));
         if (post.getFaqJson() != null) {
