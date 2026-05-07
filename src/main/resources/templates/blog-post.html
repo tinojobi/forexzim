@@ -29,9 +29,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <th:block th:replace="~{layout :: head-meta}"></th:block>
     <meta th:if="${isPreview}" name="robots" content="noindex, nofollow">
-    <script th:if="${structuredData and !isPreview}" type="application/ld+json" th:utext="${structuredData}"></script>
-    <script th:if="${breadcrumbData and !isPreview}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
-    <script th:if="${faqData and !isPreview}" type="application/ld+json" th:utext="${faqData}"></script>
+    <script th:if="${structuredData != null and !isPreview}" type="application/ld+json" th:utext="${structuredData}"></script>
+    <script th:if="${breadcrumbData != null and !isPreview}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
+    <script th:if="${faqData != null and !isPreview}" type="application/ld+json" th:utext="${faqData}"></script>
 </head>
 <body>
     <div th:replace="~{layout :: header}"></div>
