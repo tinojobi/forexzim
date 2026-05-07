@@ -1,0 +1,15 @@
+INSERT INTO blog_posts (title, slug, excerpt, content, meta_description, read_time_minutes, author, status, published_at, created_at, updated_at, preview_token)
+VALUES (
+    'How Zimbabwe''s US$328 Million EU Trade Surplus is Backing the ZiG',
+    'zimbabwe-eu-trade-surplus-zig',
+    'Most people assume forex is just draining out of Zimbabwe, but we actually hold a massive positive trade balance with the EU. This new grant boosts exports further, bringing in more USD, easing liquidity, and providing backing to stabilize the ZiG.',
+    '<p>When people talk about foreign currency in Zimbabwe, the conversation almost always focuses on the money leaving the country. You hear about import bills and local liquidity crunches. But take a look at our trade with the European Union and you will see a totally different picture.</p><p>Recent numbers show that Zimbabwe is actually holding a massive US$328 million positive trade balance with the EU. In 2025, total trade between Zimbabwe and the EU hit US$919 million, and the bulk of that was money flowing into the country.</p><p>According to a report from <a href="https://www.newzimbabwe.com/eu-unveils-e7-8-million-boost-for-zimbabwe-horticulture-sector/">NewZimbabwe.com this May</a>, the EU just announced a €7.8 million capacity-building project. This will help farmers export more produce to Europe.</p><h2>Why this matters for the ZiG</h2><p>A trade surplus implies hard currency is entering the local banking system. This influx of foreign exchange is exactly what the Reserve Bank of Zimbabwe needs to back the local currency. If you want to see how this liquidity affects daily rates, you can check the live tracking on the <a href="https://zimrate.com">ZimRate homepage</a>.</p><h2>The push beyond mining</h2><p>Mining is highly vulnerable to global price crashes. Agriculture and horticulture offer a more stable, renewable source of income.</p><p>Information shared by the <a href="https://www.herald.co.zw">Herald</a> indicates that agricultural exports are a major priority. This diversification is a big deal for everyone holding local currency. You can calculate the exact value of your money today using our <a href="https://zimrate.com/convert/100-usd-to-zig">100 USD to ZiG converter</a>.</p><h2>Looking ahead</h2><p>Maximum exports to the lucrative European market are one of the clearest paths to long-term currency stability. If you want to track how these macroeconomic shifts are impacting the exchange rate over time, keep an eye on our <a href="https://zimrate.com/history">exchange rate history</a>.</p><br><p><em>This article is for informational purposes only and does not constitute financial advice.</em></p>',
+    'Zimbabwe holds a US$328m trade surplus with the EU. Learn how a new €7.8m horticulture grant will boost exports, bring in USD, and stabilize the ZiG.',
+    3,
+    'ZimRate Team',
+    'PUBLISHED',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    gen_random_uuid()::text
+) ON CONFLICT (slug) DO NOTHING;
