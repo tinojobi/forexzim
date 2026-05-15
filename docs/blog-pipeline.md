@@ -316,7 +316,7 @@ Opening this URL renders the article exactly as it will look when published, wit
 | readTimeMinutes | integer | Auto-calculated | Estimated at 200 words/minute |
 | faqItems | array | null | FAQ structured data (see below) |
 | publishAt | string (ISO datetime) | null | Schedule auto-publish e.g. `"2026-05-05T08:00:00"` |
-| imageUrl | string | null | Featured image URL for OG/social sharing |
+| imageUrl | string | null | Featured image URL — shown in the post, on listing cards, and as the OG/Twitter share image. Use a landscape Unsplash photo URL (append `?w=1200&q=80&fit=crop&crop=center`). Required for good social sharing previews. |
 
 #### Similarity check
 

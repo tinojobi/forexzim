@@ -40,6 +40,9 @@
 
         <div th:unless="${posts.empty}" class="blog-list">
             <article th:each="post : ${posts}" class="blog-card">
+                <a th:if="${post.imageUrl}" th:href="@{/blog/{slug}(slug=${post.slug})}" class="blog-card-image-link">
+                    <img th:src="${post.imageUrl}" th:alt="${post.title}" class="blog-card-image">
+                </a>
                 <div class="blog-card-body">
                     <div class="blog-card-meta">
                         <span class="blog-card-date">
