@@ -54,7 +54,9 @@
                     <h3 class="blog-card-title">
                         <a th:href="@{/blog/{slug}(slug=${post.slug})}" th:text="${post.title}">Post title</a>
                     </h3>
-                    <p class="blog-card-excerpt" th:if="${post.excerpt}" th:text="${post.excerpt}">Excerpt goes here.</p>
+                    <p class="blog-card-excerpt"
+                       th:if="${post.excerpt != null or post.metaDescription != null}"
+                       th:text="${post.excerpt != null ? post.excerpt : post.metaDescription}">Excerpt goes here.</p>
                 </div>
                 <div class="blog-card-footer">
                     <span class="blog-card-author">

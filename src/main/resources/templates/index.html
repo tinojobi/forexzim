@@ -709,6 +709,55 @@
             -->
         </div>
 
+        <!-- Latest from the Blog -->
+        <div class="blog-teaser" th:if="${recentPosts != null and !recentPosts.empty}">
+            <div class="blog-teaser-header">
+                <div style="display:flex;align-items:center;gap:0.875rem;">
+                    <div class="section-icon icon-business">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="section-info">
+                        <div class="section-title">Latest from the Blog</div>
+                        <div class="section-sub">Zimbabwe forex news &amp; analysis</div>
+                    </div>
+                </div>
+                <a th:href="@{/blog}" class="blog-teaser-view-all">
+                    View all <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="blog-teaser-grid">
+                <article th:each="post : ${recentPosts}" class="blog-card">
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">
+                            <span class="blog-card-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span th:text="${#temporals.format(post.publishedAt, 'dd MMM yyyy')}">14 Apr 2026</span>
+                            </span>
+                            <span class="blog-card-read-time">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${post.readTimeMinutes + ' min read'}">5 min read</span>
+                            </span>
+                        </div>
+                        <h3 class="blog-card-title">
+                            <a th:href="@{/blog/{slug}(slug=${post.slug})}" th:text="${post.title}">Post title</a>
+                        </h3>
+                        <p class="blog-card-excerpt"
+                           th:if="${post.excerpt != null or post.metaDescription != null}"
+                           th:text="${post.excerpt != null ? post.excerpt : post.metaDescription}">Excerpt goes here.</p>
+                    </div>
+                    <div class="blog-card-footer">
+                        <span class="blog-card-author">
+                            <i class="fas fa-user-pen"></i>
+                            <span th:text="${post.author}">ZimRate Team</span>
+                        </span>
+                        <a th:href="@{/blog/{slug}(slug=${post.slug})}" class="blog-read-more">
+                            Read more <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </div>
+
         <!-- About rates -->
         <div class="explainer-section">
             <h2 class="explainer-title">Understanding Zimbabwe's Exchange Rates</h2>

@@ -2977,6 +2977,56 @@ footer {
     .blog-card { padding: 1.25rem 1rem; }
 }
 
+/* ─── Homepage blog teaser ───────────────────────────────────────────────────── */
+
+.blog-teaser { margin-bottom: 2rem; }
+
+.blog-teaser-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.blog-teaser-view-all {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--green-700);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s;
+}
+.blog-teaser-view-all:hover { color: var(--green-900); }
+
+.blog-teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.blog-teaser .blog-card { height: 100%; }
+
+.blog-teaser .blog-card-excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .blog-teaser-view-all       { color: #6ee7b7; }
+[data-theme="dark"] .blog-teaser-view-all:hover { color: #a7f3d0; }
+
+@media (max-width: 900px) {
+    .blog-teaser-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .blog-teaser-grid { grid-template-columns: 1fr; }
+}
+
 /* ─── Remittance comparison page ────────────────────────────────────────────── */
 
 .rm-draft-notice {

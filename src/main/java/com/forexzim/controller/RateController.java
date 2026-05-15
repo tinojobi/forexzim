@@ -1,7 +1,9 @@
 package com.forexzim.controller;
 
+import com.forexzim.model.BlogPost;
 import com.forexzim.model.GoldCoinPrice;
 import com.forexzim.model.Rate;
+import com.forexzim.repository.BlogRepository;
 import com.forexzim.service.GoldCoinService;
 import com.forexzim.service.InflationScraperService;
 import com.forexzim.service.RateService;
@@ -64,6 +66,7 @@ public class RateController {
         private final RateService rateService;
         private final GoldCoinService goldCoinService;
         private final InflationScraperService inflationScraperService;
+        private final BlogRepository blogRepository;
 
         @Value("${zimrate.ads.enabled:true}")
         private boolean adsEnabled;
@@ -72,10 +75,12 @@ public class RateController {
         private String baseUrl;
 
         public WebController(RateService rateService, GoldCoinService goldCoinService,
-                             InflationScraperService inflationScraperService) {
+                             InflationScraperService inflationScraperService,
+                             BlogRepository blogRepository) {
             this.rateService = rateService;
             this.goldCoinService = goldCoinService;
             this.inflationScraperService = inflationScraperService;
+            this.blogRepository = blogRepository;
         }
 
         @GetMapping
@@ -296,6 +301,8 @@ public class RateController {
             model.addAttribute("adsEnabled",       adsEnabled);
             goldCoinService.getLatest().ifPresent(g -> model.addAttribute("goldCoin", g));
             inflationScraperService.getLatest().ifPresent(i -> model.addAttribute("inflation", i));
+            model.addAttribute("recentPosts",
+                    blogRepository.findTop3ByStatusOrderByPublishedAtDesc(BlogPost.Status.PUBLISHED));
 
             return "index";
         }
