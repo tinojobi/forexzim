@@ -72,6 +72,20 @@
                 </div>
             </article>
         </div>
+
+        <div class="newsletter-card">
+            <div class="newsletter-card-icon"><i class="fas fa-envelope-open-text"></i></div>
+            <div class="newsletter-card-body">
+                <div class="newsletter-card-title">Get New Articles by Email</div>
+                <div class="newsletter-card-sub">Zimbabwe forex news and analysis, delivered to your inbox when we publish.</div>
+            </div>
+            <form class="newsletter-form" novalidate>
+                <input type="email" class="newsletter-input" placeholder="your@email.com" required autocomplete="email">
+                <button type="submit" class="newsletter-btn">Subscribe</button>
+            </form>
+            <p class="newsletter-note">Free &middot; No spam &middot; Unsubscribe any time</p>
+            <div class="newsletter-feedback"></div>
+        </div>
     </main>
 
     <div th:replace="~{layout :: footer}"></div>
@@ -88,6 +102,34 @@
         if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
         if (toggle) toggle.addEventListener('click', function () {
             applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    (function () {
+        document.querySelectorAll('.newsletter-form').forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var card     = form.closest('.newsletter-card');
+                var feedback = card.querySelector('.newsletter-feedback');
+                var btn      = form.querySelector('.newsletter-btn');
+                var email    = form.querySelector('.newsletter-input').value.trim();
+                if (!email) return;
+                btn.disabled = true;
+                feedback.className = 'newsletter-feedback';
+                fetch('/api/newsletter/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                }).then(function (r) {
+                    return r.json().then(function (d) { return { ok: r.ok, data: d }; });
+                }).then(function (res) {
+                    feedback.className = 'newsletter-feedback ' + (res.ok ? 'success' : 'error');
+                    feedback.textContent = res.data.message || res.data.error || 'Something went wrong.';
+                    if (res.ok) form.reset();
+                }).catch(function () {
+                    feedback.className = 'newsletter-feedback error';
+                    feedback.textContent = 'Network error — please try again.';
+                }).finally(function () { btn.disabled = false; });
+            });
         });
     }());
     </script>

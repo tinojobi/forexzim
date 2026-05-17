@@ -1,6 +1,7 @@
 package com.forexzim.controller;
 
 import com.forexzim.repository.AlertSubscriptionRepository;
+import com.forexzim.service.NewsletterService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class UnsubscribeController {
 
     private final AlertSubscriptionRepository subscriptionRepository;
+    private final NewsletterService newsletterService;
 
     @Value("${zimrate.base-url:https://zimrate.com}")
     private String baseUrl;
 
-    public UnsubscribeController(AlertSubscriptionRepository subscriptionRepository) {
+    public UnsubscribeController(AlertSubscriptionRepository subscriptionRepository,
+                                 NewsletterService newsletterService) {
         this.subscriptionRepository = subscriptionRepository;
+        this.newsletterService = newsletterService;
+    }
+
+    @GetMapping(value = "/unsubscribe/newsletter/{token}", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> unsubscribeNewsletter(@PathVariable String token) {
+        boolean found = newsletterService.unsubscribeByToken(token);
+        return ResponseEntity.ok(found ? newsletterUnsubscribedPage() : notFoundPage());
     }
 
     @GetMapping(value = "/unsubscribe/{id}", produces = MediaType.TEXT_HTML_VALUE)
@@ -29,6 +39,15 @@ public class UnsubscribeController {
         }).orElse(false);
 
         return ResponseEntity.ok(found ? successPage() : notFoundPage());
+    }
+
+    private String newsletterUnsubscribedPage() {
+        return page(
+            "Unsubscribed from ZimRate Blog",
+            "You've been unsubscribed from ZimRate Blog",
+            "You'll no longer receive blog article emails from ZimRate.",
+            "#14532d"
+        );
     }
 
     private String successPage() {
