@@ -3010,48 +3010,60 @@ footer {
 /* ─── Newsletter signup card ─────────────────────────────────────────────────── */
 
 .newsletter-card {
-    background: var(--green-50, #f0fdf4);
-    border: 1.5px solid var(--green-200, #bbf7d0);
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1.5px solid #bbf7d0;
     border-radius: var(--radius-md);
-    padding: 1.75rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex-wrap: wrap;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
     margin-bottom: 2rem;
 }
 
 .newsletter-card-icon {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background: #14532d;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
+    font-size: 1.3rem;
+    margin: 0 auto 1.25rem;
 }
 
-.newsletter-card-body { flex: 1; min-width: 180px; }
-.newsletter-card-title { font-weight: 700; font-size: 1rem; color: var(--gray-900); }
-.newsletter-card-sub   { font-size: 0.875rem; color: var(--gray-600); margin-top: 0.2rem; }
+.newsletter-card-body { margin-bottom: 1.5rem; }
+.newsletter-card-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--gray-900);
+    margin-bottom: 0.4rem;
+}
+.newsletter-card-sub {
+    font-size: 0.925rem;
+    color: var(--gray-600);
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
 
 .newsletter-form {
     display: flex;
     gap: 0.5rem;
+    justify-content: center;
     flex-wrap: wrap;
+    max-width: 460px;
+    margin: 0 auto 0.875rem;
 }
 
 .newsletter-input {
-    border: 1.5px solid var(--green-300, #86efac);
+    flex: 1;
+    min-width: 220px;
+    border: 1.5px solid #86efac;
     border-radius: 8px;
-    padding: 0.55rem 0.875rem;
+    padding: 0.65rem 1rem;
     font-size: 0.9rem;
     font-family: inherit;
     outline: none;
-    min-width: 200px;
     background: #fff;
     color: var(--gray-900);
     transition: border-color 0.15s;
@@ -3063,7 +3075,7 @@ footer {
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 0.55rem 1.25rem;
+    padding: 0.65rem 1.5rem;
     font-size: 0.9rem;
     font-weight: 600;
     font-family: inherit;
@@ -3078,20 +3090,17 @@ footer {
     font-size: 0.78rem;
     color: var(--gray-500);
     margin: 0;
-    width: 100%;
-    padding-top: 0.5rem;
 }
 
 .newsletter-feedback {
     font-size: 0.875rem;
-    width: 100%;
-    padding-top: 0.25rem;
-    min-height: 1.2em;
+    min-height: 1.4em;
+    margin-top: 0.5rem;
 }
 .newsletter-feedback.success { color: #15803d; font-weight: 600; }
 .newsletter-feedback.error   { color: #dc2626; }
 
-[data-theme="dark"] .newsletter-card           { background: #0f2d1a; border-color: #166534; }
+[data-theme="dark"] .newsletter-card           { background: linear-gradient(135deg, #0f2d1a 0%, #14532d22 100%); border-color: #166534; }
 [data-theme="dark"] .newsletter-card-title     { color: #f1f5f9; }
 [data-theme="dark"] .newsletter-card-sub       { color: #94a3b8; }
 [data-theme="dark"] .newsletter-input          { background: #1e293b; border-color: #334155; color: #f1f5f9; }
@@ -3100,9 +3109,10 @@ footer {
 [data-theme="dark"] .newsletter-feedback.success { color: #6ee7b7; }
 
 @media (max-width: 600px) {
-    .newsletter-card { padding: 1.25rem 1rem; gap: 1rem; }
+    .newsletter-card  { padding: 2rem 1.25rem; }
     .newsletter-input { min-width: 0; width: 100%; }
-    .newsletter-form  { width: 100%; }
+    .newsletter-form  { flex-direction: column; }
+    .newsletter-btn   { width: 100%; }
 }
 
 /* ─── Homepage blog teaser ───────────────────────────────────────────────────── */

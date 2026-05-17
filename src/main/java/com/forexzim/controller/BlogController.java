@@ -29,14 +29,22 @@ public class BlogController {
     @Value("${zimrate.base-url:https://zimrate.com}")
     private String baseUrl;
 
+    @Value("${spring.mail.username:}")
+    private String mailUsername;
+
     public BlogController(BlogRepository blogRepository) {
         this.blogRepository = blogRepository;
+    }
+
+    private boolean isEmailEnabled() {
+        return mailUsername != null && !mailUsername.isBlank();
     }
 
     @GetMapping
     public String list(Model model) {
         List<BlogPost> posts = blogRepository.findByStatusOrderByPublishedAtDesc(BlogPost.Status.PUBLISHED);
         model.addAttribute("posts", posts);
+        model.addAttribute("emailEnabled", isEmailEnabled());
         model.addAttribute("structuredData",
             "{\"@context\":\"https://schema.org\",\"@type\":\"Blog\","
             + "\"name\":\"ZimRate Blog\","
@@ -77,6 +85,7 @@ public class BlogController {
         model.addAttribute("post", post);
         model.addAttribute("relatedPosts", related);
         model.addAttribute("isPreview", isPreview);
+        model.addAttribute("emailEnabled", isEmailEnabled());
         model.addAttribute("structuredData", buildPostJsonLd(post));
         model.addAttribute("breadcrumbData", buildBreadcrumbJsonLd(post));
         if (post.getFaqJson() != null) {
@@ -106,9 +115,14 @@ public class BlogController {
                 : "";
         String title        = post.getTitle().replace("\"", "\\\"");
 
+        String imageClause = post.getImageUrl() != null
+                ? "\"image\":\"" + post.getImageUrl() + "\","
+                : "";
+
         return "{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\","
             + "\"headline\":\"" + title + "\","
             + "\"description\":\"" + description + "\","
+            + imageClause
             + "\"author\":{\"@type\":\"Organization\",\"name\":\"" + post.getAuthor() + "\"},"
             + "\"datePublished\":\"" + publishedIso + "\","
             + "\"dateModified\":\"" + modifiedIso + "\","

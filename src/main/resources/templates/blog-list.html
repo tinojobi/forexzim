@@ -73,7 +73,7 @@
             </article>
         </div>
 
-        <div class="newsletter-card">
+        <div class="newsletter-card" th:if="${emailEnabled}">
             <div class="newsletter-card-icon"><i class="fas fa-envelope-open-text"></i></div>
             <div class="newsletter-card-body">
                 <div class="newsletter-card-title">Get New Articles by Email</div>

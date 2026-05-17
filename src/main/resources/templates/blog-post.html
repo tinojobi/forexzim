@@ -79,7 +79,7 @@
 
         </article>
 
-        <div class="newsletter-card">
+        <div class="newsletter-card" th:if="${emailEnabled}">
             <div class="newsletter-card-icon"><i class="fas fa-envelope-open-text"></i></div>
             <div class="newsletter-card-body">
                 <div class="newsletter-card-title">Get New Articles by Email</div>
@@ -114,7 +114,9 @@
                         <h3 class="blog-card-title">
                             <a th:href="@{/blog/{slug}(slug=${rp.slug})}" th:text="${rp.title}"></a>
                         </h3>
-                        <p th:if="${rp.excerpt}" class="blog-card-excerpt" th:text="${rp.excerpt}"></p>
+                        <p class="blog-card-excerpt"
+                           th:if="${rp.excerpt != null or rp.metaDescription != null}"
+                           th:text="${rp.excerpt != null ? rp.excerpt : rp.metaDescription}"></p>
                         <div class="blog-card-footer">
                             <a th:href="@{/blog/{slug}(slug=${rp.slug})}" class="blog-card-read-more">
                                 Read more <i class="fas fa-arrow-right"></i>

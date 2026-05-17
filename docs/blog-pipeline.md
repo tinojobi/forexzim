@@ -553,7 +553,7 @@ Before calling PATCH to publish, verify:
 - [ ] No AI writing patterns (check humanizer list)
 - [ ] At least 2 internal links to zimrate.com pages
 - [ ] Meta description is 120-160 characters
-- [ ] Title is clear and specific (50-80 chars)
+- [ ] Title is under 70 characters (X/Twitter truncates share previews at ~70 chars)
 - [ ] Excerpt summarizes the article in one sentence (under 500 chars)
 - [ ] Content is HTML (not markdown)
 - [ ] Disclaimer footer is present
