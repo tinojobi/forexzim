@@ -6,6 +6,8 @@ import com.forexzim.model.BlogPost;
 import com.forexzim.repository.BlogRepository;
 import com.forexzim.service.TelegramService;
 import jakarta.validation.Valid;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +29,9 @@ public class BlogApiController {
     @Value("${zimrate.admin.token:}")
     private String adminToken;
 
-    private static final Pattern SCRIPT_TAG = Pattern.compile(
-            "<script[^>]*>.*?</script>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+    private static final Safelist CONTENT_SAFELIST = Safelist.relaxed()
+            .addTags("figure", "figcaption")
+            .preserveRelativeLinks(true);
     private static final Pattern INTERNAL_LINK = Pattern.compile(
             "href=[\"'](/[^\"']*|https://(www\\.)?zimrate\\.com[^\"']*)[\"']", Pattern.CASE_INSENSITIVE);
     private static final Pattern BANNED_DASHES = Pattern.compile("[—–]");
@@ -45,16 +48,24 @@ public class BlogApiController {
         this.telegramService = telegramService;
     }
 
-    // ── Read endpoints (public) ───────────────────────────────────────────────
+    // ── Read endpoints ────────────────────────────────────────────────────────
 
     /**
      * List all posts — summary view. Supports ?status=DRAFT|PUBLISHED|REJECTED|ALL and ?q=keyword.
-     * Used by agents before writing to check existing coverage.
+     * PUBLISHED listings are public; any other status requires X-Admin-Token.
      */
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> list(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token,
             @RequestParam(defaultValue = "ALL") String status,
             @RequestParam(required = false) String q) {
+
+        boolean isPublicRequest = "PUBLISHED".equalsIgnoreCase(status);
+        if (!isPublicRequest) {
+            ResponseEntity<?> auth = checkAuth(token);
+            if (auth != null) return ResponseEntity.status(auth.getStatusCode())
+                    .body(List.of());
+        }
 
         List<BlogPost> posts;
         if ("DRAFT".equalsIgnoreCase(status)) {
@@ -84,13 +95,24 @@ public class BlogApiController {
         return ResponseEntity.ok(posts.stream().map(this::summarise).toList());
     }
 
-    /** Get a single post by slug — full content included. */
+    /**
+     * Get a single post by slug — full content included.
+     * Published posts are public; drafts and rejected posts require X-Admin-Token.
+     */
     @GetMapping("/{slug}")
-    public ResponseEntity<?> getBySlug(@PathVariable String slug) {
-        return blogRepository.findBySlug(slug)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(error("No post found with slug: " + slug)));
+    public ResponseEntity<?> getBySlug(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token,
+            @PathVariable String slug) {
+        Optional<BlogPost> found = blogRepository.findBySlug(slug);
+        if (found.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error("No post found with slug: " + slug));
+        }
+        BlogPost post = found.get();
+        if (post.getStatus() != BlogPost.Status.PUBLISHED) {
+            ResponseEntity<?> auth = checkAuth(token);
+            if (auth != null) return auth;
+        }
+        return ResponseEntity.ok(post);
     }
 
     // ── Write endpoints (require X-Admin-Token) ───────────────────────────────
@@ -341,7 +363,7 @@ public class BlogApiController {
     }
 
     private String sanitiseContent(String content) {
-        return SCRIPT_TAG.matcher(content).replaceAll("");
+        return Jsoup.clean(content, CONTENT_SAFELIST);
     }
 
     private String resolveSlug(String requested, String title) {

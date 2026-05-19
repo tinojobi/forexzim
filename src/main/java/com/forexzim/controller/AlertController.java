@@ -4,6 +4,7 @@ import com.forexzim.model.AlertSubscription;
 import com.forexzim.repository.AlertSubscriptionRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -53,18 +54,28 @@ public class AlertController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> unsubscribe(@PathVariable Long id) {
+    public ResponseEntity<Void> unsubscribe(
+            @PathVariable Long id,
+            @RequestParam @Email @NotBlank String email) {
         subscriptionRepository.findById(id).ifPresent(sub -> {
-            sub.setActive(false);
-            subscriptionRepository.save(sub);
+            if (sub.getEmail().equalsIgnoreCase(email.trim())) {
+                sub.setActive(false);
+                subscriptionRepository.save(sub);
+            }
         });
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/reactivate")
-    public ResponseEntity<?> reactivate(@PathVariable Long id) {
+    public ResponseEntity<?> reactivate(
+            @PathVariable Long id,
+            @RequestParam @Email @NotBlank String email) {
         return subscriptionRepository.findById(id)
                 .map(sub -> {
+                    if (!sub.getEmail().equalsIgnoreCase(email.trim())) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                .<Object>body(Map.of("error", "Email does not match this subscription."));
+                    }
                     sub.setActive(true);
                     sub.setLastNotifiedAt(null);
                     return ResponseEntity.ok((Object) subscriptionRepository.save(sub));
