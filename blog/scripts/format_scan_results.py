@@ -46,16 +46,23 @@ def story_message(idx: int, story: dict[str, Any]) -> str:
     angle = story.get("angle", "Broader economic implications for Zimbabwe")
     facts = story.get("key_facts") or story.get("description") or "No summary available."
     novelty = story.get("novelty_label", "New story")
+    readiness = story.get("draft_readiness", "Needs verification")
+    blockers = story.get("readiness_blockers") or []
+    next_step = story.get("next_step", "Verify source evidence before drafting.")
     link = story.get("link", "")
+    blocker_text = "; ".join(blockers) if blockers else "None"
     return (
         f"[{idx}] SCORE: {score}/100\n"
+        f"READINESS: {readiness}\n"
         f"HEADLINE: {headline}\n"
         f"SOURCES ({story.get('num_sources', len(story.get('sources') or []))}): {source_line(story)}\n"
         f"TOPIC: {topic}\n"
         f"RECENCY: {recency}\n"
         f"ANGLE: {angle}\n"
         f"KEY FACTS: {facts}\n"
-        f"NOVELTY: {novelty}"
+        f"NOVELTY: {novelty}\n"
+        f"BLOCKERS: {blocker_text}\n"
+        f"NEXT STEP: {next_step}"
         + (f"\nLINK: {link}" if link else "")
     )
 
@@ -70,6 +77,13 @@ def build_messages(data: dict[str, Any], top_n: int) -> list[dict[str, str]]:
         f"Clusters: {data.get('clusters', 0)}\n"
         f"Top stories: {len(stories)}"
     )
+    filter_stats = data.get("filter_stats") or {}
+    if filter_stats:
+        header += (
+            f"\nFiltered: {filter_stats.get('old', 0)} old, "
+            f"{filter_stats.get('non_economic', 0)} non-economic, "
+            f"{filter_stats.get('no_date', 0)} missing date"
+        )
     messages = [{"kind": "header", "text": header}]
     for idx, story in enumerate(stories, 1):
         messages.append({"kind": f"story_{idx}", "text": story_message(idx, story)})

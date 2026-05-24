@@ -28,8 +28,21 @@ except:
 PUBLISHED_KEYWORDS = [t["primary_keyword"].lower() for t in published_topics]
 PUBLISHED_SLUGS = [t.get("slug", "") for t in published_topics]
 
+SOURCE_QUALITY = {
+    "iHarare": {"tier": "primary-news", "reliability": "medium", "base": 0.78},
+    "ZimLive": {"tier": "primary-news", "reliability": "medium", "base": 0.78},
+    "New Zimbabwe": {"tier": "primary-news", "reliability": "medium", "base": 0.76},
+    "Zimbabwe Mail": {"tier": "primary-news", "reliability": "medium", "base": 0.70},
+    "NewsDay": {"tier": "primary-news", "reliability": "high", "base": 0.84},
+    "Herald": {"tier": "primary-news", "reliability": "high", "base": 0.84},
+    "Zimbabwe Independent": {"tier": "primary-news", "reliability": "high", "base": 0.84},
+    "Southern Eye": {"tier": "primary-news", "reliability": "medium", "base": 0.74},
+    "The Standard": {"tier": "primary-news", "reliability": "high", "base": 0.82},
+}
+
 all_articles = []
 source_stats = {}
+filter_stats = {"no_date": 0, "old": 0, "non_economic": 0, "economic": 0}
 
 
 def fetch_url(url, timeout=15):
@@ -454,7 +467,8 @@ EXCLUDE_PATTERNS = [
     "celebrity", "gossip", "murder", "robbery", "court", "trial", "rape",
     "football", "soccer", "church", "prophet", "relationship", "wedding",
     "accident", "dies", "killed", "arrested", "music", "movie", "psl",
-    "golden boot", "caps united", "zifa", "stadium", "bangladesh",
+    "golden boot", "goldenboot", "transfer window", "premiership",
+    "caps united", "zifa", "stadium", "bangladesh", "anderlecht", "motherwell",
     # Crime/court stories often contain fee, tax, dollar or gold words but are not
     # useful ZimRate economic coverage unless the policy/business angle is central.
     "behind bars", "police officer", "accomplices", "fake release fees",
@@ -599,6 +613,64 @@ def novelty_score(title, desc=""):
     return 8
 
 
+def article_quality(article):
+    """Classify source quality and retrieval method for draft-readiness scoring."""
+    source = article.get("source", "")
+    meta = SOURCE_QUALITY.get(source, {"tier": "unknown", "reliability": "unknown", "base": 0.60})
+    method = "Google News" if str(article.get("source_url", "")).startswith("Google News") else "RSS"
+    score = meta["base"]
+    if method == "Google News":
+        score -= 0.10
+    if article.get("description"):
+        score += 0.03
+    score = max(0.30, min(1.00, score))
+    return {
+        "source": source,
+        "tier": meta["tier"],
+        "reliability": meta["reliability"],
+        "method": method,
+        "quality_score": round(score, 2),
+    }
+
+
+def readiness_for_story(story):
+    """Assign editorial readiness labels before Tino picks a story to draft."""
+    score = story.get("total_score", 0)
+    num_sources = story.get("num_sources", 0)
+    novelty = story.get("novelty_score", 0)
+    topic = story.get("topic_score", 0)
+    avg_quality = story.get("avg_source_quality", 0)
+    uses_google_only = story.get("google_news_only", False)
+
+    blockers = []
+    if novelty <= 3:
+        blockers.append("related topic was covered recently")
+    if num_sources < 2:
+        blockers.append("single-source candidate")
+    if uses_google_only:
+        blockers.append("Google News link requires source-page verification")
+    if avg_quality < 0.70:
+        blockers.append("source quality is below preferred threshold")
+
+    if novelty <= 3:
+        label = "Monitor only"
+    elif score >= 78 and topic >= 21 and (num_sources >= 2 or avg_quality >= 0.82):
+        label = "Ready to draft"
+    elif score >= 65:
+        label = "Needs verification"
+    else:
+        label = "Monitor only"
+
+    if label == "Ready to draft":
+        next_step = "Proceed to Phase A research and verify key claims."
+    elif label == "Needs verification":
+        next_step = "Find corroborating official or independent sources before drafting."
+    else:
+        next_step = "Track only unless a stronger source or new angle appears."
+
+    return label, blockers, next_step
+
+
 def cluster_key(title):
     """Generate a cluster key for grouping similar articles."""
     # Simple word-based clustering
@@ -622,13 +694,18 @@ cluster_map = defaultdict(list)
 for art in all_articles:
     # Check if within 24h window
     if art["pub_date"] is None:
+        filter_stats["no_date"] += 1
         continue
     if art["pub_date"] < WINDOW_START:
+        filter_stats["old"] += 1
         continue
     
     # Check if economic
     if not is_economic(art["title"], art.get("description", "")):
+        filter_stats["non_economic"] += 1
         continue
+    filter_stats["economic"] += 1
+    art["_quality"] = article_quality(art)
     
     # Score
     rs = recency_score(art["pub_date"])
@@ -697,6 +774,9 @@ for ckey, arts in sorted(cluster_map.items(), key=lambda x: -max(a["_recency"] f
     # Unique sources in cluster
     unique_sources = set(a["source"] for a in arts)
     num_sources = len(unique_sources)
+    quality_details = [a.get("_quality") or article_quality(a) for a in arts]
+    avg_source_quality = round(sum(q["quality_score"] for q in quality_details) / len(quality_details), 2)
+    google_news_only = all(q["method"] == "Google News" for q in quality_details)
     
     if num_sources >= 3:
         source_s = 27 + min(3, num_sources - 2)
@@ -731,6 +811,9 @@ for ckey, arts in sorted(cluster_map.items(), key=lambda x: -max(a["_recency"] f
         "search_score": best["_search"],
         "novelty_score": best["_novelty"],
         "source_score": source_s,
+        "avg_source_quality": avg_source_quality,
+        "google_news_only": google_news_only,
+        "quality_detail": quality_details,
         "total_score": total_score,
         "time_ago": best["_time_ago"],
         "pub_date": best["pub_date"],
@@ -761,6 +844,8 @@ for i, s in enumerate(top5):
 
 def categorize_topic(title, desc=""):
     text = (title + " " + desc).lower()
+    if any(w in text for w in ["counterfeit", "fake goods", "fake products", "smuggled goods", "consumer protection", "standards law"]):
+        return "Consumer Protection & Trade"
     if any(w in text for w in ["zig", "zimbabwe gold", "gold reserve", "rbz", "reserve bank"]):
         return "ZiG / Monetary Policy"
     if any(w in text for w in ["mining", "mineral", "platinum", "lithium", "chrome", "diamond"]):
@@ -814,6 +899,8 @@ def suggest_angle(title, desc=""):
     text = (title + " " + desc).lower()
     angles = []
     
+    if any(w in text for w in ["counterfeit", "fake goods", "fake products", "smuggled goods", "consumer protection", "standards law"]):
+        return "Consumer protection and formal retail standards"
     if any(w in text for w in ["zig", "gold", "rbz"]):
         angles.append("ZiG stability and gold backing analysis")
     if any(w in text for w in ["mining", "mineral"]):
@@ -842,12 +929,17 @@ for s in top5:
     s["novelty_label"] = novelty_label(s["headline"], s.get("description", ""))
     s["angle"] = suggest_angle(s["headline"], s.get("description", ""))
     s["key_facts"] = f"Headline: {s['headline']}. Covered by {s['num_sources']} source(s). {s['cluster_size']} article(s) in cluster."
+    label, blockers, next_step = readiness_for_story(s)
+    s["draft_readiness"] = label
+    s["readiness_blockers"] = blockers
+    s["next_step"] = next_step
 
 # Save results for pipeline
 output = {
     "scan_time": NOW.isoformat(),
     "window_start": WINDOW_START.isoformat(),
     "source_stats": source_stats,
+    "filter_stats": filter_stats,
     "total_articles": len(all_articles),
     "economic_articles": len(filtered),
     "clusters": len(clustered),
