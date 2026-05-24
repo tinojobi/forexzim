@@ -40,3 +40,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Generated artifacts ###
+__pycache__/
+*.py[cod]
+
+### Runtime logs/state ###
+*.log
+monitor/.health_state
+*.bak.*

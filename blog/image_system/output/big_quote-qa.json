@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "layout": "big_quote",
+  "article_type": "macro_forecast",
+  "issues": [],
+  "warnings": [],
+  "text_boxes": [
+    {
+      "key": "masthead",
+      "text": "Z I M R A T E   I N S I G H T S",
+      "bbox": [
+        130.0,
+        1071.0,
+        1103.5,
+        1130.0
+      ]
+    },
+    {
+      "key": "issue",
+      "text": "MAY 2026 \u00b7 ISSUE 01",
+      "bbox": [
+        1459.9,
+        1074.0,
+        1980.0,
+        1122.0
+      ]
+    },
+    {
+      "key": "eyebrow",
+      "text": "ZIMBABWE \u00b7 2026 OUTLOOK",
+      "bbox": [
+        135.0,
+        944.0,
+        966.1,
+        996.0
+      ]
+    },
+    {
+      "key": "hero_number",
+      "text": "10",
+      "bbox": [
+        145.0,
+        720.5,
+        392.5,
+        909.5
+      ]
+    },
+    {
+      "key": "hero_unit",
+      "text": "%",
+      "bbox": [
+        610.0,
+        835.0,
+        689.2,
+        915.0
+      ]
+    },
+    {
+      "key": "pull_quote",
+      "text": "\u201cGrowth is easy.\nStability is.\u201d",
+      "bbox": [
+        250.0,
+        487.4,
+        1254.1,
+        732.6
+      ]
+    },
+    {
+      "key": "headline_context",
+      "text": "Upper growth\nforecast after.",
+      "bbox": [
+        1510.0,
+        296.5,
+        1866.6,
+        403.5
+      ]
+    },
+    {
+      "key": "stat_1_label",
+      "text": "MIN FORECAST",
+      "bbox": [
+        980.0,
+        225.0,
+        1262.2,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_1_value",
+      "text": "8.5%",
+      "bbox": [
+        980.0,
+        93.0,
+        1220.1,
+        183.0
+      ]
+    },
+    {
+      "key": "stat_2_label",
+      "text": "EARLIER VIEW",
+      "bbox": [
+        1280.0,
+        222.0,
+        1546.8,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_2_value",
+      "text": "6.6%",
+      "bbox": [
+        1280.0,
+        89.0,
+        1520.4,
+        179.0
+      ]
+    },
+    {
+      "key": "stat_3_label",
+      "text": "INFLATION",
+      "bbox": [
+        1560.0,
+        225.0,
+        1759.6,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_3_value",
+      "text": "4.1%",
+      "bbox": [
+        1560.0,
+        93.0,
+        1800.0,
+        183.0
+      ]
+    },
+    {
+      "key": "stat_4_label",
+      "text": "CURRENT ACCT",
+      "bbox": [
+        1850.0,
+        222.0,
+        2136.0,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_4_value",
+      "text": "3.8% GDP",
+      "bbox": [
+        1850.0,
+        92.0,
+        2249.0,
+        167.8
+      ]
+    },
+    {
+      "key": "wordmark",
+      "text": "zimrate.com",
+      "bbox": [
+        1959.6,
+        39.0,
+        2220.0,
+        81.0
+      ]
+    }
+  ],
+  "style_checks": {
+    "no_cards_or_grid": true,
+    "warm_restrained_palette": true,
+    "paper_grain": true,
+    "layout_rotation_enabled": true
+  },
+  "layout_reason": "Selected 'big_quote' from rotation pool for article_type='macro_forecast'.",
+  "output_png": "/opt/forexzim/blog/image_system/output/big_quote.png"
+}

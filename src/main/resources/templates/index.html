@@ -20,7 +20,7 @@
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
 <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -824,7 +824,7 @@
                 <form id="alertForm" novalidate>
                     <div class="form-group">
                         <label for="alertEmail">Email address</label>
-                        <input type="email" id="alertEmail" placeholder="you@example.com" required autocomplete="email">
+                        <input type="email" id="alertEmail" placeholder="you@example.com" required autocomplete="email" aria-describedby="alertFeedback">
                     </div>
                     <div class="form-group">
                         <label for="alertPair">Currency pair</label>
@@ -853,14 +853,15 @@
                         <i class="fas fa-bell"></i> Set alert
                     </button>
                 </form>
-                <div class="alert-feedback" id="alertFeedback"></div>
+                <div class="alert-feedback" id="alertFeedback" role="status" aria-live="polite"></div>
             </div>
 
             <!-- Manage tab -->
             <div class="modal-tab-panel" id="tab-manage">
                 <p class="modal-desc">Enter the email you subscribed with to view or manage your alerts.</p>
                 <form class="manage-search" id="manageSearchForm">
-                    <input type="email" id="manageEmail" placeholder="your@email.com" autocomplete="email" required>
+                    <label class="sr-only" for="manageEmail">Email address used for alerts</label>
+                    <input type="email" id="manageEmail" placeholder="your@email.com" autocomplete="email" required aria-label="Email address used for alerts">
                     <button type="submit" class="btn-search">Look up</button>
                 </form>
                 <div class="alert-list" id="alertList"></div>
@@ -876,8 +877,9 @@
             <div class="alert-capture-sub">We'll email you when USD/ZiG moves significantly.</div>
         </div>
         <form class="alert-capture-form" id="alertCaptureForm" novalidate>
+            <label class="sr-only" for="alertCaptureEmail">Email address for rate alerts</label>
             <input type="email" id="alertCaptureEmail" class="alert-capture-input"
-                   placeholder="your@email.com" required autocomplete="email">
+                   placeholder="your@email.com" required autocomplete="email" aria-label="Email address for rate alerts">
             <button type="submit" class="alert-capture-btn">Set Alert</button>
         </form>
         <p class="alert-capture-note">Free &middot; No spam &middot; Unsubscribe any time</p>
@@ -1336,14 +1338,21 @@
                 var threshVal = parseFloat(document.getElementById('alertThreshold').value);
 
                 // Client-side validation
+                var errors = [];
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-                    feedback.className = 'alert-feedback error';
-                    feedback.textContent = 'Please enter a valid email address.';
-                    return;
+                    errors.push('Please enter a valid email address.');
                 }
                 if (isNaN(threshVal) || threshVal <= 0) {
+                    errors.push('Threshold must be a positive number greater than 0.');
+                }
+                if (errors.length) {
                     feedback.className = 'alert-feedback error';
-                    feedback.textContent = 'Threshold must be a positive number greater than 0.';
+                    feedback.textContent = errors.join(' ');
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                        document.getElementById('alertEmail').focus();
+                    } else {
+                        document.getElementById('alertThreshold').focus();
+                    }
                     return;
                 }
 

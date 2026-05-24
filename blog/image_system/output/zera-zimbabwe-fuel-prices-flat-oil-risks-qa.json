@@ -1,0 +1,167 @@
+{
+  "passed": true,
+  "layout": "diagonal",
+  "article_type": "rate_update",
+  "issues": [],
+  "warnings": [],
+  "text_boxes": [
+    {
+      "key": "masthead",
+      "text": "Z I M R A T E   I N S I G H T S",
+      "bbox": [
+        130.0,
+        1071.0,
+        1103.5,
+        1130.0
+      ]
+    },
+    {
+      "key": "issue",
+      "text": "MAY 2026 \u00b7 FUEL WATCH",
+      "bbox": [
+        1367.4,
+        1074.0,
+        1980.0,
+        1122.0
+      ]
+    },
+    {
+      "key": "eyebrow",
+      "text": "ZIMBABWE FUEL PRICES",
+      "bbox": [
+        135.0,
+        944.0,
+        854.9,
+        996.0
+      ]
+    },
+    {
+      "key": "hero_number",
+      "text": "$2.09",
+      "bbox": [
+        150.0,
+        401.0,
+        1382.6,
+        819.0
+      ]
+    },
+    {
+      "key": "headline_context",
+      "text": "Diesel per\nlitre, held flat\nwhile oil risks.",
+      "bbox": [
+        1350.0,
+        649.1,
+        1921.6,
+        890.9
+      ]
+    },
+    {
+      "key": "pull_quote",
+      "text": "\u201cA flat pump price is\nrelief, not immunity.\u201d",
+      "bbox": [
+        1350.0,
+        436.9,
+        2213.6,
+        603.1
+      ]
+    },
+    {
+      "key": "stat_1_label",
+      "text": "DIESEL 50",
+      "bbox": [
+        140.0,
+        225.0,
+        329.5,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_1_value",
+      "text": "$2.09",
+      "bbox": [
+        140.0,
+        84.0,
+        522.1,
+        213.0
+      ]
+    },
+    {
+      "key": "stat_2_label",
+      "text": "BLEND E20",
+      "bbox": [
+        660.0,
+        222.0,
+        866.5,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_2_value",
+      "text": "$2.08",
+      "bbox": [
+        660.0,
+        80.0,
+        1042.1,
+        209.0
+      ]
+    },
+    {
+      "key": "stat_3_label",
+      "text": "STOCK COVER",
+      "bbox": [
+        1165.0,
+        225.0,
+        1428.2,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_3_value",
+      "text": "3+ mo",
+      "bbox": [
+        1165.0,
+        84.0,
+        1610.8,
+        213.0
+      ]
+    },
+    {
+      "key": "stat_4_label",
+      "text": "",
+      "bbox": [
+        1640.0,
+        229.0,
+        1640.0,
+        229.0
+      ]
+    },
+    {
+      "key": "stat_4_value",
+      "text": "",
+      "bbox": [
+        1640.0,
+        108.0,
+        1640.0,
+        108.0
+      ]
+    },
+    {
+      "key": "wordmark",
+      "text": "zimrate.com",
+      "bbox": [
+        1959.6,
+        39.0,
+        2220.0,
+        81.0
+      ]
+    }
+  ],
+  "style_checks": {
+    "no_cards_or_grid": true,
+    "warm_restrained_palette": true,
+    "paper_grain": true,
+    "layout_rotation_enabled": true
+  },
+  "layout_reason": "Selected 'diagonal' from rotation pool for article_type='rate_update'.",
+  "output_png": "/opt/forexzim/blog/image_system/output/zera-zimbabwe-fuel-prices-flat-oil-risks-editorial.png"
+}

@@ -44,4 +44,7 @@ public class BlogPostRequest {
 
     /** Optional: URL of a featured image for OG/social sharing. */
     private String imageUrl;
+
+    /** Optional: URL used only for OG/Twitter previews. Falls back to imageUrl. */
+    private String socialImageUrl;
 }

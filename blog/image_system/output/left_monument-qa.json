@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "layout": "left_monument",
+  "article_type": "macro_forecast",
+  "issues": [],
+  "warnings": [],
+  "text_boxes": [
+    {
+      "key": "masthead",
+      "text": "Z I M R A T E   I N S I G H T S",
+      "bbox": [
+        130.0,
+        1071.0,
+        1103.5,
+        1130.0
+      ]
+    },
+    {
+      "key": "issue",
+      "text": "MAY 2026 \u00b7 ISSUE 01",
+      "bbox": [
+        1459.9,
+        1074.0,
+        1980.0,
+        1122.0
+      ]
+    },
+    {
+      "key": "eyebrow",
+      "text": "ZIMBABWE \u00b7 2026 OUTLOOK",
+      "bbox": [
+        135.0,
+        958.0,
+        1009.1,
+        1012.0
+      ]
+    },
+    {
+      "key": "hero_number",
+      "text": "10",
+      "bbox": [
+        130.0,
+        287.0,
+        978.2,
+        933.0
+      ]
+    },
+    {
+      "key": "hero_unit",
+      "text": "%",
+      "bbox": [
+        1135.0,
+        727.5,
+        1335.6,
+        932.5
+      ]
+    },
+    {
+      "key": "headline_context",
+      "text": "Upper growth\nforecast after\nthe IMF.",
+      "bbox": [
+        1400.0,
+        640.2,
+        1973.9,
+        889.8
+      ]
+    },
+    {
+      "key": "pull_quote",
+      "text": "\u201cGrowth is easy.\nStability is harder.\u201d",
+      "bbox": [
+        1400.0,
+        346.4,
+        2194.2,
+        513.6
+      ]
+    },
+    {
+      "key": "stat_1_label",
+      "text": "MIN FORECAST",
+      "bbox": [
+        140.0,
+        225.0,
+        422.2,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_1_value",
+      "text": "8.5%",
+      "bbox": [
+        140.0,
+        84.0,
+        479.0,
+        213.0
+      ]
+    },
+    {
+      "key": "stat_2_label",
+      "text": "EARLIER VIEW",
+      "bbox": [
+        660.0,
+        222.0,
+        926.8,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_2_value",
+      "text": "6.6%",
+      "bbox": [
+        660.0,
+        80.0,
+        998.8,
+        209.0
+      ]
+    },
+    {
+      "key": "stat_3_label",
+      "text": "INFLATION",
+      "bbox": [
+        1165.0,
+        225.0,
+        1364.6,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_3_value",
+      "text": "4.1%",
+      "bbox": [
+        1165.0,
+        84.0,
+        1504.1,
+        213.0
+      ]
+    },
+    {
+      "key": "stat_4_label",
+      "text": "CURRENT ACCT",
+      "bbox": [
+        1640.0,
+        222.0,
+        1926.0,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_4_value",
+      "text": "3.8% GDP",
+      "bbox": [
+        1640.0,
+        87.0,
+        2153.0,
+        182.8
+      ]
+    },
+    {
+      "key": "wordmark",
+      "text": "zimrate.com",
+      "bbox": [
+        1959.6,
+        39.0,
+        2220.0,
+        81.0
+      ]
+    }
+  ],
+  "style_checks": {
+    "no_cards_or_grid": true,
+    "warm_restrained_palette": true,
+    "paper_grain": true,
+    "layout_rotation_enabled": true
+  },
+  "layout_reason": "Selected 'left_monument' from rotation pool for article_type='macro_forecast'.",
+  "output_png": "/opt/forexzim/blog/image_system/output/left_monument.png"
+}

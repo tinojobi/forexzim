@@ -1,0 +1,27 @@
+<p>Zimbabwe is talking up its strongest growth outlook in more than a decade, after officials linked a new IMF staff-monitored programme to a sharply higher 2026 GDP forecast. Treasury Permanent Secretary George Guvamatanga said the economy could grow by at least 8.5% in 2026, with the range possibly reaching 9% to 10% (<a href="https://www.newzimbabwe.com/zimbabwe-expects-fastest-growth-in-14-years-after-imf-deal/">New Zimbabwe</a>). If that materialises, it would be Zimbabwe's fastest expansion in about 14 years (<a href="https://www.newzimbabwe.com/zimbabwe-expects-fastest-growth-in-14-years-after-imf-deal/">New Zimbabwe</a>).</p>
+
+<p>The numbers are a big jump from earlier expectations. New Zimbabwe, citing Bloomberg, reported that the new outlook is well above a previous 6.6% projection and almost double the 5% pace associated with the IMF's earlier view for the year (<a href="https://www.newzimbabwe.com/zimbabwe-expects-fastest-growth-in-14-years-after-imf-deal/">New Zimbabwe</a>). The Herald also reported Guvamatanga's minimum 8.5% forecast and his view that growth could move into the 9% to 10% range (<a href="https://www.heraldonline.co.zw/2026-growth-forecast-jumps-to-8-5-percent/">Herald</a>).</p>
+
+<h2>Why the IMF programme matters</h2>
+
+<p>The IMF says staff-monitored programmes are informal arrangements where IMF staff monitor a country's economic programme, without endorsement by the IMF Executive Board (<a href="https://www.imf.org/en/news/articles/2026/04/16/pr-26122-zimbabwe-imf-management-approves-a-staff-monitored-program">IMF</a>). In plain terms, this is not a cash bailout. It is closer to a credibility test, and Zimbabwe needs credibility because arrears, policy slippages and weak access to external finance have weighed on the economy for years.</p>
+
+<p>NewsDay reported that the 10-month programme is meant to consolidate stabilisation gains, strengthen fiscal and monetary policy frameworks, improve the foreign exchange market, and advance governance reforms (<a href="https://www.newsday.co.zw/business/article/200051310/zimbabwe-secures-imf-staff-level-agreement-on-10-month-smp">NewsDay</a>). That matters for anyone checking rates on <a href="https://zimrate.com/converter">ZimRate's currency converter</a>, because confidence in the ZiG depends less on speeches and more on whether monetary policy, fiscal spending and foreign exchange supply move in the same direction.</p>
+
+<h2>Growth is good, but inflation is the real test</h2>
+
+<p>The IMF-linked comments reported by NewsDay said inflation fell to 4.1% in January 2026, helped by exchange rate stability and tight monetary conditions (<a href="https://www.newsday.co.zw/business/article/200051310/zimbabwe-secures-imf-staff-level-agreement-on-10-month-smp">NewsDay</a>). The same report said 2026 inflation was expected to remain in single digits if tight policy and a more stable foreign exchange market were maintained (<a href="https://www.newsday.co.zw/business/article/200051310/zimbabwe-secures-imf-staff-level-agreement-on-10-month-smp">NewsDay</a>).</p>
+
+<p>That is the part households and businesses will watch closely. A high GDP forecast looks impressive on paper, but it only changes daily life if prices stop running ahead of incomes and if the exchange rate becomes predictable. Anyone who prices stock in US dollars but pays some costs in ZiG already knows the awkward arithmetic.</p>
+
+<h2>Mining and external balances are doing heavy lifting</h2>
+
+<p>Mining appears central to the optimistic forecast. The Herald reported that mining contributes about 14.5% of real GDP and more than 70% of export earnings (<a href="https://www.heraldonline.co.zw/2026-growth-forecast-jumps-to-8-5-percent/">Herald</a>). NewsDay also reported that growth has been supported by agriculture and mining, including high gold prices and recovering platinum and lithium output (<a href="https://www.newsday.co.zw/business/article/200051310/zimbabwe-secures-imf-staff-level-agreement-on-10-month-smp">NewsDay</a>).</p>
+
+<p>External accounts also matter. NewsDay reported a projected current account surplus of about 3.8% of GDP, while public debt stood at US$23.4 billion as of September 2025 according to Treasury figures it cited (<a href="https://www.newsday.co.zw/business/article/200051310/zimbabwe-secures-imf-staff-level-agreement-on-10-month-smp">NewsDay</a>). Strong exports can support currency stability, but heavy debt and arrears still limit the room for policy mistakes.</p>
+
+<h2>What to watch next</h2>
+
+<p>For ZimRate readers, the key question is not just whether Zimbabwe reaches 8.5% growth in 2026 (<a href="https://www.heraldonline.co.zw/2026-growth-forecast-jumps-to-8-5-percent/">Herald</a>). It is whether that growth comes with stable prices, a credible ZiG market, and enough foreign currency liquidity to narrow the gap between official promises and street-level reality. You can track the day-to-day exchange-rate side on <a href="https://zimrate.com/history">ZimRate's rate history</a> and compare conversions on <a href="https://zimrate.com">ZimRate</a>.</p>
+
+<p><em>This article is for informational purposes only and does not constitute financial advice.</em></p>

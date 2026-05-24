@@ -1,0 +1,24 @@
+{
+  "article": {
+    "title": "World Bank lifts Zimbabwe 2026 growth forecast to 5%",
+    "slug": "world-bank-zimbabwe-2026-growth-forecast"
+  },
+  "image": {
+    "layout": "left_monument",
+    "article_type": "macro_forecast",
+    "masthead": "Z I M R A T E   I N S I G H T S",
+    "issue": "MAY 2026",
+    "eyebrow": "Zimbabwe · growth forecast",
+    "hero_number": "5",
+    "hero_unit": "%",
+    "hero_word": "GROWTH",
+    "headline_context": "World Bank lifts 2026 outlook on farms and mines.",
+    "pull_quote": "Growth must pass the budget test."
+  },
+  "stats": [
+    {"label": "2025 estimate", "value": "6.6%"},
+    {"label": "Earlier 2026 view", "value": "4.6%"},
+    {"label": "Budget gap", "value": "0.2%"},
+    {"label": "2027 view", "value": "5.0%"}
+  ]
+}

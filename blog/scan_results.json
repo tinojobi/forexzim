@@ -1,0 +1,320 @@
+{
+  "scan_time": "2026-05-23T20:12:51.645426+02:00",
+  "window_start": "2026-05-22T20:12:51.645426+02:00",
+  "source_stats": {
+    "iHarare": {
+      "total": 10,
+      "method": "RSS"
+    },
+    "ZimLive": {
+      "total": 10,
+      "method": "RSS"
+    },
+    "New Zimbabwe": {
+      "total": 20,
+      "method": "RSS"
+    },
+    "Zimbabwe Mail": {
+      "total": 10,
+      "method": "RSS"
+    },
+    "NewsDay": {
+      "total": 100,
+      "method": "Google News"
+    },
+    "Herald": {
+      "total": 0,
+      "method": "Google News"
+    },
+    "Zimbabwe Independent": {
+      "total": 19,
+      "method": "Google News"
+    },
+    "Southern Eye": {
+      "total": 9,
+      "method": "Google News"
+    },
+    "The Standard": {
+      "total": 100,
+      "method": "Google News"
+    }
+  },
+  "total_articles": 278,
+  "economic_articles": 6,
+  "clusters": 6,
+  "all_clusters": [
+    {
+      "headline": "\u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa",
+      "link": "https://www.newzimbabwe.com/public-officials-demanding-bribes-from-investors-are-enemies-of-development-mnangagwa/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (13h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 15.414632579722221,
+      "search_score": 12,
+      "novelty_score": 8,
+      "source_score": 20,
+      "total_score": 80,
+      "time_ago": "13h ago",
+      "pub_date": "2026-05-23 05:02:37+00:00",
+      "description": "<p>PRESIDENT Emmerson Mnangagwa has warned that individuals demanding bribes from investors and those vandalising energy infrastructure will be dealt with. Speaking while commissioning the 10MW New Glovers Solar Plant in Munyati, Kwekwe Friday, Mnangagwa said his government has a zero-tolerance stance on acts undermining strategic national investments. His remarks come amid recurring reports from both [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/public-officials-demanding-bribe",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "New story",
+      "angle": "Impact on Zimbabwe's mining export revenue; Energy costs and industrial competitiveness",
+      "key_facts": "Headline: \u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "TN Cybertech hails easing inflationary pressures",
+      "link": "https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (19h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 12.4049103575,
+      "search_score": 15,
+      "novelty_score": 8,
+      "source_score": 20,
+      "total_score": 76,
+      "time_ago": "19h ago",
+      "pub_date": "2026-05-22 23:01:27+00:00",
+      "description": "<p>TN CyberTech (TNCI) Bank Limited has commended the country\u2019s economic measures for creating an environment of eased inflation, which has partly enabled the group\u2019s revenue to surge by 23%. Presenting the group\u2019s quarterly performance for the first quarter period ended March 31, 2026, TNCI Group CEO, Tawanda Nyambirai commended the operating environment\u2019s stability. \u201cThe operating [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/\">",
+      "cluster_size": 1,
+      "topic": "Tax & Fiscal Policy",
+      "novelty_label": "New story",
+      "angle": "Inflation trajectory and purchasing power",
+      "key_facts": "Headline: TN Cybertech hails easing inflationary pressures. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Zimbabwe bans foreigners from small-scale gold mining sector",
+      "link": "https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from-small-scale-gold-mining-sector/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (13h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 15.077688135277779,
+      "search_score": 12,
+      "novelty_score": 2,
+      "source_score": 20,
+      "total_score": 74,
+      "time_ago": "13h ago",
+      "pub_date": "2026-05-23 04:22:11+00:00",
+      "description": "<p>THE Government of Zimbabwe has, henceforth, banned foreigners from the small-scale gold mining sector, which is now exclusively reserved for Zimbabwean citizens and wholly Zimbabwean-owned entities Mines Minister Polite Kambamura announced the new policy in Harare this Friday. The measures aim to promote local miners, reduce foreign dominance, and curb rampant environmental degradation from mechanised [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "Already published \u2705",
+      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
+      "key_facts": "Headline: Zimbabwe bans foreigners from small-scale gold mining sector. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Old Mutual revenues hit near parity",
+      "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQT254RlNQMENoendfUWpjZ3FiMk10ckZoRTktMW0yQ3NzM0F0WmhscHEwNUxiemF2RXh0dE9xUkdsSVo4czJ4VGFZWG1jVVpMZ2dtN0RiWm1KaVJnV0ZXRVlXOFYwdnk3N2ZjakRndVhHQW9UTGVrRm0xMkxDaWpFVDBTRlRhZzZ2amMxUFRpS24tN3RPNnAtMkVOcEEtU2VwdHdVQ3l3cWdkNEItVmJV0gG0AUFVX3lxTE10cmNnS0k2SVpNMmJJc1o2RzNQOEFYVmwzeUdZY09WbEtjdTlWS0k0b0tRNWx1bHlGTFdCbnVRTTJ6U252VVNOUWhmZ2ttYVlNM1dQTldlQmNrMVMzOGw0eVJyTDlXYUlfMC1oV3dZajkyaV9PTGtRLVZidjYtNnN1NDlmeEo4XzNUT3cxdnJrMXhFZFhMZDRPTlZMR3QzdHEta2VBTnNMNEpKeTlIZnJGekxUeg?oc=5",
+      "sources": [
+        "NewsDay"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "NewsDay (22h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 10.680049246388888,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "total_score": 67,
+      "time_ago": "22h ago",
+      "pub_date": "2026-05-22 19:34:28+00:00",
+      "description": "",
+      "cluster_size": 1,
+      "topic": "Tax & Fiscal Policy",
+      "novelty_label": "New story",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Old Mutual revenues hit near parity. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe",
+      "link": "https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-into-manufacturing-plant-in-zimbabwe/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (13h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 15.13352146861111,
+      "search_score": 8,
+      "novelty_score": 2,
+      "source_score": 20,
+      "total_score": 66,
+      "time_ago": "13h ago",
+      "pub_date": "2026-05-23 04:28:53+00:00",
+      "description": "<p>INDIAN billionaire Ravi Jaipuria has further expanded his presence in Africa with the opening of a $40 million manufacturing plant in Zimbabwe, reinforcing his position on the continent\u2019s competitive consumer market. The facility, operated under Varun Beverages, produces snacks, juice, and dairy products, including a dedicated Cheetos production line. It has been designed to meet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-in",
+      "cluster_size": 1,
+      "topic": "Manufacturing & Industry",
+      "novelty_label": "Already published \u2705",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Companies intensify hunt for black market dollar as shortages deepen",
+      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQNnF4aVJ5OFMySnRNbkQ0OWI3TmdTWjRGRFVCdk1OWWZrQTNHQ3hEMU5lc1ZXTG9CLXN5RlF6UVZiWUNjTVh2UTEtYkRZaklZTy14ckJVLXdZZWVCbXlLdjYycUZOVXdtWWFDVHEwYUdaRGVUc2NRYThkeDYtYWxpRU9Qaml2MUhGeUNaNFVrcDRDX21DNFFpQjBCOTBYN3BtLXlhUE9iSVNwTzJKVmk3enk2S1dXWmF5eUU5Y2pJQV9scFhqMXpydmRQT01FU19ZYjMtddIB2gFBVV95cUxOUFZiOF9wYXM2YVYyNG12S2dlQVJZZ182U1B3amRSMnI5Nk9HYkVISmdoY0VYLTBKaXlMRm92RGVJcGQtNkQzTXEwaUN0c3FMV1BSa0JOa0V4NlhJcWdhRGE3MXFZcnQzejRFUHJ1TFJueFVCdjhCUFNCeUt2ZHdwYU1TaVhIV1BCblg4dElnTm1EaTZ3MkFNT1dVa0MtZ21JcmxscnV6c0w0MDNjb2R6QXlPenU3dldaSnFGMDE4YTdBLU1tanhQZmlTMV84VlRJQ1pEaVJoWWRQdw?oc=5",
+      "sources": [
+        "NewsDay"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "NewsDay (22h ago)"
+      ],
+      "topic_score": 10,
+      "recency_score": 10.943104801944443,
+      "search_score": 8,
+      "novelty_score": 2,
+      "source_score": 20,
+      "total_score": 50,
+      "time_ago": "22h ago",
+      "pub_date": "2026-05-22 20:06:02+00:00",
+      "description": "",
+      "cluster_size": 1
+    }
+  ],
+  "top_stories": [
+    {
+      "headline": "\u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa",
+      "link": "https://www.newzimbabwe.com/public-officials-demanding-bribes-from-investors-are-enemies-of-development-mnangagwa/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (13h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 15.414632579722221,
+      "search_score": 12,
+      "novelty_score": 8,
+      "source_score": 20,
+      "total_score": 80,
+      "time_ago": "13h ago",
+      "pub_date": "2026-05-23 05:02:37+00:00",
+      "description": "<p>PRESIDENT Emmerson Mnangagwa has warned that individuals demanding bribes from investors and those vandalising energy infrastructure will be dealt with. Speaking while commissioning the 10MW New Glovers Solar Plant in Munyati, Kwekwe Friday, Mnangagwa said his government has a zero-tolerance stance on acts undermining strategic national investments. His remarks come amid recurring reports from both [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/public-officials-demanding-bribe",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "New story",
+      "angle": "Impact on Zimbabwe's mining export revenue; Energy costs and industrial competitiveness",
+      "key_facts": "Headline: \u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "TN Cybertech hails easing inflationary pressures",
+      "link": "https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (19h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 12.4049103575,
+      "search_score": 15,
+      "novelty_score": 8,
+      "source_score": 20,
+      "total_score": 76,
+      "time_ago": "19h ago",
+      "pub_date": "2026-05-22 23:01:27+00:00",
+      "description": "<p>TN CyberTech (TNCI) Bank Limited has commended the country\u2019s economic measures for creating an environment of eased inflation, which has partly enabled the group\u2019s revenue to surge by 23%. Presenting the group\u2019s quarterly performance for the first quarter period ended March 31, 2026, TNCI Group CEO, Tawanda Nyambirai commended the operating environment\u2019s stability. \u201cThe operating [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/\">",
+      "cluster_size": 1,
+      "topic": "Tax & Fiscal Policy",
+      "novelty_label": "New story",
+      "angle": "Inflation trajectory and purchasing power",
+      "key_facts": "Headline: TN Cybertech hails easing inflationary pressures. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Old Mutual revenues hit near parity",
+      "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQT254RlNQMENoendfUWpjZ3FiMk10ckZoRTktMW0yQ3NzM0F0WmhscHEwNUxiemF2RXh0dE9xUkdsSVo4czJ4VGFZWG1jVVpMZ2dtN0RiWm1KaVJnV0ZXRVlXOFYwdnk3N2ZjakRndVhHQW9UTGVrRm0xMkxDaWpFVDBTRlRhZzZ2amMxUFRpS24tN3RPNnAtMkVOcEEtU2VwdHdVQ3l3cWdkNEItVmJV0gG0AUFVX3lxTE10cmNnS0k2SVpNMmJJc1o2RzNQOEFYVmwzeUdZY09WbEtjdTlWS0k0b0tRNWx1bHlGTFdCbnVRTTJ6U252VVNOUWhmZ2ttYVlNM1dQTldlQmNrMVMzOGw0eVJyTDlXYUlfMC1oV3dZajkyaV9PTGtRLVZidjYtNnN1NDlmeEo4XzNUT3cxdnJrMXhFZFhMZDRPTlZMR3QzdHEta2VBTnNMNEpKeTlIZnJGekxUeg?oc=5",
+      "sources": [
+        "NewsDay"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "NewsDay (22h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 10.680049246388888,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "total_score": 67,
+      "time_ago": "22h ago",
+      "pub_date": "2026-05-22 19:34:28+00:00",
+      "description": "",
+      "cluster_size": 1,
+      "topic": "Tax & Fiscal Policy",
+      "novelty_label": "New story",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Old Mutual revenues hit near parity. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Zimbabwe bans foreigners from small-scale gold mining sector",
+      "link": "https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from-small-scale-gold-mining-sector/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (13h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 15.077688135277779,
+      "search_score": 12,
+      "novelty_score": 2,
+      "source_score": 20,
+      "total_score": 74,
+      "time_ago": "13h ago",
+      "pub_date": "2026-05-23 04:22:11+00:00",
+      "description": "<p>THE Government of Zimbabwe has, henceforth, banned foreigners from the small-scale gold mining sector, which is now exclusively reserved for Zimbabwean citizens and wholly Zimbabwean-owned entities Mines Minister Polite Kambamura announced the new policy in Harare this Friday. The measures aim to promote local miners, reduce foreign dominance, and curb rampant environmental degradation from mechanised [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "Already published \u2705",
+      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
+      "key_facts": "Headline: Zimbabwe bans foreigners from small-scale gold mining sector. Covered by 1 source(s). 1 article(s) in cluster."
+    },
+    {
+      "headline": "Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe",
+      "link": "https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-into-manufacturing-plant-in-zimbabwe/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (13h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 15.13352146861111,
+      "search_score": 8,
+      "novelty_score": 2,
+      "source_score": 20,
+      "total_score": 66,
+      "time_ago": "13h ago",
+      "pub_date": "2026-05-23 04:28:53+00:00",
+      "description": "<p>INDIAN billionaire Ravi Jaipuria has further expanded his presence in Africa with the opening of a $40 million manufacturing plant in Zimbabwe, reinforcing his position on the continent\u2019s competitive consumer market. The facility, operated under Varun Beverages, produces snacks, juice, and dairy products, including a dedicated Cheetos production line. It has been designed to meet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-in",
+      "cluster_size": 1,
+      "topic": "Manufacturing & Industry",
+      "novelty_label": "Already published \u2705",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe. Covered by 1 source(s). 1 article(s) in cluster."
+    }
+  ]
+}

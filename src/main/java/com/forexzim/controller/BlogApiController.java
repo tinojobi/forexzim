@@ -280,6 +280,7 @@ public class BlogApiController {
         post.setFaqJson(buildFaqJsonLd(req.getFaqItems()));
         post.setPublishAt(req.getPublishAt());
         post.setImageUrl(req.getImageUrl() != null ? req.getImageUrl().trim() : null);
+        post.setSocialImageUrl(req.getSocialImageUrl() != null ? req.getSocialImageUrl().trim() : null);
 
         if (req.getReadTimeMinutes() != null) {
             post.setReadTimeMinutes(req.getReadTimeMinutes());
@@ -385,6 +386,7 @@ public class BlogApiController {
         m.put("excerpt", post.getExcerpt());
         m.put("metaDescription", post.getMetaDescription());
         m.put("imageUrl", post.getImageUrl());
+        m.put("socialImageUrl", post.getSocialImageUrl());
         m.put("wordCount", wordCount);
         m.put("readTimeMinutes", post.getReadTimeMinutes());
         m.put("publishAt", post.getPublishAt());
@@ -407,6 +409,7 @@ public class BlogApiController {
         m.put("excerpt", post.getExcerpt());
         m.put("metaDescription", post.getMetaDescription());
         m.put("imageUrl", post.getImageUrl());
+        m.put("socialImageUrl", post.getSocialImageUrl());
         m.put("wordCount", wordCount);
         m.put("readTimeMinutes", post.getReadTimeMinutes());
         m.put("publishAt", post.getPublishAt());

@@ -1,0 +1,26 @@
+{
+  "article": {
+    "title": "Zimbabwe GDP Growth Forecast Jumps After IMF Programme",
+    "slug": "zimbabwe-gdp-growth-forecast-imf-programme"
+  },
+  "image": {
+    "masthead": "Z I M R A T E   I N S I G H T S",
+    "issue": "MAY 2026 · ISSUE 01",
+    "eyebrow": "Zimbabwe · 2026 outlook",
+    "hero_number": "10",
+    "hero_unit": "%",
+    "headline_context": "Upper growth forecast after the IMF programme.",
+    "pull_quote": "Growth is easy. Stability is harder.",
+    "background": "#f7eed3",
+    "primary": "#0d3d2e",
+    "text": "#1a1a1a",
+    "accent": "#8a5a1a",
+    "secondary": "#6e4a1a"
+  },
+  "stats": [
+    {"label": "Min forecast", "value": "8.5%"},
+    {"label": "Earlier view", "value": "6.6%"},
+    {"label": "Inflation", "value": "4.1%"},
+    {"label": "Current account", "value": "3.8% GDP"}
+  ]
+}

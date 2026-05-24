@@ -1,0 +1,23 @@
+{
+  "article": {
+    "title": "ZERA keeps Zimbabwe fuel prices flat as oil risks linger",
+    "slug": "zera-zimbabwe-fuel-prices-flat-oil-risks"
+  },
+  "image": {
+    "layout": "diagonal",
+    "article_type": "rate_update",
+    "masthead": "Z I M R A T E   I N S I G H T S",
+    "issue": "MAY 2026 · FUEL WATCH",
+    "eyebrow": "Zimbabwe fuel prices",
+    "hero_number": "$2.09",
+    "hero_unit": "",
+    "hero_word": "FUEL",
+    "headline_context": "Diesel per litre, held flat while oil risks linger.",
+    "pull_quote": "A flat pump price is relief, not immunity."
+  },
+  "stats": [
+    {"label": "Diesel 50", "value": "$2.09"},
+    {"label": "Blend E20", "value": "$2.08"},
+    {"label": "Stock cover", "value": "3+ mo"}
+  ]
+}

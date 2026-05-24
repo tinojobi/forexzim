@@ -129,13 +129,13 @@ This is journalism, not marketing.
 
 Every statistic or factual claim needs an inline source.
 
-Format: `(<a href="URL">Source Name, Date</a>)` — always hyperlink to the original article when the URL is available.
+Format: `(<a href="URL">Source Name</a>)` — always hyperlink to the original article. No dates in citations.
 
 - WRONG: "Inflation reached 12% last month."
-- RIGHT: "Inflation reached 12% last month, according to (<a href="https://zimstat.gov.zw/...">ZimStat data published by NewsDay, April 2026</a>)."
+- RIGHT: "Inflation reached 12% last month, according to (<a href="https://zimstat.gov.zw/...">ZimStat data published by NewsDay</a>)."
 
 - WRONG: "Gold output reached 46.7 tonnes (Herald, March 2026)."
-- RIGHT: "Gold output reached 46.7 tonnes (<a href="https://herald.co.zw/...">Herald, March 2026</a>)."
+- RIGHT: "Gold output reached 46.7 tonnes (<a href="https://herald.co.zw/...">Herald</a>)."
 
 If a claim cannot be attributed to a named source, remove it or mark it as "industry estimates".
 

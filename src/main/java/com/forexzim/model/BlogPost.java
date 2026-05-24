@@ -68,6 +68,9 @@ public class BlogPost {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
+    @Column(name = "social_image_url", length = 500)
+    private String socialImageUrl;
+
     @Column(name = "preview_token", nullable = false, length = 36)
     private String previewToken;
 }

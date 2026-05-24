@@ -13,18 +13,18 @@
     <meta property="og:description" th:if="${post.metaDescription}" th:content="${post.metaDescription}">
     <meta property="og:description" th:unless="${post.metaDescription}" th:content="${post.excerpt}">
     <meta property="og:url" th:content="${@environment.getProperty('zimrate.base-url','https://zimrate.com') + '/blog/' + post.slug}">
-    <meta property="og:image" th:content="${post.imageUrl != null ? post.imageUrl : @environment.getProperty('zimrate.base-url','https://zimrate.com') + '/logo-social.svg'}">
+    <meta property="og:image" th:content="${post.socialImageUrl != null ? post.socialImageUrl : (post.imageUrl != null ? post.imageUrl : @environment.getProperty('zimrate.base-url','https://zimrate.com') + '/logo-social.svg')}">
     <meta property="article:published_time" th:if="${post.publishedAt}" th:content="${#temporals.format(post.publishedAt, 'yyyy-MM-dd')}">
     <meta property="article:modified_time" th:content="${#temporals.format(post.updatedAt, 'yyyy-MM-dd')}">
     <meta property="article:author" th:content="${post.author}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" th:content="${post.title}">
     <meta name="twitter:description" th:content="${post.metaDescription != null ? post.metaDescription : post.excerpt}">
-    <meta name="twitter:image" th:content="${post.imageUrl != null ? post.imageUrl : @environment.getProperty('zimrate.base-url','https://zimrate.com') + '/logo-social.svg'}">
+    <meta name="twitter:image" th:content="${post.socialImageUrl != null ? post.socialImageUrl : (post.imageUrl != null ? post.imageUrl : @environment.getProperty('zimrate.base-url','https://zimrate.com') + '/logo-social.svg')}">
     <meta name="theme-color" content="#14532d">
     <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <th:block th:replace="~{layout :: head-meta}"></th:block>
@@ -86,11 +86,12 @@
                 <div class="newsletter-card-sub">Zimbabwe forex news and analysis, delivered to your inbox when we publish.</div>
             </div>
             <form class="newsletter-form" novalidate>
-                <input type="email" class="newsletter-input" placeholder="your@email.com" required autocomplete="email">
+                <label class="sr-only" for="postNewsletterEmail">Email address for ZimRate article updates</label>
+                <input type="email" id="postNewsletterEmail" class="newsletter-input" placeholder="your@email.com" required autocomplete="email" aria-describedby="postNewsletterFeedback">
                 <button type="submit" class="newsletter-btn">Subscribe</button>
             </form>
             <p class="newsletter-note">Free &middot; No spam &middot; Unsubscribe any time</p>
-            <div class="newsletter-feedback"></div>
+            <div class="newsletter-feedback" id="postNewsletterFeedback" role="status" aria-live="polite"></div>
         </div>
 
         <section th:if="${relatedPosts != null and !#lists.isEmpty(relatedPosts)}" class="related-posts">
@@ -118,7 +119,7 @@
                            th:if="${rp.excerpt != null or rp.metaDescription != null}"
                            th:text="${rp.excerpt != null ? rp.excerpt : rp.metaDescription}"></p>
                         <div class="blog-card-footer">
-                            <a th:href="@{/blog/{slug}(slug=${rp.slug})}" class="blog-card-read-more">
+                            <a th:href="@{/blog/{slug}(slug=${rp.slug})}" class="blog-read-more">
                                 Read more <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
@@ -152,8 +153,20 @@
                 var card     = form.closest('.newsletter-card');
                 var feedback = card.querySelector('.newsletter-feedback');
                 var btn      = form.querySelector('.newsletter-btn');
-                var email    = form.querySelector('.newsletter-input').value.trim();
-                if (!email) return;
+                var input    = form.querySelector('.newsletter-input');
+                var email    = input.value.trim();
+                if (!email) {
+                    feedback.className = 'newsletter-feedback error';
+                    feedback.textContent = 'Please enter your email address.';
+                    input.focus();
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    feedback.className = 'newsletter-feedback error';
+                    feedback.textContent = 'Please enter a valid email address.';
+                    input.focus();
+                    return;
+                }
                 btn.disabled = true;
                 feedback.className = 'newsletter-feedback';
                 fetch('/api/newsletter/subscribe', {
