@@ -48,4 +48,5 @@ __pycache__/
 ### Runtime logs/state ###
 *.log
 monitor/.health_state
+monitor/.*_state.json
 *.bak.*
