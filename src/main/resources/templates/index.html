@@ -20,7 +20,7 @@
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
 <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa1')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa2')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -76,7 +76,7 @@
     </script>
 </head>
 <body>
-    <div th:replace="layout :: header"></div>
+    <div th:replace="~{layout :: header}"></div>
 
     <main class="container">
 
@@ -902,7 +902,7 @@
         </div>
     </div>
 
-    <div th:replace="layout :: footer"></div>
+    <div th:replace="~{layout :: footer}"></div>
 
     <script>
     // ── Fetch with timeout ───────────────────────────────────────────────────
@@ -1193,12 +1193,12 @@
                 xaxis: {
                     categories: labels,
                     axisBorder: { show: false }, axisTicks: { show: false },
-                    labels: { style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' } }
+                    labels: { style: { fontFamily: 'Inter, sans-serif', fontSize: '11px', fontWeight: 600 } }
                 },
                 yaxis: {
                     labels: {
                         formatter: function (v) { return v != null ? v.toFixed(1) : ''; },
-                        style: { fontFamily: 'Inter, sans-serif', fontSize: '10px' }
+                        style: { fontFamily: 'Inter, sans-serif', fontSize: '11px', fontWeight: 600 }
                     }
                 },
                 tooltip: {
@@ -1207,7 +1207,7 @@
                 },
                 legend: {
                     position: 'top', horizontalAlign: 'left',
-                    fontSize: '11px', fontFamily: 'Inter, sans-serif',
+                    fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: 600,
                     markers: { width: 8, height: 8, radius: 4 }
                 }
             }, themeOpts());
