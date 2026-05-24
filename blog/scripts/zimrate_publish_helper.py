@@ -197,6 +197,7 @@ def main() -> int:
     parser.add_argument("--cluster-id", help="Cluster ID for --log-topic.")
     parser.add_argument("--primary-keyword", help="Primary keyword for --log-topic.")
     parser.add_argument("--x-spec", help="JSON spec for scripts/x_intent_links.py")
+    parser.add_argument("--skip-gate", action="store_true", help="Skip the pre-publish quality gate. Use only for emergency/manual overrides.")
     args = parser.parse_args()
 
     token = admin_token()
@@ -220,6 +221,16 @@ def main() -> int:
         changed = True
 
     if args.publish and post.get("status") != "PUBLISHED":
+        if not args.skip_gate:
+            gate_script = Path(__file__).with_name("zimrate_publish_gate.py")
+            gate_proc = subprocess.run(
+                [sys.executable, str(gate_script), "--slug", args.slug, "--mode", "prepublish", "--require-social-image"],
+                text=True,
+                capture_output=True,
+                env=os.environ.copy(),
+            )
+            if gate_proc.returncode != 0:
+                raise SystemExit(f"FAIL: pre-publish quality gate failed:\n{gate_proc.stdout.strip()}\n{gate_proc.stderr.strip()}")
         request_json("PATCH", f"{api_base}/api/blog/{args.slug}/publish", token)
         post = request_json("GET", f"{api_base}/api/blog/{args.slug}", token)
         changed = True
