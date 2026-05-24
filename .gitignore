@@ -44,6 +44,8 @@ out/
 ### Generated artifacts ###
 __pycache__/
 *.py[cod]
+blog/scan_history/
+blog/scan_history.jsonl
 
 ### Runtime logs/state ###
 *.log

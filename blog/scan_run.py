@@ -6,6 +6,7 @@ import re
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import quote_plus
@@ -19,6 +20,9 @@ WINDOW_START = NOW - timedelta(hours=24)
 
 # Load published topics for novelty check
 PUBLISHED_FILE = "/opt/forexzim/blog/published_topics.json"
+SCAN_RESULTS_FILE = Path("/opt/forexzim/blog/scan_results.json")
+SCAN_HISTORY_DIR = Path("/opt/forexzim/blog/scan_history")
+SCAN_HISTORY_JSONL = Path("/opt/forexzim/blog/scan_history.jsonl")
 try:
     with open(PUBLISHED_FILE) as f:
         published_topics = json.load(f)
@@ -934,6 +938,41 @@ for s in top5:
     s["readiness_blockers"] = blockers
     s["next_step"] = next_step
 
+def save_scan_outputs(output):
+    """Persist latest scan plus append immutable history for weekly intelligence."""
+    SCAN_RESULTS_FILE.write_text(json.dumps(output, indent=2, default=str), encoding="utf-8")
+    SCAN_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+    stamp = NOW.strftime("%Y-%m-%d-%H%M")
+    snapshot = SCAN_HISTORY_DIR / f"{stamp}.json"
+    snapshot.write_text(json.dumps(output, indent=2, default=str), encoding="utf-8")
+
+    compact = {
+        "scan_time": output["scan_time"],
+        "window_start": output["window_start"],
+        "total_articles": output["total_articles"],
+        "economic_articles": output["economic_articles"],
+        "clusters": output["clusters"],
+        "filter_stats": output.get("filter_stats", {}),
+        "source_stats": output.get("source_stats", {}),
+        "top_stories": [
+            {
+                "headline": s.get("headline"),
+                "link": s.get("link"),
+                "total_score": s.get("total_score"),
+                "draft_readiness": s.get("draft_readiness"),
+                "readiness_blockers": s.get("readiness_blockers", []),
+                "topic": s.get("topic"),
+                "sources": s.get("sources", []),
+                "num_sources": s.get("num_sources", 0),
+                "novelty_label": s.get("novelty_label"),
+                "time_ago": s.get("time_ago"),
+            }
+            for s in output.get("top_stories", [])
+        ],
+    }
+    with SCAN_HISTORY_JSONL.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(compact, ensure_ascii=False, default=str) + "\n")
+
 # Save results for pipeline
 output = {
     "scan_time": NOW.isoformat(),
@@ -947,8 +986,7 @@ output = {
     "top_stories": top5,
 }
 
-with open("/opt/forexzim/blog/scan_results.json", "w") as f:
-    json.dump(output, f, indent=2, default=str)
+save_scan_outputs(output)
 
-print(f"\nResults saved to scan_results.json")
+print(f"\nResults saved to scan_results.json and scan_history/")
 print("Scan complete.")
