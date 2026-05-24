@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -105,6 +107,23 @@ def summarize_sources(rows: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
+def summarize_search_console(days: int) -> list[str]:
+    script = Path("/opt/forexzim/blog/scripts/search_console_digest.py")
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(script), "--days", str(max(days, 28))],
+            text=True,
+            capture_output=True,
+            timeout=60,
+        )
+        output = (proc.stdout or proc.stderr or "").strip()
+        if not output:
+            return ["Search Console", "- No output from Search Console digest script."]
+        return output.splitlines()
+    except Exception as exc:
+        return ["Search Console", f"- Error: {type(exc).__name__}: {exc}"]
+
+
 def summarize_official_state() -> list[str]:
     state = load_json(OFFICIAL_STATE, {})
     sources = state.get("sources") or state.get("seen") or {}
@@ -183,6 +202,9 @@ def build_digest(days: int) -> str:
 
     lines.extend(["", "Official-source monitor"])
     lines.extend(summarize_official_state())
+
+    lines.append("")
+    lines.extend(summarize_search_console(days))
 
     published = recent_published(days)
     lines.extend(["", "Recently published topics"])
