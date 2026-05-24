@@ -24,6 +24,8 @@ LOG_PATH = Path("/opt/forexzim/monitor/metadata_watchdog.log")
 USER_AGENT = "AthenaZimRateMetadataWatchdog/1.0 (+https://zimrate.com)"
 TIMEOUT = 20
 REPEAT_AFTER_SECONDS = 12 * 60 * 60
+SLOW_RESPONSE_MS = 8000
+SLOW_CONSECUTIVE_ALERTS = 2
 
 ROUTES = [
     "/",
@@ -124,7 +126,9 @@ def main() -> int:
     state = load_state()
     issues: list[str] = []
 
-    # Route health.
+    # Route health. Slow responses are debounced separately so one-off origin or
+    # network stalls do not create Telegram noise.
+    slow_counts = dict(state.get("route_slow_counts") or {})
     for path in ROUTES:
         url = urljoin(BASE, path)
         started = time.time()
@@ -132,10 +136,17 @@ def main() -> int:
             status, ctype, data, _ = fetch(url)
             latency_ms = int((time.time() - started) * 1000)
             if status != 200:
+                slow_counts[path] = 0
                 issues.append(f"{url} returned HTTP {status}")
-            elif latency_ms > 8000:
-                issues.append(f"{url} slow response: {latency_ms}ms")
+            elif latency_ms > SLOW_RESPONSE_MS:
+                count = int(slow_counts.get(path) or 0) + 1
+                slow_counts[path] = count
+                if count >= SLOW_CONSECUTIVE_ALERTS:
+                    issues.append(f"{url} slow response: {latency_ms}ms ({count} consecutive checks)")
+            else:
+                slow_counts[path] = 0
         except Exception as exc:
+            slow_counts[path] = 0
             issues.append(f"{url} failed: {exc}")
 
     # Article metadata, latest 5 articles from blog listing.
@@ -184,6 +195,7 @@ def main() -> int:
         "last_status": "issues" if issues else "healthy",
         "last_signature": signature,
         "last_issue_count": len(issues),
+        "route_slow_counts": slow_counts,
     })
     if should_alert:
         state["last_alert_signature"] = signature
