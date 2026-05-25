@@ -3107,7 +3107,7 @@ footer {
 .blog-share {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 1rem;
     flex-wrap: wrap;
     padding: 0.9rem 1rem;
@@ -3227,7 +3227,7 @@ footer {
     .blog-post-title { font-size: 1.35rem; }
     .blog-share { align-items: stretch; margin-top: -0.35rem; padding: 0.85rem; }
     .blog-share-label { width: 100%; }
-    .blog-share-actions { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .blog-share-actions { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .blog-share-btn { justify-content: center; }
     .blog-card { padding: 1.25rem 1rem; }
 }
