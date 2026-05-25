@@ -1,0 +1,24 @@
+<p>If you searched for 1 USD to ZiG today, you probably want one of two things: the live number, or a clear explanation of which number to trust. Zimbabwe now has several exchange-rate references in everyday use, including the RBZ official rate, bank rates, cash rates, and the parallel market rate. ZimRate tracks those rates on the <a href="https://zimrate.com/">live Zimbabwe exchange rates homepage</a> and lets you check common amounts using the <a href="https://zimrate.com/convert/100-usd-to-zig">USD to ZiG converter</a>.</p>
+
+<h2>What does 1 USD to ZiG mean?</h2>
+<p>1 USD to ZiG means the amount of Zimbabwe Gold you get for one United States dollar. ZiG, short for Zimbabwe Gold, was introduced by the Reserve Bank of Zimbabwe as a structured currency in April 2024, backed by a reserve basket that includes foreign currency and precious metals, mainly gold (<a href="https://factcheck.cite.org.zw/explainer-zimbabwe-gold-zig-currency/">FactCheckZW</a>). The legal framework for ZiG says the currency must be issued against reserve assets held and managed by the RBZ (<a href="https://www.veritaszim.net/sites/veritas_d/files/SI%202024-060%20Presidential%20Powers%20%28Temporary%20Measures%29%20%28Zimbabwe%20Gold%20Notes%20and%20Coins%29%20Regulations%2C%202024.pdf">Statutory Instrument 60</a>).</p>
+
+<p>The starting exchange rate for the currency was reported at US$1 to 13.5616 ZiG when ZiG was launched (<a href="https://factcheck.cite.org.zw/explainer-zimbabwe-gold-zig-currency/">FactCheckZW</a>). Since then, the rate has moved as Zimbabwe's official and market conditions changed. That is why a static article cannot safely give you a permanent value. The safer approach is to use the live rate table, then understand which rate category you are looking at.</p>
+
+<h2>Why are there different ZiG rates?</h2>
+<p>The official rate is the formal reference used by the Reserve Bank of Zimbabwe and the banking system. The RBZ publishes interbank exchange-rate notices on its exchange-rates page (<a href="https://www.rbz.co.zw/index.php/research/markets/exchange-rates/13-daily-exchange-rates/1589-may-2026">RBZ</a>). Bank rates and bureau rates may sit close to that official reference, depending on the provider and the transaction type.</p>
+
+<p>The black market rate is different. It reflects informal supply and demand for United States dollars outside formal channels. That rate is often higher than the RBZ official rate because people may pay a premium when cash dollars are scarce. That is easier said than done if you are budgeting in ZiG and paying suppliers in USD. The gap between the official rate and the parallel market rate is the market premium, which ZimRate displays so readers can see how far apart the two markets are.</p>
+
+<h2>Is ZiG the same as ZWG?</h2>
+<p>Yes. ZiG is the common name, while ZWG is the international currency code. The ISO 4217 amendment listed Zimbabwe Gold under the alphabetic code ZWG, numeric code 924, with two minor units (<a href="https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/amendments/dl-currency-iso-amendment-177.pdf">SIX Group</a>). The same notice said the Reserve Bank of Zimbabwe confirmed that ZWG would replace the old ZWL code (<a href="https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/amendments/dl-currency-iso-amendment-177.pdf">SIX Group</a>).</p>
+
+<h2>How to convert USD to ZiG</h2>
+<p>The basic calculation is simple: multiply your USD amount by the ZiG rate you want to use. If the official rate is your reference, use the RBZ or bank rate. If you are checking informal cash pricing, compare it with the black market rate. For quick checks, use ZimRate's common conversion pages such as <a href="https://zimrate.com/convert/1-usd-to-zig">1 USD to ZiG</a>, 10 USD to ZiG, 100 USD to ZiG, and 1500 USD to ZiG.</p>
+
+<p>For context, also check the <a href="https://zimrate.com/history">USD/ZiG rate history</a>. A single day's rate can answer a transaction question, but the history shows whether the currency is stable, moving slowly, or repricing quickly. That matters for salaries, rent, school fees, imports, and remittances.</p>
+
+<h2>Which 1 USD to ZiG rate should you use?</h2>
+<p>Use the official rate for formal accounting, bank pricing, and official comparisons. Use the black market rate only as a market signal, not as financial advice or a guarantee of what any person will receive. If you are sending money, pricing stock, or converting a large amount, compare the official rate, bank rate, and parallel market rate before making a decision.</p>
+
+<p><em>This article is for informational purposes only and does not constitute financial advice.</em></p>
