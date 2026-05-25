@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -82,16 +84,26 @@ public class BlogController {
                     BlogPost.Status.PUBLISHED, post.getId());
         }
 
+        String shareUrl = baseUrl + "/blog/" + post.getSlug();
+        String shareText = post.getTitle() + " | ZimRate";
+
         model.addAttribute("post", post);
         model.addAttribute("relatedPosts", related);
         model.addAttribute("isPreview", isPreview);
         model.addAttribute("emailEnabled", isEmailEnabled());
+        model.addAttribute("shareUrl", shareUrl);
+        model.addAttribute("encodedShareUrl", encodeForUrl(shareUrl));
+        model.addAttribute("encodedShareText", encodeForUrl(shareText));
         model.addAttribute("structuredData", buildPostJsonLd(post));
         model.addAttribute("breadcrumbData", buildBreadcrumbJsonLd(post));
         if (post.getFaqJson() != null) {
             model.addAttribute("faqData", post.getFaqJson());
         }
         return "blog-post";
+    }
+
+    private String encodeForUrl(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     private String buildBreadcrumbJsonLd(BlogPost post) {

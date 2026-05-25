@@ -58,6 +58,24 @@ class BlogControllerTest {
     }
 
     @Test
+    void publishedPostRendersShareActions() throws Exception {
+        BlogPost post = blogPost(PUBLISHED_SLUG, BlogPost.Status.PUBLISHED, "Published market update", "Published content", PREVIEW_TOKEN);
+        when(blogRepository.findBySlugAndStatus(PUBLISHED_SLUG, BlogPost.Status.PUBLISHED)).thenReturn(Optional.of(post));
+        when(blogRepository.findTop3ByStatusAndIdNotOrderByPublishedAtDesc(BlogPost.Status.PUBLISHED, post.getId()))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/blog/{slug}", PUBLISHED_SLUG))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Share this article")))
+                .andExpect(content().string(containsString("https://twitter.com/intent/tweet")))
+                .andExpect(content().string(containsString("https://www.facebook.com/sharer/sharer.php")))
+                .andExpect(content().string(containsString("https://api.whatsapp.com/send")))
+                .andExpect(content().string(containsString("mailto:?subject=")))
+                .andExpect(content().string(containsString("data-share-url=\"https://zimrate.com/blog/published-market-update\"")))
+                .andExpect(content().string(containsString("Copy link")));
+    }
+
+    @Test
     void draftPostWithoutPreviewTokenReturnsNotFound() throws Exception {
         when(blogRepository.findBySlugAndStatus(DRAFT_SLUG, BlogPost.Status.PUBLISHED)).thenReturn(Optional.empty());
 
