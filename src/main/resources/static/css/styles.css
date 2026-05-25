@@ -3166,8 +3166,8 @@ footer {
 }
 
 .blog-share-feedback {
+    display: none;
     flex-basis: 100%;
-    min-height: 1rem;
     color: var(--green-700);
     font-size: 0.78rem;
     font-weight: 600;
