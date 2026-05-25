@@ -215,7 +215,7 @@ def build_digest(days: int) -> str:
         "Recommended next moves",
         "- Draft only stories marked Ready to draft, or Needs verification after source corroboration.",
         "- Use repeated Monitor only stories as signal for background explainers, not immediate news posts.",
-        "- Phase 4B: connect Google Search Console to add impressions, CTR and query opportunities.",
+        "- Use Search Console query/page data to pick CTR fixes and supporting content opportunities.",
     ])
     return "\n".join(lines)
 
