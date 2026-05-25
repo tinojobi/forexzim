@@ -1,0 +1,28 @@
+{
+  "article": {
+    "title": "Zimbabwe Black Market Rate Today: What It Means",
+    "slug": "zimbabwe-black-market-rate-today"
+  },
+  "image": {
+    "article_type": "comparison",
+    "layout": "ledger",
+    "issue": "MAY 2026 · RATE EXPLAINER",
+    "masthead": "Z I M R A T E   E X C H A N G E",
+    "hero_number": "40.00",
+    "hero_unit": "",
+    "eyebrow": "Zimbabwe · parallel market",
+    "headline_context": "Many prices for one dollar.",
+    "pull_quote": "Rates rarely match.",
+    "background": "#f7eed3",
+    "primary": "#0d3d2e",
+    "text": "#1a1a1a",
+    "accent": "#8a5a1a",
+    "secondary": "#6e4a1a"
+  },
+  "stats": [
+    {"label": "Official", "value": "25.34"},
+    {"label": "Cash", "value": "40.00"},
+    {"label": "Informal", "value": "30-33"},
+    {"label": "Signal", "value": "Premium"}
+  ]
+}
