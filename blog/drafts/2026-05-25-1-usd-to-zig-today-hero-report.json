@@ -1,0 +1,167 @@
+{
+  "passed": true,
+  "layout": "left_monument",
+  "article_type": "currency",
+  "issues": [],
+  "warnings": [],
+  "text_boxes": [
+    {
+      "key": "masthead",
+      "text": "Z I M R A T E   G U I D E",
+      "bbox": [
+        130.0,
+        1071.0,
+        927.2,
+        1130.0
+      ]
+    },
+    {
+      "key": "issue",
+      "text": "MAY 2026",
+      "bbox": [
+        1733.0,
+        1074.0,
+        1980.0,
+        1122.0
+      ]
+    },
+    {
+      "key": "eyebrow",
+      "text": "ZIMBABWE EXCHANGE RATES",
+      "bbox": [
+        135.0,
+        958.0,
+        1050.0,
+        1012.0
+      ]
+    },
+    {
+      "key": "hero_number",
+      "text": "$1",
+      "bbox": [
+        130.0,
+        287.0,
+        978.2,
+        933.0
+      ]
+    },
+    {
+      "key": "headline_context",
+      "text": "Official, bank\nand parallel\nrates explained",
+      "bbox": [
+        1400.0,
+        640.7,
+        2028.1,
+        889.3
+      ]
+    },
+    {
+      "key": "pull_quote",
+      "text": "\u201cSeveral rates, one\ndecision\u201d",
+      "bbox": [
+        1400.0,
+        347.9,
+        2181.9,
+        512.1
+      ]
+    },
+    {
+      "key": "stat_1_label",
+      "text": "OFFICIAL",
+      "bbox": [
+        140.0,
+        225.0,
+        310.8,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_1_value",
+      "text": "RBZ",
+      "bbox": [
+        140.0,
+        84.0,
+        431.2,
+        213.0
+      ]
+    },
+    {
+      "key": "stat_2_label",
+      "text": "CODE",
+      "bbox": [
+        660.0,
+        222.0,
+        763.4,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_2_value",
+      "text": "ZWG",
+      "bbox": [
+        660.0,
+        80.0,
+        996.4,
+        209.0
+      ]
+    },
+    {
+      "key": "stat_3_label",
+      "text": "MARKET",
+      "bbox": [
+        1165.0,
+        225.0,
+        1321.2,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_3_value",
+      "text": "Parallel",
+      "bbox": [
+        1165.0,
+        91.0,
+        1550.2,
+        186.8
+      ]
+    },
+    {
+      "key": "stat_4_label",
+      "text": "TOOL",
+      "bbox": [
+        1640.0,
+        222.0,
+        1740.5,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_4_value",
+      "text": "Converter",
+      "bbox": [
+        1640.0,
+        87.0,
+        2152.1,
+        182.8
+      ]
+    },
+    {
+      "key": "wordmark",
+      "text": "zimrate.com",
+      "bbox": [
+        1959.6,
+        39.0,
+        2220.0,
+        81.0
+      ]
+    }
+  ],
+  "style_checks": {
+    "no_cards_or_grid": true,
+    "warm_restrained_palette": true,
+    "paper_grain": true,
+    "layout_rotation_enabled": true
+  },
+  "layout_reason": "Selected 'left_monument' from rotation pool for article_type='currency'.",
+  "output_png": "blog/drafts/2026-05-25-1-usd-to-zig-today-hero.png"
+}

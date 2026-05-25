@@ -1,0 +1,29 @@
+{
+  "article": {
+    "title": "1 USD to ZiG Today: Zimbabwe Exchange Rate Explained",
+    "slug": "1-usd-to-zig-today"
+  },
+  "image": {
+    "article_type": "currency",
+    "layout": "left_monument",
+    "issue": "MAY 2026",
+    "masthead": "Z I M R A T E   G U I D E",
+    "hero_number": "$1",
+    "hero_unit": "",
+    "hero_word": "USD TO ZiG",
+    "eyebrow": "Zimbabwe exchange rates",
+    "headline_context": "Official, bank and parallel rates explained",
+    "pull_quote": "Several rates, one decision",
+    "background": "#f7eed3",
+    "primary": "#0d3d2e",
+    "text": "#1a1a1a",
+    "accent": "#8a5a1a",
+    "secondary": "#6e4a1a"
+  },
+  "stats": [
+    {"label": "Official", "value": "RBZ"},
+    {"label": "Code", "value": "ZWG"},
+    {"label": "Market", "value": "Parallel"},
+    {"label": "Tool", "value": "Converter"}
+  ]
+}
