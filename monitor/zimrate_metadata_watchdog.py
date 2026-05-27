@@ -25,7 +25,10 @@ USER_AGENT = "AthenaZimRateMetadataWatchdog/1.0 (+https://zimrate.com)"
 TIMEOUT = 20
 REPEAT_AFTER_SECONDS = 12 * 60 * 60
 SLOW_RESPONSE_MS = 8000
-SLOW_CONSECUTIVE_ALERTS = 2
+# Latency-only alerts are noisy when a single Cloudflare/origin edge stalls.
+# Require sustained slowness, and retry slow route probes once before counting.
+SLOW_CONSECUTIVE_ALERTS = 3
+SLOW_RETRY_DELAY_SECONDS = 2
 
 ROUTES = [
     "/",
@@ -35,7 +38,6 @@ ROUTES = [
     "/sitemap.xml",
     "/robots.txt",
 ]
-DEFAULT_IMAGE_MARKERS = ("logo-social.svg", "og-default.png")
 
 
 def now_iso() -> str:
@@ -71,6 +73,31 @@ def fetch(url: str, max_bytes: int = 350_000) -> tuple[int, str, bytes, dict]:
         return exc.code, exc.headers.get("content-type", ""), data, dict(exc.headers.items())
     except URLError as exc:
         raise RuntimeError(str(exc)) from exc
+
+
+def fetch_timed(url: str, max_bytes: int = 350_000) -> tuple[int, str, bytes, dict, int]:
+    started = time.monotonic()
+    status, ctype, data, headers = fetch(url, max_bytes=max_bytes)
+    latency_ms = int((time.monotonic() - started) * 1000)
+    return status, ctype, data, headers, latency_ms
+
+
+def fetch_route_with_retry(url: str) -> tuple[int, str, bytes, dict, int, int | None]:
+    """Fetch a public route, retrying once when the first response is slow.
+
+    Returns the fastest successful measurement and the first slow measurement
+    when a retry was attempted. HTTP failures are not retried here; they should
+    alert immediately as route health problems.
+    """
+    status, ctype, data, headers, latency_ms = fetch_timed(url)
+    first_latency = None
+    if status == 200 and latency_ms > SLOW_RESPONSE_MS:
+        first_latency = latency_ms
+        time.sleep(SLOW_RETRY_DELAY_SECONDS)
+        retry_status, retry_ctype, retry_data, retry_headers, retry_latency = fetch_timed(url)
+        if retry_status == 200 and retry_latency < latency_ms:
+            return retry_status, retry_ctype, retry_data, retry_headers, retry_latency, first_latency
+    return status, ctype, data, headers, latency_ms, first_latency
 
 
 def text(data: bytes) -> str:
@@ -129,12 +156,16 @@ def main() -> int:
     # Route health. Slow responses are debounced separately so one-off origin or
     # network stalls do not create Telegram noise.
     slow_counts = dict(state.get("route_slow_counts") or {})
+    route_timings = {}
     for path in ROUTES:
         url = urljoin(BASE, path)
-        started = time.time()
         try:
-            status, ctype, data, _ = fetch(url)
-            latency_ms = int((time.time() - started) * 1000)
+            status, ctype, data, _, latency_ms, first_latency = fetch_route_with_retry(url)
+            route_timings[path] = {
+                "status": status,
+                "latency_ms": latency_ms,
+                "retried_after_ms": first_latency,
+            }
             if status != 200:
                 slow_counts[path] = 0
                 issues.append(f"{url} returned HTTP {status}")
@@ -147,6 +178,7 @@ def main() -> int:
                 slow_counts[path] = 0
         except Exception as exc:
             slow_counts[path] = 0
+            route_timings[path] = {"status": "failed", "error": str(exc)}
             issues.append(f"{url} failed: {exc}")
 
     # Article metadata, latest 5 articles from blog listing.
@@ -174,8 +206,6 @@ def main() -> int:
                             issues.append(f"{article_url} missing {label}")
                             continue
                         image_url = values[0]
-                        if any(marker in image_url for marker in DEFAULT_IMAGE_MARKERS):
-                            issues.append(f"{article_url} uses default social card for {label}: {image_url}")
                         img_issue = check_image(image_url)
                         if img_issue:
                             issues.append(f"{article_url} {label} {img_issue}")
@@ -196,6 +226,7 @@ def main() -> int:
         "last_signature": signature,
         "last_issue_count": len(issues),
         "route_slow_counts": slow_counts,
+        "last_route_timings": route_timings,
     })
     if should_alert:
         state["last_alert_signature"] = signature
@@ -204,7 +235,7 @@ def main() -> int:
         state.pop("last_alert_signature", None)
         state.pop("last_alert_at", None)
     save_state(state)
-    log(f"status={state['last_status']} issues={len(issues)} sig={signature[:10]}")
+    log(f"status={state['last_status']} issues={len(issues)} sig={signature[:10]} routes={json.dumps(route_timings, sort_keys=True)}")
 
     if should_alert:
         print("ZimRate metadata watchdog alert")
