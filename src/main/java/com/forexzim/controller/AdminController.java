@@ -1,6 +1,9 @@
 package com.forexzim.controller;
 
+import com.forexzim.model.AlertSubscription;
 import com.forexzim.model.BlogPost;
+import com.forexzim.model.NewsletterSubscriber;
+import com.forexzim.model.TelegramAlert;
 import com.forexzim.repository.AlertSubscriptionRepository;
 import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.NewsletterSubscriberRepository;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
+import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -238,11 +242,22 @@ public class AdminController {
 
     @GetMapping("/subscribers")
     public String subscribers(Model model) {
-        model.addAttribute("newsletterActive", newsletterSubscriberRepository.findByActiveTrue().size());
-        model.addAttribute("newsletterTotal", newsletterSubscriberRepository.count());
-        model.addAttribute("alertActive", alertSubscriptionRepository.findByActiveTrue().size());
-        model.addAttribute("alertTotal", alertSubscriptionRepository.count());
-        model.addAttribute("telegramTotal", telegramAlertRepository.count());
+        List<NewsletterSubscriber> newsletterSubs = newsletterSubscriberRepository
+            .findAll(Sort.by(Sort.Direction.DESC, "subscribedAt"));
+        List<AlertSubscription> emailAlerts = alertSubscriptionRepository
+            .findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<TelegramAlert> telegramAlerts = telegramAlertRepository
+            .findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        model.addAttribute("newsletterActive", newsletterSubs.stream().filter(s -> Boolean.TRUE.equals(s.getActive())).count());
+        model.addAttribute("newsletterTotal", (long) newsletterSubs.size());
+        model.addAttribute("alertActive", emailAlerts.stream().filter(a -> Boolean.TRUE.equals(a.getActive())).count());
+        model.addAttribute("alertTotal", (long) emailAlerts.size());
+        model.addAttribute("telegramTotal", (long) telegramAlerts.size());
+
+        model.addAttribute("newsletterSubs", newsletterSubs);
+        model.addAttribute("emailAlerts", emailAlerts);
+        model.addAttribute("telegramAlerts", telegramAlerts);
         model.addAttribute("activePage", "subscribers");
         return "admin/subscribers";
     }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{admin/layout :: head('Subscribers')}"></head>
 <body>
 <div class="admin-shell">
@@ -20,7 +19,7 @@
                     <div class="stat-card-icon gold"><i class="fas fa-envelope"></i></div>
                     <div class="stat-value" th:text="${newsletterActive}">0</div>
                     <div class="stat-label">Active Newsletter</div>
-                    <div class="stat-sub" th:text="${newsletterTotal} + ' total (inc. unsubscribed)'">0 total</div>
+                    <div class="stat-sub" th:text="${newsletterTotal} + ' total'">0 total</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-card-icon blue"><i class="fas fa-bell"></i></div>
@@ -36,128 +35,267 @@
                 </div>
             </div>
 
-            <!-- Detail cards -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            <i class="fas fa-envelope"></i> Newsletter
-                        </h2>
-                        <span class="badge badge-gold" th:text="${newsletterActive} + ' active'">0 active</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="sub-rows">
-                            <div class="sub-row">
-                                <div class="sub-row-left">
-                                    <div class="sub-icon green-lt" style="background:var(--green-lt);color:var(--green);">
-                                        <i class="fas fa-circle-check"></i>
-                                    </div>
-                                    <div>
-                                        <div class="sub-name">Active</div>
-                                        <div class="sub-desc">Receiving emails</div>
-                                    </div>
-                                </div>
-                                <div class="sub-counts">
-                                    <div class="sub-active text-green" th:text="${newsletterActive}">0</div>
-                                </div>
-                            </div>
-                            <div class="sub-row">
-                                <div class="sub-row-left">
-                                    <div class="sub-icon" style="background:var(--gray-lt);color:var(--muted);">
-                                        <i class="fas fa-circle-xmark"></i>
-                                    </div>
-                                    <div>
-                                        <div class="sub-name">Unsubscribed</div>
-                                        <div class="sub-desc">Opted out</div>
-                                    </div>
-                                </div>
-                                <div class="sub-counts">
-                                    <div class="sub-active" style="color:var(--muted);"
-                                         th:text="${newsletterTotal - newsletterActive}">0</div>
-                                </div>
-                            </div>
-                            <div class="sub-row">
-                                <div class="sub-row-left">
-                                    <div class="sub-icon" style="background:#dbeafe;color:#2563eb;">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                    <div>
-                                        <div class="sub-name">Total ever</div>
-                                        <div class="sub-desc">All time signups</div>
-                                    </div>
-                                </div>
-                                <div class="sub-counts">
-                                    <div class="sub-active" th:text="${newsletterTotal}">0</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            <i class="fas fa-bell"></i> Rate Alerts
-                        </h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="sub-rows">
-                            <div class="sub-row">
-                                <div class="sub-row-left">
-                                    <div class="sub-icon" style="background:#dbeafe;color:#2563eb;">
-                                        <i class="fas fa-envelope-circle-check"></i>
-                                    </div>
-                                    <div>
-                                        <div class="sub-name">Email Alerts Active</div>
-                                        <div class="sub-desc">Will fire on threshold cross</div>
-                                    </div>
-                                </div>
-                                <div class="sub-counts">
-                                    <div class="sub-active" style="color:#2563eb;" th:text="${alertActive}">0</div>
-                                </div>
-                            </div>
-                            <div class="sub-row">
-                                <div class="sub-row-left">
-                                    <div class="sub-icon" style="background:#ccfbf1;color:#0d9488;">
-                                        <i class="fab fa-telegram"></i>
-                                    </div>
-                                    <div>
-                                        <div class="sub-name">Telegram Bot Users</div>
-                                        <div class="sub-desc">@the_zimrate_bot personal alerts</div>
-                                    </div>
-                                </div>
-                                <div class="sub-counts">
-                                    <div class="sub-active" style="color:#0d9488;" th:text="${telegramTotal}">0</div>
-                                </div>
-                            </div>
-                            <div class="sub-row">
-                                <div class="sub-row-left">
-                                    <div class="sub-icon" style="background:var(--gray-lt);color:var(--muted);">
-                                        <i class="fas fa-clock-rotate-left"></i>
-                                    </div>
-                                    <div>
-                                        <div class="sub-name">Email Alerts Total</div>
-                                        <div class="sub-desc">Including deactivated</div>
-                                    </div>
-                                </div>
-                                <div class="sub-counts">
-                                    <div class="sub-active" style="color:var(--muted);" th:text="${alertTotal}">0</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Tab bar -->
+            <div class="sub-tabs">
+                <button class="sub-tab active" onclick="showTab('newsletter', this)">
+                    <i class="fas fa-envelope"></i>
+                    Newsletter
+                    <span class="sub-tab-count" th:text="${newsletterTotal}">0</span>
+                </button>
+                <button class="sub-tab" onclick="showTab('email-alerts', this)">
+                    <i class="fas fa-bell"></i>
+                    Email Alerts
+                    <span class="sub-tab-count" th:text="${alertTotal}">0</span>
+                </button>
+                <button class="sub-tab" onclick="showTab('telegram', this)">
+                    <i class="fab fa-telegram"></i>
+                    Telegram Alerts
+                    <span class="sub-tab-count" th:text="${telegramTotal}">0</span>
+                </button>
             </div>
 
-            <p style="margin-top:20px;font-size:12px;color:var(--muted);">
-                <i class="fas fa-info-circle"></i>
-                Counts update live from the database. Telegram channel follower count is managed via the Telegram app.
-            </p>
+            <!-- Newsletter table -->
+            <div id="tab-newsletter" class="sub-tab-panel card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-envelope"></i> Newsletter Subscribers</h2>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="badge badge-published" th:text="${newsletterActive} + ' active'">0 active</span>
+                        <span class="badge badge-draft" th:text="${newsletterTotal - newsletterActive} + ' unsubscribed'">0 unsubscribed</span>
+                    </div>
+                </div>
+                <div class="table-wrap" th:if="${!newsletterSubs.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Subscribed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="sub : ${newsletterSubs}">
+                                <td>
+                                    <span th:text="${sub.email}" style="font-weight:500;">email</span>
+                                </td>
+                                <td>
+                                    <span th:if="${sub.active}" class="badge badge-published">
+                                        <i class="fas fa-circle" style="font-size:6px;"></i> Active
+                                    </span>
+                                    <span th:unless="${sub.active}" class="badge badge-draft">
+                                        <i class="fas fa-circle" style="font-size:6px;"></i> Unsubscribed
+                                    </span>
+                                </td>
+                                <td style="font-size:13px;color:var(--muted);"
+                                    th:text="${#temporals.format(sub.subscribedAt, 'dd MMM yyyy, HH:mm')}">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${newsletterSubs.isEmpty()}" class="empty-state">
+                    <i class="fas fa-envelope"></i>
+                    <p>No newsletter subscribers yet.</p>
+                </div>
+            </div>
+
+            <!-- Email Alerts table -->
+            <div id="tab-email-alerts" class="sub-tab-panel card" style="display:none;">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-bell"></i> Email Alert Subscriptions</h2>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="badge badge-published" th:text="${alertActive} + ' active'">0 active</span>
+                        <span class="badge badge-draft" th:text="${alertTotal - alertActive} + ' inactive'">0 inactive</span>
+                    </div>
+                </div>
+                <div class="table-wrap" th:if="${!emailAlerts.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Pair</th>
+                                <th>Alert</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Last Fired</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="alert : ${emailAlerts}">
+                                <td style="font-weight:500;" th:text="${alert.email}">email</td>
+                                <td>
+                                    <span class="badge badge-gold" th:text="${alert.currencyPair}">USD/ZiG</span>
+                                </td>
+                                <td>
+                                    <span th:if="${alert.direction == 'above'}"
+                                          style="color:var(--green);font-size:13px;font-weight:600;">
+                                        <i class="fas fa-arrow-up"></i>
+                                        above <span th:text="${alert.threshold}">0</span>
+                                    </span>
+                                    <span th:if="${alert.direction == 'below'}"
+                                          style="color:var(--red);font-size:13px;font-weight:600;">
+                                        <i class="fas fa-arrow-down"></i>
+                                        below <span th:text="${alert.threshold}">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${alert.active}" class="badge badge-published">
+                                        <i class="fas fa-circle" style="font-size:6px;"></i> Active
+                                    </span>
+                                    <span th:unless="${alert.active}" class="badge badge-draft">
+                                        <i class="fas fa-circle" style="font-size:6px;"></i> Inactive
+                                    </span>
+                                </td>
+                                <td style="font-size:13px;color:var(--muted);"
+                                    th:text="${#temporals.format(alert.createdAt, 'dd MMM yyyy')}">—</td>
+                                <td style="font-size:13px;color:var(--muted);">
+                                    <span th:if="${alert.lastNotifiedAt != null}"
+                                          th:text="${#temporals.format(alert.lastNotifiedAt, 'dd MMM yyyy, HH:mm')}">—</span>
+                                    <span th:if="${alert.lastNotifiedAt == null}" style="color:var(--light);">Never</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${emailAlerts.isEmpty()}" class="empty-state">
+                    <i class="fas fa-bell"></i>
+                    <p>No email alert subscriptions yet.</p>
+                </div>
+            </div>
+
+            <!-- Telegram Alerts table -->
+            <div id="tab-telegram" class="sub-tab-panel card" style="display:none;">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fab fa-telegram"></i> Telegram Alert Subscriptions</h2>
+                    <span class="badge badge-gold" th:text="${telegramTotal} + ' total'">0 total</span>
+                </div>
+                <div class="table-wrap" th:if="${!telegramAlerts.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Chat ID</th>
+                                <th>Pair</th>
+                                <th>Alert</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Last Fired</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="alert : ${telegramAlerts}">
+                                <td>
+                                    <div style="font-weight:500;">
+                                        <span th:if="${alert.firstName != null}" th:text="${alert.firstName}">—</span>
+                                        <span th:if="${alert.firstName == null}" style="color:var(--light);">Unknown</span>
+                                    </div>
+                                    <div class="cell-meta"
+                                         th:if="${alert.username != null}"
+                                         th:text="'@' + ${alert.username}"></div>
+                                </td>
+                                <td style="font-size:12px;color:var(--muted);font-family:monospace;"
+                                    th:text="${alert.chatId}">0</td>
+                                <td>
+                                    <span class="badge badge-gold" th:text="${alert.currencyPair}">USD/ZiG</span>
+                                </td>
+                                <td>
+                                    <span th:if="${alert.direction == 'above'}"
+                                          style="color:var(--green);font-size:13px;font-weight:600;">
+                                        <i class="fas fa-arrow-up"></i>
+                                        above <span th:text="${alert.threshold}">0</span>
+                                    </span>
+                                    <span th:if="${alert.direction == 'below'}"
+                                          style="color:var(--red);font-size:13px;font-weight:600;">
+                                        <i class="fas fa-arrow-down"></i>
+                                        below <span th:text="${alert.threshold}">0</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span th:if="${alert.active}" class="badge badge-published">
+                                        <i class="fas fa-circle" style="font-size:6px;"></i> Active
+                                    </span>
+                                    <span th:unless="${alert.active}" class="badge badge-draft">
+                                        <i class="fas fa-circle" style="font-size:6px;"></i> Cancelled
+                                    </span>
+                                </td>
+                                <td style="font-size:13px;color:var(--muted);"
+                                    th:text="${#temporals.format(alert.createdAt, 'dd MMM yyyy')}">—</td>
+                                <td style="font-size:13px;color:var(--muted);">
+                                    <span th:if="${alert.lastNotifiedAt != null}"
+                                          th:text="${#temporals.format(alert.lastNotifiedAt, 'dd MMM yyyy, HH:mm')}">—</span>
+                                    <span th:if="${alert.lastNotifiedAt == null}" style="color:var(--light);">Never</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${telegramAlerts.isEmpty()}" class="empty-state">
+                    <i class="fab fa-telegram"></i>
+                    <p>No Telegram alerts set yet.</p>
+                </div>
+            </div>
 
         </div>
     </div>
 </div>
+
+<style>
+.sub-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+}
+
+.sub-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+}
+
+.sub-tab:hover { background: var(--gray-lt); color: var(--text); }
+
+.sub-tab.active {
+    background: #14532d;
+    color: #fff;
+}
+
+.sub-tab-count {
+    background: rgba(255,255,255,0.2);
+    color: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.sub-tab:not(.active) .sub-tab-count {
+    background: var(--border);
+    color: var(--muted);
+}
+</style>
+
+<script>
+function showTab(name, btn) {
+    document.querySelectorAll('.sub-tab-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).style.display = 'block';
+    btn.classList.add('active');
+}
+</script>
 </body>
 </html>
