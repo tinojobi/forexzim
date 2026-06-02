@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/layout :: head('Blog Posts')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('blog')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title">Blog Posts</span>
+            <div class="admin-topbar-actions">
+                <a th:href="@{/admin/blog/new}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> New Post
+                </a>
+            </div>
+        </div>
+
+        <div class="admin-body">
+
+            <div th:if="${success}" class="flash flash-success">
+                <i class="fas fa-circle-check"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="flash flash-error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-newspaper"></i>
+                        All Posts
+                        <span class="badge badge-draft" style="font-size:11px;"
+                              th:text="${posts.size()} + ' total'">0 total</span>
+                    </h2>
+                </div>
+
+                <div class="table-wrap" th:if="${!posts.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Published</th>
+                                <th>Author</th>
+                                <th>Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="post : ${posts}">
+                                <td class="cell-title">
+                                    <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
+                                       th:text="${post.title}">Post title</a>
+                                    <div class="cell-meta" th:if="${post.slug != null}"
+                                         th:text="'/' + ${post.slug}"></div>
+                                </td>
+                                <td>
+                                    <span th:switch="${post.status.name()}">
+                                        <span th:case="'PUBLISHED'" class="badge badge-published">
+                                            <i class="fas fa-circle" style="font-size:6px;"></i> Published
+                                        </span>
+                                        <span th:case="'DRAFT'" class="badge badge-draft">
+                                            <i class="fas fa-circle" style="font-size:6px;"></i> Draft
+                                        </span>
+                                        <span th:case="'REJECTED'" class="badge badge-rejected">
+                                            <i class="fas fa-circle" style="font-size:6px;"></i> Rejected
+                                        </span>
+                                    </span>
+                                </td>
+                                <td style="font-size:13px;color:var(--muted);">
+                                    <span th:if="${post.publishedAt != null}"
+                                          th:text="${#temporals.format(post.publishedAt, 'dd MMM yyyy')}">—</span>
+                                    <span th:if="${post.publishedAt == null}">—</span>
+                                </td>
+                                <td style="font-size:13px;" th:text="${post.author}">Author</td>
+                                <td style="font-size:13px;color:var(--muted);">
+                                    <span th:text="${#temporals.format(post.updatedAt, 'dd MMM yyyy')}">—</span>
+                                </td>
+                                <td>
+                                    <div class="action-row">
+                                        <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
+                                           class="btn btn-outline btn-sm">
+                                            <i class="fas fa-pen"></i> Edit
+                                        </a>
+
+                                        <!-- Publish (when draft/rejected) -->
+                                        <form th:if="${post.status.name() != 'PUBLISHED'}"
+                                              th:action="@{/admin/blog/{id}/publish(id=${post.id})}"
+                                              method="post" style="display:inline;">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-upload"></i> Publish
+                                            </button>
+                                        </form>
+
+                                        <!-- Unpublish (when published) -->
+                                        <form th:if="${post.status.name() == 'PUBLISHED'}"
+                                              th:action="@{/admin/blog/{id}/unpublish(id=${post.id})}"
+                                              method="post" style="display:inline;">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                            <button type="submit" class="btn btn-outline btn-sm">
+                                                <i class="fas fa-eye-slash"></i> Unpublish
+                                            </button>
+                                        </form>
+
+                                        <!-- View live (if published) -->
+                                        <a th:if="${post.status.name() == 'PUBLISHED'}"
+                                           th:href="@{/blog/{slug}(slug=${post.slug})}"
+                                           target="_blank"
+                                           class="btn btn-outline btn-icon" title="View live">
+                                            <i class="fas fa-arrow-up-right-from-square"></i>
+                                        </a>
+
+                                        <!-- Delete -->
+                                        <form th:action="@{/admin/blog/{id}/delete(id=${post.id})}"
+                                              method="post" style="display:inline;"
+                                              th:id="'del-' + ${post.id}">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                            <button type="button" class="btn btn-danger btn-icon"
+                                                    title="Delete"
+                                                    th:onclick="'confirmDelete(' + ${post.id} + ', \'' + ${#strings.escapeXml(post.title)} + '\')'">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${posts.isEmpty()}" class="empty-state">
+                    <i class="fas fa-newspaper"></i>
+                    <p>No posts yet. <a th:href="@{/admin/blog/new}">Write your first post</a>.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(id, title) {
+    if (confirm('Delete "' + title + '"? This cannot be undone.')) {
+        document.getElementById('del-' + id).submit();
+    }
+}
+</script>
+</body>
+</html>

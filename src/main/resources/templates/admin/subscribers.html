@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/layout :: head('Subscribers')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('subscribers')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title">Subscribers</span>
+        </div>
+
+        <div class="admin-body">
+
+            <!-- Stat cards -->
+            <div class="stat-grid" style="margin-bottom:24px;">
+                <div class="stat-card">
+                    <div class="stat-card-icon gold"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-value" th:text="${newsletterActive}">0</div>
+                    <div class="stat-label">Active Newsletter</div>
+                    <div class="stat-sub" th:text="${newsletterTotal} + ' total (inc. unsubscribed)'">0 total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon blue"><i class="fas fa-bell"></i></div>
+                    <div class="stat-value" th:text="${alertActive}">0</div>
+                    <div class="stat-label">Active Email Alerts</div>
+                    <div class="stat-sub" th:text="${alertTotal} + ' total'">0 total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon teal"><i class="fab fa-telegram"></i></div>
+                    <div class="stat-value" th:text="${telegramTotal}">0</div>
+                    <div class="stat-label">Telegram Alerts</div>
+                    <div class="stat-sub">Via @the_zimrate_bot</div>
+                </div>
+            </div>
+
+            <!-- Detail cards -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-envelope"></i> Newsletter
+                        </h2>
+                        <span class="badge badge-gold" th:text="${newsletterActive} + ' active'">0 active</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="sub-rows">
+                            <div class="sub-row">
+                                <div class="sub-row-left">
+                                    <div class="sub-icon green-lt" style="background:var(--green-lt);color:var(--green);">
+                                        <i class="fas fa-circle-check"></i>
+                                    </div>
+                                    <div>
+                                        <div class="sub-name">Active</div>
+                                        <div class="sub-desc">Receiving emails</div>
+                                    </div>
+                                </div>
+                                <div class="sub-counts">
+                                    <div class="sub-active text-green" th:text="${newsletterActive}">0</div>
+                                </div>
+                            </div>
+                            <div class="sub-row">
+                                <div class="sub-row-left">
+                                    <div class="sub-icon" style="background:var(--gray-lt);color:var(--muted);">
+                                        <i class="fas fa-circle-xmark"></i>
+                                    </div>
+                                    <div>
+                                        <div class="sub-name">Unsubscribed</div>
+                                        <div class="sub-desc">Opted out</div>
+                                    </div>
+                                </div>
+                                <div class="sub-counts">
+                                    <div class="sub-active" style="color:var(--muted);"
+                                         th:text="${newsletterTotal - newsletterActive}">0</div>
+                                </div>
+                            </div>
+                            <div class="sub-row">
+                                <div class="sub-row-left">
+                                    <div class="sub-icon" style="background:#dbeafe;color:#2563eb;">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div>
+                                        <div class="sub-name">Total ever</div>
+                                        <div class="sub-desc">All time signups</div>
+                                    </div>
+                                </div>
+                                <div class="sub-counts">
+                                    <div class="sub-active" th:text="${newsletterTotal}">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-bell"></i> Rate Alerts
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="sub-rows">
+                            <div class="sub-row">
+                                <div class="sub-row-left">
+                                    <div class="sub-icon" style="background:#dbeafe;color:#2563eb;">
+                                        <i class="fas fa-envelope-circle-check"></i>
+                                    </div>
+                                    <div>
+                                        <div class="sub-name">Email Alerts Active</div>
+                                        <div class="sub-desc">Will fire on threshold cross</div>
+                                    </div>
+                                </div>
+                                <div class="sub-counts">
+                                    <div class="sub-active" style="color:#2563eb;" th:text="${alertActive}">0</div>
+                                </div>
+                            </div>
+                            <div class="sub-row">
+                                <div class="sub-row-left">
+                                    <div class="sub-icon" style="background:#ccfbf1;color:#0d9488;">
+                                        <i class="fab fa-telegram"></i>
+                                    </div>
+                                    <div>
+                                        <div class="sub-name">Telegram Bot Users</div>
+                                        <div class="sub-desc">@the_zimrate_bot personal alerts</div>
+                                    </div>
+                                </div>
+                                <div class="sub-counts">
+                                    <div class="sub-active" style="color:#0d9488;" th:text="${telegramTotal}">0</div>
+                                </div>
+                            </div>
+                            <div class="sub-row">
+                                <div class="sub-row-left">
+                                    <div class="sub-icon" style="background:var(--gray-lt);color:var(--muted);">
+                                        <i class="fas fa-clock-rotate-left"></i>
+                                    </div>
+                                    <div>
+                                        <div class="sub-name">Email Alerts Total</div>
+                                        <div class="sub-desc">Including deactivated</div>
+                                    </div>
+                                </div>
+                                <div class="sub-counts">
+                                    <div class="sub-active" style="color:var(--muted);" th:text="${alertTotal}">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <p style="margin-top:20px;font-size:12px;color:var(--muted);">
+                <i class="fas fa-info-circle"></i>
+                Counts update live from the database. Telegram channel follower count is managed via the Telegram app.
+            </p>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

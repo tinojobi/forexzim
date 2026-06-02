@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/layout :: head(${isNew} ? 'New Post' : 'Edit Post')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('blog')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title" th:text="${isNew} ? 'New Post' : 'Edit Post'">Post</span>
+            <div class="admin-topbar-actions">
+                <a th:href="@{/admin/blog}" class="btn btn-outline btn-sm">
+                    <i class="fas fa-arrow-left"></i> All Posts
+                </a>
+                <a th:if="${!isNew and post.status.name() == 'PUBLISHED'}"
+                   th:href="@{/blog/{slug}(slug=${post.slug})}"
+                   target="_blank" class="btn btn-outline btn-sm">
+                    <i class="fas fa-arrow-up-right-from-square"></i> View live
+                </a>
+            </div>
+        </div>
+
+        <div class="admin-body">
+
+            <div th:if="${success}" class="flash flash-success">
+                <i class="fas fa-circle-check"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="flash flash-error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Main form -->
+            <form th:action="${isNew} ? @{/admin/blog} : @{/admin/blog/{id}(id=${post.id})}"
+                  method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div class="form-grid">
+
+                <!-- Left: content -->
+                <div>
+
+                    <!-- Title -->
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-body">
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="title">Title <span style="color:var(--red)">*</span></label>
+                                <input class="form-control" type="text" id="title" name="title"
+                                       th:value="${post.title}"
+                                       placeholder="e.g. Zimbabwe Black Market Rate Explained"
+                                       required
+                                       oninput="autoSlug(this.value)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-align-left"></i> Content</h2>
+                            <span style="font-size:12px;color:var(--muted);">HTML or plain text</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-0">
+                                <textarea class="form-control mono" id="content" name="content"
+                                          rows="22"
+                                          placeholder="Write your post content here..."
+                                          th:text="${post.content}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Excerpt -->
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-quote-left"></i> Excerpt</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-0">
+                                <textarea class="form-control" id="excerpt" name="excerpt"
+                                          rows="3"
+                                          placeholder="Short summary shown on the blog listing..."
+                                          th:text="${post.excerpt}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-magnifying-glass"></i> SEO</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label" for="metaDescription">
+                                    Meta Description
+                                </label>
+                                <p class="form-hint">Target 140–160 characters for best search results.</p>
+                                <textarea class="form-control" id="metaDescription" name="metaDescription"
+                                          rows="3"
+                                          maxlength="160"
+                                          placeholder="Brief description for search engines..."
+                                          th:text="${post.metaDescription}"
+                                          oninput="updateCounter(this)"></textarea>
+                                <div class="char-counter" id="metaCounter">0 / 160</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: settings panels -->
+                <div>
+
+                    <!-- Publish -->
+                    <div class="form-panel">
+                        <div class="form-panel-title"><i class="fas fa-upload"></i> Publish</div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="status">Status</label>
+                            <select class="form-control" id="status" name="status">
+                                <option th:each="s : ${statuses}"
+                                        th:value="${s.name()}"
+                                        th:text="${s.name()}"
+                                        th:selected="${post.status == s}">DRAFT</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="publishAt">Schedule Publish</label>
+                            <p class="form-hint">Auto-publishes at this date/time (Harare time).</p>
+                            <input class="form-control" type="datetime-local" id="publishAt" name="publishAt"
+                                   th:value="${post.publishAt != null ? #temporals.format(post.publishAt, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-floppy-disk"></i>
+                                <span th:text="${isNew} ? 'Create Post' : 'Save Changes'">Save</span>
+                            </button>
+                            <a th:href="@{/admin/blog}" class="btn btn-outline">Cancel</a>
+                        </div>
+                    </div>
+
+                    <!-- Identity -->
+                    <div class="form-panel" style="margin-top:16px;">
+                        <div class="form-panel-title"><i class="fas fa-fingerprint"></i> Identity</div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="slug">Slug <span style="color:var(--red)">*</span></label>
+                            <p class="form-hint">URL: /blog/<strong id="slugPreview">your-slug</strong></p>
+                            <input class="form-control" type="text" id="slug" name="slug"
+                                   th:value="${post.slug}"
+                                   placeholder="your-post-slug"
+                                   pattern="[a-z0-9\-]+"
+                                   required>
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <label class="form-label" for="author">Author</label>
+                            <input class="form-control" type="text" id="author" name="author"
+                                   th:value="${post.author}"
+                                   placeholder="ZimRate Team">
+                        </div>
+                    </div>
+
+                    <!-- Media -->
+                    <div class="form-panel" style="margin-top:16px;">
+                        <div class="form-panel-title"><i class="fas fa-image"></i> Media</div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="imageUrl">Featured Image URL</label>
+                            <input class="form-control" type="url" id="imageUrl" name="imageUrl"
+                                   th:value="${post.imageUrl}"
+                                   placeholder="https://...">
+                            <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
+                                 style="margin-top:8px;">
+                                <img th:src="${post.imageUrl}" alt="Preview"
+                                     style="width:100%;border-radius:6px;border:1px solid var(--border);">
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <label class="form-label" for="socialImageUrl">Social / OG Image URL</label>
+                            <input class="form-control" type="url" id="socialImageUrl" name="socialImageUrl"
+                                   th:value="${post.socialImageUrl}"
+                                   placeholder="https://... (1200×630)">
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="form-panel" style="margin-top:16px;">
+                        <div class="form-panel-title"><i class="fas fa-gear"></i> Settings</div>
+
+                        <div class="form-group mb-0">
+                            <label class="form-label" for="readTimeMinutes">Read Time (minutes)</label>
+                            <input class="form-control" type="number" id="readTimeMinutes"
+                                   name="readTimeMinutes"
+                                   th:value="${post.readTimeMinutes}"
+                                   min="1" max="60">
+                        </div>
+                    </div>
+
+                    <!-- Notifications status (read-only info) -->
+                    <div th:if="${!isNew}" class="form-panel" style="margin-top:16px;">
+                        <div class="form-panel-title"><i class="fas fa-bell"></i> Notifications</div>
+                        <div style="font-size:13px;display:flex;flex-direction:column;gap:8px;">
+                            <div style="display:flex;justify-content:space-between;">
+                                <span style="color:var(--muted);">Telegram notified</span>
+                                <span th:class="${post.telegramNotified} ? 'text-green' : 'text-muted'"
+                                      th:text="${post.telegramNotified} ? 'Yes' : 'No'">—</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;">
+                                <span style="color:var(--muted);">Newsletter sent</span>
+                                <span th:class="${post.newsletterNotified} ? 'text-green' : 'text-muted'"
+                                      th:text="${post.newsletterNotified} ? 'Yes' : 'No'">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /form-grid -->
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-generate slug from title (new posts only)
+const isNew = /*[[${isNew}]]*/ true;
+
+function slugify(text) {
+    return text.toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+function autoSlug(title) {
+    const slugEl = document.getElementById('slug');
+    const previewEl = document.getElementById('slugPreview');
+    if (isNew) slugEl.value = slugify(title);
+    if (previewEl) previewEl.textContent = slugEl.value || 'your-slug';
+}
+
+document.getElementById('slug').addEventListener('input', function() {
+    const previewEl = document.getElementById('slugPreview');
+    if (previewEl) previewEl.textContent = this.value || 'your-slug';
+});
+
+// Meta description character counter
+function updateCounter(el) {
+    const counter = document.getElementById('metaCounter');
+    const len = el.value.length;
+    counter.textContent = len + ' / 160';
+    counter.className = 'char-counter';
+    if (len >= 140 && len <= 160) counter.classList.add('good');
+    else if (len > 160) counter.classList.add('over');
+    else if (len > 100) counter.classList.add('warn');
+}
+
+// Init counter on load
+const metaEl = document.getElementById('metaDescription');
+if (metaEl && metaEl.value) updateCounter(metaEl);
+
+// Init slug preview on load
+const slugEl = document.getElementById('slug');
+const previewEl = document.getElementById('slugPreview');
+if (previewEl && slugEl) previewEl.textContent = slugEl.value || 'your-slug';
+</script>
+</body>
+</html>
