@@ -19,6 +19,7 @@ import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
@@ -126,20 +127,25 @@ public class AdminController {
     }
 
     @PostMapping("/blog")
-    public String createBlog(@ModelAttribute BlogPost post, RedirectAttributes ra) {
+    public String createBlog(@ModelAttribute BlogPost post, Model model, RedirectAttributes ra) {
         try {
             LocalDateTime now = LocalDateTime.now();
             post.setCreatedAt(now);
             post.setUpdatedAt(now);
+            post.setPreviewToken(UUID.randomUUID().toString());
             if (BlogPost.Status.PUBLISHED.equals(post.getStatus()) && post.getPublishedAt() == null) {
                 post.setPublishedAt(now);
             }
             blogRepository.save(post);
             ra.addFlashAttribute("success", "Post \"" + post.getTitle() + "\" created.");
+            return "redirect:/admin/blog";
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Could not create post: " + e.getMessage());
+            model.addAttribute("error", friendlyError(e));
+            model.addAttribute("statuses", BlogPost.Status.values());
+            model.addAttribute("isNew", true);
+            model.addAttribute("activePage", "blog");
+            return "admin/blog-form";
         }
-        return "redirect:/admin/blog";
     }
 
     @GetMapping("/blog/{id}/edit")
@@ -154,9 +160,10 @@ public class AdminController {
     }
 
     @PostMapping("/blog/{id}")
-    public String updateBlog(@PathVariable Long id, @ModelAttribute BlogPost form, RedirectAttributes ra) {
+    public String updateBlog(@PathVariable Long id, @ModelAttribute BlogPost form,
+                             Model model, RedirectAttributes ra) {
+        BlogPost post = blogRepository.findById(id).orElseThrow();
         try {
-            BlogPost post = blogRepository.findById(id).orElseThrow();
             post.setTitle(form.getTitle());
             post.setSlug(form.getSlug());
             post.setExcerpt(form.getExcerpt());
@@ -169,15 +176,22 @@ public class AdminController {
             post.setPublishAt(form.getPublishAt());
             post.setStatus(form.getStatus());
             post.setUpdatedAt(LocalDateTime.now());
+            if (post.getPreviewToken() == null) post.setPreviewToken(UUID.randomUUID().toString());
             if (BlogPost.Status.PUBLISHED.equals(form.getStatus()) && post.getPublishedAt() == null) {
                 post.setPublishedAt(LocalDateTime.now());
             }
             blogRepository.save(post);
             ra.addFlashAttribute("success", "Post updated.");
+            return "redirect:/admin/blog";
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Could not update post: " + e.getMessage());
+            // post already has the user's input applied — re-render with all system fields intact
+            model.addAttribute("post", post);
+            model.addAttribute("error", friendlyError(e));
+            model.addAttribute("statuses", BlogPost.Status.values());
+            model.addAttribute("isNew", false);
+            model.addAttribute("activePage", "blog");
+            return "admin/blog-form";
         }
-        return "redirect:/admin/blog";
     }
 
     @PostMapping("/blog/{id}/publish")
@@ -206,6 +220,18 @@ public class AdminController {
         blogRepository.deleteById(id);
         ra.addFlashAttribute("success", "Post deleted.");
         return "redirect:/admin/blog";
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    private String friendlyError(Exception e) {
+        Throwable root = e;
+        while (root.getCause() != null) root = root.getCause();
+        String msg = root.getMessage() != null ? root.getMessage() : e.getMessage();
+        if (msg != null && msg.contains("slug")) return "That slug is already in use — choose a different one.";
+        if (msg != null && (msg.contains("duplicate key") || msg.contains("unique constraint")))
+            return "A duplicate value was detected. Check the slug and other unique fields.";
+        return msg != null ? msg : "An unexpected error occurred.";
     }
 
     // ── Subscribers ────────────────────────────────────────────────────────────
