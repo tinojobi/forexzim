@@ -39,4 +39,6 @@ jobs:
             cd /opt/forexzim
             git pull origin main
             ./gradlew bootJar --no-daemon
-            sudo systemctl restart forexzim
+            systemctl stop forexzim || true
+            sleep 2
+            systemctl start forexzim
