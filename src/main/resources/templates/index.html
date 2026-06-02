@@ -1053,7 +1053,8 @@
             if (zigInput) zigInput.value = isNaN(usd) ? '' : (usd * currentRate).toFixed(2);
         }
 
-        if (usdInput) usdInput.value = '1';
+        var savedAmount = localStorage.getItem('zimrate_convert_amount');
+        if (usdInput) usdInput.value = savedAmount || '1';
         applyRate('official');
 
         toggleBtns.forEach(function (btn) {
@@ -1075,10 +1076,13 @@
             usdInput.addEventListener('input', function () {
                 var usd = parseFloat(this.value);
                 if (zigInput) zigInput.value = isNaN(usd) ? '' : (usd * currentRate).toFixed(2);
-                if (!isNaN(usd)) updatePermalink(usd);
+                if (!isNaN(usd) && usd > 0) {
+                    updatePermalink(usd);
+                    localStorage.setItem('zimrate_convert_amount', Math.round(Math.abs(usd)));
+                }
             });
         }
-        updatePermalink(1);
+        updatePermalink(parseFloat(savedAmount) || 1);
 
         if (zigInput) {
             zigInput.addEventListener('input', function () {

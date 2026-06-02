@@ -196,10 +196,23 @@
         });
     }());
 
+    // Restore last used amount
+    (function () {
+        var saved = localStorage.getItem('zimrate_convert_amount');
+        if (saved) {
+            var input = document.getElementById('customAmount');
+            if (input && !input.value) {
+                input.value = saved;
+                input.placeholder = saved + ' (last used)';
+            }
+        }
+    }());
+
     document.getElementById('convertForm').addEventListener('submit', function (e) {
         e.preventDefault();
         var val = parseInt(document.getElementById('customAmount').value, 10);
         if (val > 0 && val <= 10000000) {
+            localStorage.setItem('zimrate_convert_amount', val);
             window.location.href = '/convert/' + val + '-usd-to-zig';
         }
     });
