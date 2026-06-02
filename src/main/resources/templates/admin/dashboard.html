@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{admin/layout :: head('Dashboard')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('dashboard')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title">Dashboard</span>
+            <div class="admin-topbar-actions">
+                <div class="admin-user-chip">
+                    <div class="admin-user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span sec:authentication="name">admin</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-body">
+
+            <!-- Flash messages -->
+            <div th:if="${success}" class="flash flash-success">
+                <i class="fas fa-circle-check"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="flash flash-error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Stats row -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-card-icon green"><i class="fas fa-newspaper"></i></div>
+                    <div class="stat-value" th:text="${publishedPosts}">0</div>
+                    <div class="stat-label">Published Posts</div>
+                    <div class="stat-sub" th:text="${totalPosts} + ' total'">0 total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon gold"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-value" th:text="${newsletterActive}">0</div>
+                    <div class="stat-label">Newsletter Subscribers</div>
+                    <div class="stat-sub" th:text="${newsletterTotal} + ' total'">0 total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon blue"><i class="fas fa-bell"></i></div>
+                    <div class="stat-value" th:text="${alertActive}">0</div>
+                    <div class="stat-label">Email Alerts</div>
+                    <div class="stat-sub" th:text="${alertTotal} + ' total'">0 total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon teal"><i class="fab fa-telegram"></i></div>
+                    <div class="stat-value" th:text="${telegramTotal}">0</div>
+                    <div class="stat-label">Telegram Alerts</div>
+                    <div class="stat-sub">Personal bot alerts</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+
+                <!-- Recent posts -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-clock-rotate-left"></i> Recent Posts
+                        </h2>
+                        <a th:href="@{/admin/blog/new}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> New Post
+                        </a>
+                    </div>
+                    <div class="card-body" style="padding:0 22px;">
+                        <div class="mini-post-list" th:if="${!recentPosts.isEmpty()}">
+                            <div th:each="post : ${recentPosts}" class="mini-post">
+                                <div>
+                                    <div class="mini-post-title" th:text="${post.title}">Post title</div>
+                                    <div style="margin-top:3px;">
+                                        <span th:switch="${post.status.name()}">
+                                            <span th:case="'PUBLISHED'" class="badge badge-published">
+                                                <i class="fas fa-circle" style="font-size:6px;"></i> Published
+                                            </span>
+                                            <span th:case="'DRAFT'" class="badge badge-draft">
+                                                <i class="fas fa-circle" style="font-size:6px;"></i> Draft
+                                            </span>
+                                            <span th:case="'REJECTED'" class="badge badge-rejected">
+                                                <i class="fas fa-circle" style="font-size:6px;"></i> Rejected
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                                    <span class="mini-post-date"
+                                          th:text="${#temporals.format(post.createdAt, 'dd MMM')}">1 Jan</span>
+                                    <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
+                                       class="btn btn-outline btn-icon">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${recentPosts.isEmpty()}" class="empty-state">
+                            <i class="fas fa-newspaper"></i>
+                            <p>No posts yet. <a th:href="@{/admin/blog/new}">Create your first one</a>.</p>
+                        </div>
+                    </div>
+                    <div style="padding:14px 22px;border-top:1px solid var(--border);">
+                        <a th:href="@{/admin/blog}" class="btn btn-outline btn-sm">
+                            View all posts <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right panel: scrape + quick links -->
+                <div>
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-rotate"></i> Data Scraper
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="scrape-box">
+                                <p>Manually refresh exchange rates from all active sources right now.</p>
+                                <form th:action="@{/admin/scrape}" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="btn btn-gold">
+                                        <i class="fas fa-rotate"></i> Scrape Now
+                                    </button>
+                                </form>
+                            </div>
+                            <p style="font-size:12px;color:var(--muted);margin-top:12px;">
+                                <i class="fas fa-info-circle"></i>
+                                Auto-scrapes every 30 minutes. Next scheduled run happens automatically.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-bolt"></i> Quick Links
+                            </h2>
+                        </div>
+                        <div class="card-body" style="padding:8px 22px;">
+                            <div class="mini-post-list">
+                                <a th:href="@{/}" target="_blank" class="mini-post">
+                                    <span class="mini-post-title"><i class="fas fa-house" style="margin-right:6px;"></i> Home page</span>
+                                    <i class="fas fa-arrow-up-right-from-square" style="color:var(--muted);font-size:11px;"></i>
+                                </a>
+                                <a th:href="@{/blog}" target="_blank" class="mini-post">
+                                    <span class="mini-post-title"><i class="fas fa-newspaper" style="margin-right:6px;"></i> Blog listing</span>
+                                    <i class="fas fa-arrow-up-right-from-square" style="color:var(--muted);font-size:11px;"></i>
+                                </a>
+                                <a th:href="@{/admin/subscribers}" class="mini-post">
+                                    <span class="mini-post-title"><i class="fas fa-users" style="margin-right:6px;"></i> Subscriber stats</span>
+                                    <i class="fas fa-chevron-right" style="color:var(--muted);font-size:11px;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /dashboard-grid -->
+        </div><!-- /admin-body -->
+    </div><!-- /admin-main -->
+</div><!-- /admin-shell -->
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Error')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title">Error</span>
+        </div>
+
+        <div class="admin-body">
+            <div style="max-width:480px;margin:60px auto;text-align:center;">
+                <div style="font-size:72px;font-weight:800;color:var(--border);line-height:1;margin-bottom:8px;"
+                     th:text="${statusCode}">500</div>
+
+                <h1 style="font-size:20px;font-weight:600;margin-bottom:8px;">
+                    <span th:switch="${statusCode}">
+                        <span th:case="404">Page not found</span>
+                        <span th:case="403">Access denied</span>
+                        <span th:case="*">Something went wrong</span>
+                    </span>
+                </h1>
+
+                <p style="font-size:14px;color:var(--muted);margin-bottom:28px;"
+                   th:text="${message}">An unexpected error occurred.</p>
+
+                <div style="display:flex;gap:10px;justify-content:center;">
+                    <a th:href="@{/admin}" class="btn btn-primary">
+                        <i class="fas fa-gauge-high"></i> Dashboard
+                    </a>
+                    <a th:href="@{/admin/blog}" class="btn btn-outline">
+                        <i class="fas fa-newspaper"></i> Blog Posts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

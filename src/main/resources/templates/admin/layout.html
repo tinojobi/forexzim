@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' — ZimRate Admin'">ZimRate Admin</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+<!-- Sidebar fragment -->
+<aside class="admin-sidebar" th:fragment="sidebar(activePage)">
+    <a th:href="@{/admin}" class="admin-sidebar-logo">
+        <img th:src="@{/logo.svg}" alt="ZimRate">
+        <span class="admin-sidebar-badge">Admin</span>
+    </a>
+
+    <nav class="admin-sidebar-nav">
+        <div class="admin-sidebar-section">Main</div>
+
+        <a th:href="@{/admin}"
+           th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
+           class="admin-nav-link">
+            <i class="fas fa-gauge-high"></i> Dashboard
+        </a>
+
+        <div class="admin-sidebar-section" style="margin-top:8px;">Content</div>
+
+        <a th:href="@{/admin/blog}"
+           th:classappend="${activePage == 'blog'} ? ' active' : ''"
+           class="admin-nav-link">
+            <i class="fas fa-newspaper"></i> Blog Posts
+        </a>
+
+        <a th:href="@{/admin/blog/new}"
+           class="admin-nav-link">
+            <i class="fas fa-pen-to-square"></i> New Post
+        </a>
+
+        <div class="admin-sidebar-section" style="margin-top:8px;">Analytics</div>
+
+        <a th:href="@{/admin/subscribers}"
+           th:classappend="${activePage == 'subscribers'} ? ' active' : ''"
+           class="admin-nav-link">
+            <i class="fas fa-users"></i> Subscribers
+        </a>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+        <a th:href="@{/}" target="_blank" class="admin-view-site">
+            <i class="fas fa-arrow-up-right-from-square"></i> View site
+        </a>
+        <form th:action="@{/admin/logout}" method="post" style="margin-top:2px;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="admin-nav-link"
+                    style="background:none;border:none;cursor:pointer;width:100%;text-align:left;">
+                <i class="fas fa-right-from-bracket"></i> Sign out
+            </button>
+        </form>
+    </div>
+</aside>
+</html>
