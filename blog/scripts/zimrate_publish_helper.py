@@ -234,6 +234,11 @@ def main() -> int:
         request_json("PATCH", f"{api_base}/api/blog/{args.slug}/publish", token)
         post = request_json("GET", f"{api_base}/api/blog/{args.slug}", token)
         changed = True
+        # Ping search engines for faster discovery
+        ping_script = Path(__file__).with_name("ping_search_engines.sh")
+        if ping_script.exists():
+            subprocess.run([str(ping_script)], capture_output=True, text=True)
+            print("Pinged search engines (IndexNow + Google sitemap)")
 
     expected_image = post.get("socialImageUrl") or post.get("imageUrl")
     if expected_image:

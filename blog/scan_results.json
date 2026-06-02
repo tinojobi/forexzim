@@ -1,6 +1,6 @@
 {
-  "scan_time": "2026-05-23T20:12:51.645426+02:00",
-  "window_start": "2026-05-22T20:12:51.645426+02:00",
+  "scan_time": "2026-06-02T17:00:44.735643+02:00",
+  "window_start": "2026-06-01T17:00:44.735643+02:00",
   "source_stats": {
     "iHarare": {
       "total": 10,
@@ -23,15 +23,15 @@
       "method": "Google News"
     },
     "Herald": {
-      "total": 0,
+      "total": 1,
       "method": "Google News"
     },
     "Zimbabwe Independent": {
-      "total": 19,
+      "total": 17,
       "method": "Google News"
     },
     "Southern Eye": {
-      "total": 9,
+      "total": 12,
       "method": "Google News"
     },
     "The Standard": {
@@ -39,282 +39,621 @@
       "method": "Google News"
     }
   },
-  "total_articles": 278,
-  "economic_articles": 6,
-  "clusters": 6,
+  "filter_stats": {
+    "no_date": 0,
+    "old": 237,
+    "non_economic": 32,
+    "economic": 11
+  },
+  "total_articles": 280,
+  "economic_articles": 11,
+  "clusters": 11,
   "all_clusters": [
     {
-      "headline": "\u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa",
-      "link": "https://www.newzimbabwe.com/public-officials-demanding-bribes-from-investors-are-enemies-of-development-mnangagwa/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (13h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 15.414632579722221,
-      "search_score": 12,
-      "novelty_score": 8,
-      "source_score": 20,
-      "total_score": 80,
-      "time_ago": "13h ago",
-      "pub_date": "2026-05-23 05:02:37+00:00",
-      "description": "<p>PRESIDENT Emmerson Mnangagwa has warned that individuals demanding bribes from investors and those vandalising energy infrastructure will be dealt with. Speaking while commissioning the 10MW New Glovers Solar Plant in Munyati, Kwekwe Friday, Mnangagwa said his government has a zero-tolerance stance on acts undermining strategic national investments. His remarks come amid recurring reports from both [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/public-officials-demanding-bribe",
-      "cluster_size": 1,
-      "topic": "Mining & Minerals",
-      "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue; Energy costs and industrial competitiveness",
-      "key_facts": "Headline: \u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "TN Cybertech hails easing inflationary pressures",
-      "link": "https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (19h ago)"
-      ],
-      "topic_score": 21,
-      "recency_score": 12.4049103575,
-      "search_score": 15,
-      "novelty_score": 8,
-      "source_score": 20,
-      "total_score": 76,
-      "time_ago": "19h ago",
-      "pub_date": "2026-05-22 23:01:27+00:00",
-      "description": "<p>TN CyberTech (TNCI) Bank Limited has commended the country\u2019s economic measures for creating an environment of eased inflation, which has partly enabled the group\u2019s revenue to surge by 23%. Presenting the group\u2019s quarterly performance for the first quarter period ended March 31, 2026, TNCI Group CEO, Tawanda Nyambirai commended the operating environment\u2019s stability. \u201cThe operating [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/\">",
-      "cluster_size": 1,
-      "topic": "Tax & Fiscal Policy",
-      "novelty_label": "New story",
-      "angle": "Inflation trajectory and purchasing power",
-      "key_facts": "Headline: TN Cybertech hails easing inflationary pressures. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "Zimbabwe bans foreigners from small-scale gold mining sector",
-      "link": "https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from-small-scale-gold-mining-sector/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (13h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 15.077688135277779,
-      "search_score": 12,
-      "novelty_score": 2,
-      "source_score": 20,
-      "total_score": 74,
-      "time_ago": "13h ago",
-      "pub_date": "2026-05-23 04:22:11+00:00",
-      "description": "<p>THE Government of Zimbabwe has, henceforth, banned foreigners from the small-scale gold mining sector, which is now exclusively reserved for Zimbabwean citizens and wholly Zimbabwean-owned entities Mines Minister Polite Kambamura announced the new policy in Harare this Friday. The measures aim to promote local miners, reduce foreign dominance, and curb rampant environmental degradation from mechanised [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from",
-      "cluster_size": 1,
-      "topic": "Mining & Minerals",
-      "novelty_label": "Already published \u2705",
-      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Zimbabwe bans foreigners from small-scale gold mining sector. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "Old Mutual revenues hit near parity",
-      "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQT254RlNQMENoendfUWpjZ3FiMk10ckZoRTktMW0yQ3NzM0F0WmhscHEwNUxiemF2RXh0dE9xUkdsSVo4czJ4VGFZWG1jVVpMZ2dtN0RiWm1KaVJnV0ZXRVlXOFYwdnk3N2ZjakRndVhHQW9UTGVrRm0xMkxDaWpFVDBTRlRhZzZ2amMxUFRpS24tN3RPNnAtMkVOcEEtU2VwdHdVQ3l3cWdkNEItVmJV0gG0AUFVX3lxTE10cmNnS0k2SVpNMmJJc1o2RzNQOEFYVmwzeUdZY09WbEtjdTlWS0k0b0tRNWx1bHlGTFdCbnVRTTJ6U252VVNOUWhmZ2ttYVlNM1dQTldlQmNrMVMzOGw0eVJyTDlXYUlfMC1oV3dZajkyaV9PTGtRLVZidjYtNnN1NDlmeEo4XzNUT3cxdnJrMXhFZFhMZDRPTlZMR3QzdHEta2VBTnNMNEpKeTlIZnJGekxUeg?oc=5",
+      "headline": "Zimbabwe trade deficit widens 16% as exports slump",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQbEZWT0NGTk1pcWZUWDhIWXBRUW5EY3ZOSXY2RVNoNzZ3QVJoTHdEbk1YWncwcFQyZTZnVHJyYmxtVU1yZ0NrZDVINDNWTzVSZW4yM3o1dWFtR3FYZnYwMk5sRlJpQmFhNS01di1fWlB0ZUFjRmlKY3FRMl9NVHNjaGdkRkliRVRvM2luQ0lwUWdSTHVJbTNHTVFzT2N6X1NVc09LU3RmUdIBrAFBVV95cUxPbmljTnRwaUdzZndwWHdxdVNNeFhhV3RrN2UwbmdfeEFMcGhVVlZTRGlCOHhUOGd1bFFOaURzUEhaQWpRVVNNOFkxcWlKS2Q4TXIwMWxLU2lreW1uc3NUR1ZHeXFPQ201T1ZpWGRvbVM5ck12OWNpNmgxQXFCQlJhekthSjdoQTFISzdtSmV1cjlsakN4R2ZMYlVLN0g0U0xfa0NyOWpHLVA2UWlP?oc=5",
       "sources": [
         "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "NewsDay (22h ago)"
+        "NewsDay (3h ago)"
       ],
       "topic_score": 21,
-      "recency_score": 10.680049246388888,
-      "search_score": 8,
+      "recency_score": 19.382928905416666,
+      "search_score": 12,
       "novelty_score": 8,
       "source_score": 20,
-      "total_score": 67,
-      "time_ago": "22h ago",
-      "pub_date": "2026-05-22 19:34:28+00:00",
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 80,
+      "time_ago": "3h ago",
+      "pub_date": "2026-06-02 11:18:36+00:00",
       "description": "",
       "cluster_size": 1,
-      "topic": "Tax & Fiscal Policy",
+      "topic": "Trade & Regional",
       "novelty_label": "New story",
-      "angle": "Broader economic implications for Zimbabwe",
-      "key_facts": "Headline: Old Mutual revenues hit near parity. Covered by 1 source(s). 1 article(s) in cluster."
+      "angle": "Export performance and trade balance",
+      "key_facts": "Headline: Zimbabwe trade deficit widens 16% as exports slump. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate",
+        "Google News link requires source-page verification"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe",
-      "link": "https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-into-manufacturing-plant-in-zimbabwe/",
+      "headline": "Treasury nullifies Agriculture Ministry\u2019s grain import levy \u2013 calls it legally invalid",
+      "link": "https://www.newzimbabwe.com/treasury-nullifies-agriculture-ministrys-grain-import-levy-calls-it-legally-invalid/",
       "sources": [
         "New Zimbabwe"
       ],
       "num_sources": 1,
       "source_detail": [
-        "New Zimbabwe (13h ago)"
+        "New Zimbabwe (4h ago)"
       ],
       "topic_score": 21,
-      "recency_score": 15.13352146861111,
-      "search_score": 8,
-      "novelty_score": 2,
+      "recency_score": 19.257558535046297,
+      "search_score": 12,
+      "novelty_score": 8,
       "source_score": 20,
-      "total_score": 66,
-      "time_ago": "13h ago",
-      "pub_date": "2026-05-23 04:28:53+00:00",
-      "description": "<p>INDIAN billionaire Ravi Jaipuria has further expanded his presence in Africa with the opening of a $40 million manufacturing plant in Zimbabwe, reinforcing his position on the continent\u2019s competitive consumer market. The facility, operated under Varun Beverages, produces snacks, juice, and dairy products, including a dedicated Cheetos production line. It has been designed to meet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-in",
+      "avg_source_quality": 0.79,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "New Zimbabwe",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.79
+        }
+      ],
+      "total_score": 80,
+      "time_ago": "4h ago",
+      "pub_date": "2026-06-02 10:33:28+00:00",
+      "description": "<p>THE Ministry of Finance has declared as invalid a grain import levy imposed on millers by the Agriculture Ministry through Statutory Instrument (SI) 87 of 2025 and urged authorities to immediately repeal it. A letter dated March 3, from the Ministry of Finance\u2019s permanent secretary George Guvamatanga to Chief Secretary to the President and Cabinet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/treasury-nullifies-agriculture-ministrys-grain-import-levy-calls-it-legally-invalid/",
       "cluster_size": 1,
-      "topic": "Manufacturing & Industry",
-      "novelty_label": "Already published \u2705",
+      "topic": "Trade & Regional",
+      "novelty_label": "New story",
       "angle": "Broader economic implications for Zimbabwe",
-      "key_facts": "Headline: Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe. Covered by 1 source(s). 1 article(s) in cluster."
+      "key_facts": "Headline: Treasury nullifies Agriculture Ministry\u2019s grain import levy \u2013 calls it legally invalid. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Companies intensify hunt for black market dollar as shortages deepen",
-      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQNnF4aVJ5OFMySnRNbkQ0OWI3TmdTWjRGRFVCdk1OWWZrQTNHQ3hEMU5lc1ZXTG9CLXN5RlF6UVZiWUNjTVh2UTEtYkRZaklZTy14ckJVLXdZZWVCbXlLdjYycUZOVXdtWWFDVHEwYUdaRGVUc2NRYThkeDYtYWxpRU9Qaml2MUhGeUNaNFVrcDRDX21DNFFpQjBCOTBYN3BtLXlhUE9iSVNwTzJKVmk3enk2S1dXWmF5eUU5Y2pJQV9scFhqMXpydmRQT01FU19ZYjMtddIB2gFBVV95cUxOUFZiOF9wYXM2YVYyNG12S2dlQVJZZ182U1B3amRSMnI5Nk9HYkVISmdoY0VYLTBKaXlMRm92RGVJcGQtNkQzTXEwaUN0c3FMV1BSa0JOa0V4NlhJcWdhRGE3MXFZcnQzejRFUHJ1TFJueFVCdjhCUFNCeUt2ZHdwYU1TaVhIV1BCblg4dElnTm1EaTZ3MkFNT1dVa0MtZ21JcmxscnV6c0w0MDNjb2R6QXlPenU3dldaSnFGMDE4YTdBLU1tanhQZmlTMV84VlRJQ1pEaVJoWWRQdw?oc=5",
+      "headline": "Zimbabwe Extends Fuel Price Cushion Measures Amid Middle East Supply Pressures",
+      "link": "https://iharare.com/zimbabwe-extends-fuel-price-cushion-measures-amid-middle-east-supply-pressures/",
+      "sources": [
+        "iHarare"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "iHarare (8h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 17.871981160694446,
+      "search_score": 15,
+      "novelty_score": 5,
+      "source_score": 20,
+      "avg_source_quality": 0.81,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "iHarare",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.81
+        }
+      ],
+      "total_score": 78,
+      "time_ago": "8h ago",
+      "pub_date": "2026-06-02 06:45:23+00:00",
+      "description": "<p>Zimbabwe Extends Fuel Price Cushion Measures Amid Middle East Supply Pressures Government will maintain measures introduced to shield motorists and businesses from rising fuel costs as authorities continue to monitor the impact of instability in the Middle East on global energy markets. Finance and Economic Development Minister Mthuli Ncube said the interventions, first rolled out [&#8230;]</p>\n<p>The post <a href=\"https://iharare.com/zimbabwe-extends-fuel-price-cushion-measures-amid-middle-e",
+      "cluster_size": 1,
+      "topic": "Energy & Fuel",
+      "novelty_label": "Related to recent coverage",
+      "angle": "Energy costs and industrial competitiveness",
+      "key_facts": "Headline: Zimbabwe Extends Fuel Price Cushion Measures Amid Middle East Supply Pressures. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "Namib Minerals Advances Redwing Mine Restart as Dewatering Programme Remains on Schedule",
+      "link": "https://thezimbabwemail.com/business/namib-minerals-advances-redwing-mine-restart-as-dewatering-programme-remains-on-schedule/",
+      "sources": [
+        "Zimbabwe Mail"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "Zimbabwe Mail (17h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 13.011703382916666,
+      "search_score": 12,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.73,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "Zimbabwe Mail",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.73
+        }
+      ],
+      "total_score": 78,
+      "time_ago": "17h ago",
+      "pub_date": "2026-06-01 21:02:09+00:00",
+      "description": "<p>HARARE \u2013 Namib Minerals has reported steady progress in the restart of its Redwing Gold Mine in Zimbabwe, with dewatering operations advancing according to plan and laying the groundwork for the mine&#8217;s return to production. The company announced that since the commencement of dewatering activities on 29 January 2026, approximately 544,570 cubic metres of water [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/business/namib-minerals-advances-redwing-mine-restart-as-dewateri",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "New story",
+      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
+      "key_facts": "Headline: Namib Minerals Advances Redwing Mine Restart as Dewatering Programme Remains on Schedule. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "Zimbabwe\u2019s sugar tax funds US$27 million radiotherapy machines, to slash cancer treatment backlog",
+      "link": "https://www.newzimbabwe.com/zimbabwes-sugar-tax-funds-us27-million-radiotherapy-machines-to-slash-cancer-treatment-backlog/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (10h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 16.934481160694446,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.79,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "New Zimbabwe",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.79
+        }
+      ],
+      "total_score": 77,
+      "time_ago": "10h ago",
+      "pub_date": "2026-06-02 04:52:53+00:00",
+      "description": "<p>Zimbabwe&#8217;s controversial sugar tax is beginning to deliver tangible results, with new radiotherapy machines worth US$27 million being installed at Parirenyatwa Group of Hospitals as government moves to tackle a treatment backlog affecting hundreds of patients. Finance Minister Professor Mthuli Ncube on Tuesday toured Parirenyatwa Hospital and expressed satisfaction with progress on the installation of [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimbabwes-sugar-tax-fun",
+      "cluster_size": 1,
+      "topic": "Tax & Fiscal Policy",
+      "novelty_label": "New story",
+      "angle": "Revenue mobilisation and business environment",
+      "key_facts": "Headline: Zimbabwe\u2019s sugar tax funds US$27 million radiotherapy machines, to slash cancer treatment backlog. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "China\u2019s factory activity slows in May, raising questions over its economy",
+      "link": "https://thezimbabwemail.com/economy/chinas-factory-activity-slows-in-may-raising-questions-over-its-economy/",
+      "sources": [
+        "Zimbabwe Mail"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "Zimbabwe Mail (3h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 19.391678905416665,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.73,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "Zimbabwe Mail",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.73
+        }
+      ],
+      "total_score": 76,
+      "time_ago": "3h ago",
+      "pub_date": "2026-06-02 11:21:45+00:00",
+      "description": "<p>BEIJING \u2014 China\u2019s factory activity was flat in May, according to an official survey released Sunday, raising questions about how much further the country\u2019s economy can shield itself from the fallout of the ongoing Iran war and pressure on demand. The official manufacturing purchasing managers index moderated to 50 from 50.3 in April, according to [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/economy/chinas-factory-activity-slows-in-may-raising-questions-over-its-economy/\">Chi",
+      "cluster_size": 1
+    },
+    {
+      "headline": "Millennium Heights powers ahead with solar innovation",
+      "link": "https://www.newzimbabwe.com/millennium-heights-powers-ahead-with-solar-innovation/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (7h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 18.31128671625,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.79,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "New Zimbabwe",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.79
+        }
+      ],
+      "total_score": 75,
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-02 07:38:06+00:00",
+      "description": "<p>WestProp Holdings, developer of Millennium Heights, has redefined sustainable urban living with the installation of a onemegawatt solar plant that now covers its 54-bay car park. More parking bays on upcoming apartment blocks will be fitted with solar covering, generating more energy for the estate. As part of its promise when pioneering the 1,000 unit [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/millennium-heights-powers-ahead-with-solar-innovation/\">Millennium Heights powe",
+      "cluster_size": 1
+    },
+    {
+      "headline": "Global fuel shocks bite Zimbabwe consumers",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNemR3R2JEekY3R1EzT0RTVjNkTEMzOV9FWHF0aFdiWE5heWctb2NhakFJR0hVUU9RQ3g0X3d0N2NQaUpZVFpucGZkSlZvOGNQSzQzTDZubGg5eHh3djhnWFVmNnF2VXVybzJlclcwdkNIZGIyd3JvczVvT1JGcUkyN1RpOGxoVVgwOUVOWGQ4X3VTV0RKNjRMcFdVY9IBoAFBVV95cUxQOVpZNUZpd21Bemt2UVBtbU1mMUM0LTJtcnpJelUxcFo3VEZnZEY2QzdkRnpXSHdoWWRHUm11akRXRnBqVUpFaFE1X0VqVXdtNWRsNHZZLWlYNzdEOXlxLVlzcVpabUN4M1RMbG8yd1N2OHF4ZmEyeThtZENKSjE1VHk3RzI3T1J3cW9HVXFJdmFnUjBkZEcweUotR2ZHSDgt?oc=5",
       "sources": [
         "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "NewsDay (22h ago)"
+        "NewsDay (7h ago)"
       ],
-      "topic_score": 10,
-      "recency_score": 10.943104801944443,
+      "topic_score": 21,
+      "recency_score": 18.16767560513889,
       "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 75,
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-02 07:20:52+00:00",
+      "description": "",
+      "cluster_size": 1
+    },
+    {
+      "headline": "How UAE became Zimbabwe\u2019s top customer, buying half of everything it exports",
+      "link": "https://www.newzimbabwe.com/how-uae-became-zimbabwes-top-customer-buying-half-of-everything-it-exports/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (10h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 16.645592271805555,
+      "search_score": 12,
       "novelty_score": 2,
       "source_score": 20,
-      "total_score": 50,
-      "time_ago": "22h ago",
-      "pub_date": "2026-05-22 20:06:02+00:00",
+      "avg_source_quality": 0.79,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "New Zimbabwe",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.79
+        }
+      ],
+      "total_score": 71,
+      "time_ago": "10h ago",
+      "pub_date": "2026-06-02 04:18:13+00:00",
+      "description": "<p>Business Insider Africa The United Arab Emirates has overtaken South Africa as Zimbabwe\u2019s largest export destination, marking a significant shift in the country&#8217;s trade landscape. UAE-bound exports accounted for 50% of Zimbabwe&#8217;s total export earnings in the first quarter of 2026, according to official data. Bilateral trade exceeded $5 billion in 2025 and is projected [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/how-uae-became-zimbabwes-top-customer-buying-half-o",
+      "cluster_size": 1
+    },
+    {
+      "headline": "Zimbabwe Winter Wheat Planting Reaches 78,458 Hectares",
+      "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOeHJ4R0pSUXlFNGJZTTVBNFRZS2hzbVl5V2RMY0JfUUdHZ1NxS3VEenZKT1NSZTRIRTNSYjdsUGVZbzcyQVdXTDJZNGRnNlZOeV80bXk5Skd0bTNfdWhKd0lCLVRHZ3BLWXNCcjRqaG5Xb1VrNDA1YkxrTUY3X2I2UmloRjFRT0d3WmZtbkotel9OZloyTUtfdHdPak5nT0MtY3Qycm92SlBMU1cx0gGyAUFVX3lxTE5mVW00MkswbDUzeDVZQl9STTlRMzlJVkdlVFRPZG56cjZMLVp4RS1vQmJWLTUxT0lWTUhRaHlFSXg4TkdLSEdHX29ObVRpR0lBMlF3OTg4MmxOclFCX3NLS1YzbkhHRE1sRG9Vc1ZuWW93WmRic3JiQXF3Rm5Wd3VZZV9YWFRkbTJmWEp1TDdxdjZRc3NMOHAyOUc2eXhxMDRFTkRpcDJzT2VYMkY5VHQyZHc?oc=5",
+      "sources": [
+        "NewsDay"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "NewsDay (3h ago)"
+      ],
+      "topic_score": 10,
+      "recency_score": 19.347373349861112,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 65,
+      "time_ago": "3h ago",
+      "pub_date": "2026-06-02 11:05:48+00:00",
+      "description": "",
+      "cluster_size": 1
+    },
+    {
+      "headline": "Legal fog clouds Zimbabwe\u2019s new minerals policy, warns watchdog",
+      "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNay1YZDZMemlmSnN2dmVFM3lINXNhMEFkVXY0eUdocVhVci12d08yRTVJMGhKcnctU2FnaEFXMDRUQ3M0YTc0WWt5ZU5lWi1IaFVEU3QzVzRiaG44Xy05WXlmQ1RjM1BtbFBtOVMzUHdkZVdHWE9ZQ3BmUDRicllFUS1ua2Nrc2FKYUZ6MHp0ckFDVUxodVNSR1ZuNGM5dExINVVoTmZYRE1QaWhvb3duQU10TnRqZHPSAbwBQVVfeXFMT3B2SEpuQjVmbEhaOFk0Yk5XSFpZbHVSc1pYY01XLTlNcktVYWJwQ1NEY1hTNlFqdnk1RTFoVVZpaWpZQldHcnRNUlBudmt0NEV6SXVhTmU5NXp5cW1Hb0VZLWU5NkZvSUNJR2xWY2lSc0pXLXRCbTRLX3NPdmVfZzN3eXBIdHBCNnB0dWhuM2hzOHVOX2dtQ2piSlYyVWxRSlhPcXM3SnJGejdUWlNSOC0zNUpGSUNCUHRzVEg?oc=5",
+      "sources": [
+        "NewsDay"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "NewsDay (7h ago)"
+      ],
+      "topic_score": 10,
+      "recency_score": 18.017397827361112,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 64,
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-02 07:02:50+00:00",
       "description": "",
       "cluster_size": 1
     }
   ],
   "top_stories": [
     {
-      "headline": "\u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa",
-      "link": "https://www.newzimbabwe.com/public-officials-demanding-bribes-from-investors-are-enemies-of-development-mnangagwa/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (13h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 15.414632579722221,
-      "search_score": 12,
-      "novelty_score": 8,
-      "source_score": 20,
-      "total_score": 80,
-      "time_ago": "13h ago",
-      "pub_date": "2026-05-23 05:02:37+00:00",
-      "description": "<p>PRESIDENT Emmerson Mnangagwa has warned that individuals demanding bribes from investors and those vandalising energy infrastructure will be dealt with. Speaking while commissioning the 10MW New Glovers Solar Plant in Munyati, Kwekwe Friday, Mnangagwa said his government has a zero-tolerance stance on acts undermining strategic national investments. His remarks come amid recurring reports from both [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/public-officials-demanding-bribe",
-      "cluster_size": 1,
-      "topic": "Mining & Minerals",
-      "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue; Energy costs and industrial competitiveness",
-      "key_facts": "Headline: \u2018Public officials demanding bribes from investors are enemies of development\u2019: Mnangagwa. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "TN Cybertech hails easing inflationary pressures",
-      "link": "https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (19h ago)"
-      ],
-      "topic_score": 21,
-      "recency_score": 12.4049103575,
-      "search_score": 15,
-      "novelty_score": 8,
-      "source_score": 20,
-      "total_score": 76,
-      "time_ago": "19h ago",
-      "pub_date": "2026-05-22 23:01:27+00:00",
-      "description": "<p>TN CyberTech (TNCI) Bank Limited has commended the country\u2019s economic measures for creating an environment of eased inflation, which has partly enabled the group\u2019s revenue to surge by 23%. Presenting the group\u2019s quarterly performance for the first quarter period ended March 31, 2026, TNCI Group CEO, Tawanda Nyambirai commended the operating environment\u2019s stability. \u201cThe operating [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/tn-cybertech-hails-easing-inflationary-pressures/\">",
-      "cluster_size": 1,
-      "topic": "Tax & Fiscal Policy",
-      "novelty_label": "New story",
-      "angle": "Inflation trajectory and purchasing power",
-      "key_facts": "Headline: TN Cybertech hails easing inflationary pressures. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "Old Mutual revenues hit near parity",
-      "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQT254RlNQMENoendfUWpjZ3FiMk10ckZoRTktMW0yQ3NzM0F0WmhscHEwNUxiemF2RXh0dE9xUkdsSVo4czJ4VGFZWG1jVVpMZ2dtN0RiWm1KaVJnV0ZXRVlXOFYwdnk3N2ZjakRndVhHQW9UTGVrRm0xMkxDaWpFVDBTRlRhZzZ2amMxUFRpS24tN3RPNnAtMkVOcEEtU2VwdHdVQ3l3cWdkNEItVmJV0gG0AUFVX3lxTE10cmNnS0k2SVpNMmJJc1o2RzNQOEFYVmwzeUdZY09WbEtjdTlWS0k0b0tRNWx1bHlGTFdCbnVRTTJ6U252VVNOUWhmZ2ttYVlNM1dQTldlQmNrMVMzOGw0eVJyTDlXYUlfMC1oV3dZajkyaV9PTGtRLVZidjYtNnN1NDlmeEo4XzNUT3cxdnJrMXhFZFhMZDRPTlZMR3QzdHEta2VBTnNMNEpKeTlIZnJGekxUeg?oc=5",
+      "headline": "Zimbabwe trade deficit widens 16% as exports slump",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQbEZWT0NGTk1pcWZUWDhIWXBRUW5EY3ZOSXY2RVNoNzZ3QVJoTHdEbk1YWncwcFQyZTZnVHJyYmxtVU1yZ0NrZDVINDNWTzVSZW4yM3o1dWFtR3FYZnYwMk5sRlJpQmFhNS01di1fWlB0ZUFjRmlKY3FRMl9NVHNjaGdkRkliRVRvM2luQ0lwUWdSTHVJbTNHTVFzT2N6X1NVc09LU3RmUdIBrAFBVV95cUxPbmljTnRwaUdzZndwWHdxdVNNeFhhV3RrN2UwbmdfeEFMcGhVVlZTRGlCOHhUOGd1bFFOaURzUEhaQWpRVVNNOFkxcWlKS2Q4TXIwMWxLU2lreW1uc3NUR1ZHeXFPQ201T1ZpWGRvbVM5ck12OWNpNmgxQXFCQlJhekthSjdoQTFISzdtSmV1cjlsakN4R2ZMYlVLN0g0U0xfa0NyOWpHLVA2UWlP?oc=5",
       "sources": [
         "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "NewsDay (22h ago)"
+        "NewsDay (3h ago)"
       ],
       "topic_score": 21,
-      "recency_score": 10.680049246388888,
+      "recency_score": 19.382928905416666,
+      "search_score": 12,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 80,
+      "time_ago": "3h ago",
+      "pub_date": "2026-06-02 11:18:36+00:00",
+      "description": "",
+      "cluster_size": 1,
+      "topic": "Trade & Regional",
+      "novelty_label": "New story",
+      "angle": "Export performance and trade balance",
+      "key_facts": "Headline: Zimbabwe trade deficit widens 16% as exports slump. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate",
+        "Google News link requires source-page verification"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "Treasury nullifies Agriculture Ministry\u2019s grain import levy \u2013 calls it legally invalid",
+      "link": "https://www.newzimbabwe.com/treasury-nullifies-agriculture-ministrys-grain-import-levy-calls-it-legally-invalid/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (4h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 19.257558535046297,
+      "search_score": 12,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.79,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "New Zimbabwe",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.79
+        }
+      ],
+      "total_score": 80,
+      "time_ago": "4h ago",
+      "pub_date": "2026-06-02 10:33:28+00:00",
+      "description": "<p>THE Ministry of Finance has declared as invalid a grain import levy imposed on millers by the Agriculture Ministry through Statutory Instrument (SI) 87 of 2025 and urged authorities to immediately repeal it. A letter dated March 3, from the Ministry of Finance\u2019s permanent secretary George Guvamatanga to Chief Secretary to the President and Cabinet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/treasury-nullifies-agriculture-ministrys-grain-import-levy-calls-it-legally-invalid/",
+      "cluster_size": 1,
+      "topic": "Trade & Regional",
+      "novelty_label": "New story",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Treasury nullifies Agriculture Ministry\u2019s grain import levy \u2013 calls it legally invalid. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "Zimbabwe Extends Fuel Price Cushion Measures Amid Middle East Supply Pressures",
+      "link": "https://iharare.com/zimbabwe-extends-fuel-price-cushion-measures-amid-middle-east-supply-pressures/",
+      "sources": [
+        "iHarare"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "iHarare (8h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 17.871981160694446,
+      "search_score": 15,
+      "novelty_score": 5,
+      "source_score": 20,
+      "avg_source_quality": 0.81,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "iHarare",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.81
+        }
+      ],
+      "total_score": 78,
+      "time_ago": "8h ago",
+      "pub_date": "2026-06-02 06:45:23+00:00",
+      "description": "<p>Zimbabwe Extends Fuel Price Cushion Measures Amid Middle East Supply Pressures Government will maintain measures introduced to shield motorists and businesses from rising fuel costs as authorities continue to monitor the impact of instability in the Middle East on global energy markets. Finance and Economic Development Minister Mthuli Ncube said the interventions, first rolled out [&#8230;]</p>\n<p>The post <a href=\"https://iharare.com/zimbabwe-extends-fuel-price-cushion-measures-amid-middle-e",
+      "cluster_size": 1,
+      "topic": "Energy & Fuel",
+      "novelty_label": "Related to recent coverage",
+      "angle": "Energy costs and industrial competitiveness",
+      "key_facts": "Headline: Zimbabwe Extends Fuel Price Cushion Measures Amid Middle East Supply Pressures. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "Namib Minerals Advances Redwing Mine Restart as Dewatering Programme Remains on Schedule",
+      "link": "https://thezimbabwemail.com/business/namib-minerals-advances-redwing-mine-restart-as-dewatering-programme-remains-on-schedule/",
+      "sources": [
+        "Zimbabwe Mail"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "Zimbabwe Mail (17h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 13.011703382916666,
+      "search_score": 12,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.73,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "Zimbabwe Mail",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.73
+        }
+      ],
+      "total_score": 78,
+      "time_ago": "17h ago",
+      "pub_date": "2026-06-01 21:02:09+00:00",
+      "description": "<p>HARARE \u2013 Namib Minerals has reported steady progress in the restart of its Redwing Gold Mine in Zimbabwe, with dewatering operations advancing according to plan and laying the groundwork for the mine&#8217;s return to production. The company announced that since the commencement of dewatering activities on 29 January 2026, approximately 544,570 cubic metres of water [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/business/namib-minerals-advances-redwing-mine-restart-as-dewateri",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "New story",
+      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
+      "key_facts": "Headline: Namib Minerals Advances Redwing Mine Restart as Dewatering Programme Remains on Schedule. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "Zimbabwe\u2019s sugar tax funds US$27 million radiotherapy machines, to slash cancer treatment backlog",
+      "link": "https://www.newzimbabwe.com/zimbabwes-sugar-tax-funds-us27-million-radiotherapy-machines-to-slash-cancer-treatment-backlog/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (10h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 16.934481160694446,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
-      "total_score": 67,
-      "time_ago": "22h ago",
-      "pub_date": "2026-05-22 19:34:28+00:00",
-      "description": "",
+      "avg_source_quality": 0.79,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "New Zimbabwe",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.79
+        }
+      ],
+      "total_score": 77,
+      "time_ago": "10h ago",
+      "pub_date": "2026-06-02 04:52:53+00:00",
+      "description": "<p>Zimbabwe&#8217;s controversial sugar tax is beginning to deliver tangible results, with new radiotherapy machines worth US$27 million being installed at Parirenyatwa Group of Hospitals as government moves to tackle a treatment backlog affecting hundreds of patients. Finance Minister Professor Mthuli Ncube on Tuesday toured Parirenyatwa Hospital and expressed satisfaction with progress on the installation of [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimbabwes-sugar-tax-fun",
       "cluster_size": 1,
       "topic": "Tax & Fiscal Policy",
       "novelty_label": "New story",
-      "angle": "Broader economic implications for Zimbabwe",
-      "key_facts": "Headline: Old Mutual revenues hit near parity. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "Zimbabwe bans foreigners from small-scale gold mining sector",
-      "link": "https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from-small-scale-gold-mining-sector/",
-      "sources": [
-        "New Zimbabwe"
+      "angle": "Revenue mobilisation and business environment",
+      "key_facts": "Headline: Zimbabwe\u2019s sugar tax funds US$27 million radiotherapy machines, to slash cancer treatment backlog. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
       ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (13h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 15.077688135277779,
-      "search_score": 12,
-      "novelty_score": 2,
-      "source_score": 20,
-      "total_score": 74,
-      "time_ago": "13h ago",
-      "pub_date": "2026-05-23 04:22:11+00:00",
-      "description": "<p>THE Government of Zimbabwe has, henceforth, banned foreigners from the small-scale gold mining sector, which is now exclusively reserved for Zimbabwean citizens and wholly Zimbabwean-owned entities Mines Minister Polite Kambamura announced the new policy in Harare this Friday. The measures aim to promote local miners, reduce foreign dominance, and curb rampant environmental degradation from mechanised [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimbabwe-bans-foreigners-from",
-      "cluster_size": 1,
-      "topic": "Mining & Minerals",
-      "novelty_label": "Already published \u2705",
-      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Zimbabwe bans foreigners from small-scale gold mining sector. Covered by 1 source(s). 1 article(s) in cluster."
-    },
-    {
-      "headline": "Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe",
-      "link": "https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-into-manufacturing-plant-in-zimbabwe/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (13h ago)"
-      ],
-      "topic_score": 21,
-      "recency_score": 15.13352146861111,
-      "search_score": 8,
-      "novelty_score": 2,
-      "source_score": 20,
-      "total_score": 66,
-      "time_ago": "13h ago",
-      "pub_date": "2026-05-23 04:28:53+00:00",
-      "description": "<p>INDIAN billionaire Ravi Jaipuria has further expanded his presence in Africa with the opening of a $40 million manufacturing plant in Zimbabwe, reinforcing his position on the continent\u2019s competitive consumer market. The facility, operated under Varun Beverages, produces snacks, juice, and dairy products, including a dedicated Cheetos production line. It has been designed to meet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/indian-billionaire-jaipuria-injects-us40-million-in",
-      "cluster_size": 1,
-      "topic": "Manufacturing & Industry",
-      "novelty_label": "Already published \u2705",
-      "angle": "Broader economic implications for Zimbabwe",
-      "key_facts": "Headline: Indian billionaire Jaipuria injects US$40 million into manufacturing plant in Zimbabwe. Covered by 1 source(s). 1 article(s) in cluster."
+      "next_step": "Find corroborating official or independent sources before drafting."
     }
   ]
 }

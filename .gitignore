@@ -52,3 +52,6 @@ blog/scan_history.jsonl
 monitor/.health_state
 monitor/.*_state.json
 *.bak.*
+
+# Graphify knowledge graph (auto-generated, fully removable)
+graphify-out/

@@ -422,6 +422,21 @@ public class RateController {
             return "redirect:" + baseUrl + "/convert/100-usd-to-zig";
         }
 
+        @GetMapping("/convert/")
+        public String convertTrailingSlash() {
+            return "redirect:/convert";
+        }
+
+        @GetMapping("/reactivate")
+        public String reactivate() {
+            return "redirect:/convert";
+        }
+
+        @GetMapping("/converter")
+        public String converter() {
+            return "redirect:/convert";
+        }
+
         @GetMapping("/convert/{amount:[0-9]+}-usd-to-zig")
         public String convert(@PathVariable("amount") String amountStr, Model model) {
             long amount;

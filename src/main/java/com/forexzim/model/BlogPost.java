@@ -73,4 +73,15 @@ public class BlogPost {
 
     @Column(name = "preview_token", nullable = false, length = 36)
     private String previewToken;
+
+    /** Article category e.g. "Economy", "Trade", "Fuel" */
+    @Column(length = 100)
+    private String category;
+
+    /** Comma-separated keywords for SEO and structured data */
+    @Column(length = 500)
+    private String keywords;
+
+    @Column(nullable = false)
+    private Boolean featured = false;
 }

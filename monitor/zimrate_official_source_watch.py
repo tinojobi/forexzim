@@ -52,7 +52,7 @@ SOURCES = [
     },
     {
         "name": "Ministry of Finance News",
-        "url": "https://www.zimtreasury.gov.zw/",
+        "url": "https://zimtreasury.co.zw/",
         "keywords": ["budget", "treasury", "fiscal", "tax", "debt", "economic", "statement"],
     },
 ]

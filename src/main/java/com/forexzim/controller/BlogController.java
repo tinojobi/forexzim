@@ -127,18 +127,44 @@ public class BlogController {
                 : "";
         String title        = post.getTitle().replace("\"", "\\\"");
 
-        String imageClause = post.getImageUrl() != null
-                ? "\"image\":\"" + post.getImageUrl() + "\","
-                : "";
+        // Build image clause with optional dimensions hint
+        String imageClause = "";
+        if (post.getImageUrl() != null) {
+            imageClause = "\"image\":\"" + post.getImageUrl() + "\",";
+        }
 
-        return "{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\","
-            + "\"headline\":\"" + title + "\","
-            + "\"description\":\"" + description + "\","
-            + imageClause
-            + "\"author\":{\"@type\":\"Organization\",\"name\":\"" + post.getAuthor() + "\"},"
-            + "\"datePublished\":\"" + publishedIso + "\","
-            + "\"dateModified\":\"" + modifiedIso + "\","
-            + "\"publisher\":{\"@type\":\"Organization\",\"name\":\"ZimRate\",\"url\":\"" + baseUrl + "\"},"
-            + "\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"" + url + "\"}}";
+        // wordCount from content strip tags
+        int wordCount = 0;
+        if (post.getContent() != null) {
+            String stripped = post.getContent().replaceAll("<[^>]+>", " ").trim();
+            wordCount = stripped.isEmpty() ? 0 : stripped.split("\\s+").length;
+        }
+
+        // articleSection (category)
+        String sectionClause = "";
+        if (post.getCategory() != null && !post.getCategory().isBlank()) {
+            sectionClause = "\"articleSection\":\"" + post.getCategory().replace("\"", "\\\"") + "\",";
+        }
+
+        // keywords
+        String keywordsClause = "";
+        if (post.getKeywords() != null && !post.getKeywords().isBlank()) {
+            String kw = post.getKeywords().replace("\"", "\\\"");
+            keywordsClause = "\"keywords\":\"" + kw + "\",";
+        }
+
+        return "{\"@context\":\"https://schema.org\",\"@type\":\"Article\"," +
+            "\"headline\":\"" + title + "\"," +
+            "\"description\":\"" + description + "\"," +
+            imageClause +
+            sectionClause +
+            keywordsClause +
+            "\"author\":{\"@type\":\"Organization\",\"name\":\"" + post.getAuthor() + "\"}," +
+            "\"datePublished\":\"" + publishedIso + "\"," +
+            "\"dateModified\":\"" + modifiedIso + "\"," +
+            "\"publisher\":{\"@type\":\"Organization\",\"name\":\"ZimRate\",\"url\":\"" + baseUrl + "\"}," +
+            "\"inLanguage\":\"en\"," +
+            "\"wordCount\":" + wordCount + "," +
+            "\"mainEntityOfPage\":{\"@type\":\"WebPage\",\"@id\":\"" + url + "\"}}";
     }
 }

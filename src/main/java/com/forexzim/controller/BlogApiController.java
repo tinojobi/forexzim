@@ -159,6 +159,7 @@ public class BlogApiController {
         BlogPost post = existing.get();
         if (body.containsKey("category")) post.setCategory(body.get("category"));
         if (body.containsKey("keywords")) post.setKeywords(body.get("keywords"));
+        if (body.containsKey("featured")) post.setFeatured(Boolean.parseBoolean(body.get("featured")));
         post.setUpdatedAt(LocalDateTime.now());
         return ResponseEntity.ok(toResponse(blogRepository.save(post)));
     }

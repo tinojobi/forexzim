@@ -593,27 +593,77 @@ def normalize_topic_text(text):
     return text
 
 
+NOVELTY_STOPWORDS = {
+    "a", "an", "and", "as", "at", "backs", "by", "for", "from", "game", "help",
+    "in", "into", "it", "its", "new", "of", "on", "only", "over", "the", "to",
+    "today", "will", "with", "zimbabwe", "zim", "zimrate",
+}
+
+# These are useful topic hints but too broad to prove a story was already covered.
+# Without this guard, a prior keyword like "Zimbabwe lithium export quotas" matched
+# unrelated articles on just {"zimbabwe", "export"} and marked them Already published.
+NOVELTY_GENERIC_TOPIC_WORDS = {
+    "business", "economy", "economic", "export", "exports", "finance", "financing",
+    "market", "markets", "mineral", "minerals", "mining", "rate", "rates", "sales",
+    "strategy", "trade", "value",
+}
+
+
+def novelty_tokens(text, *, keep_generic=False):
+    """Return normalized tokens for novelty matching, excluding noisy site/topic words."""
+    tokens = set(re.findall(r"\b[a-z0-9]+\b", normalize_topic_text(text)))
+    tokens = {t for t in tokens if len(t) > 2 and t not in NOVELTY_STOPWORDS}
+    if not keep_generic:
+        tokens -= NOVELTY_GENERIC_TOPIC_WORDS
+    return tokens
+
+
+def novelty_match_kind(title, desc=""):
+    """Classify the relationship to recent ZimRate coverage.
+
+    Returns:
+    - duplicate: specific enough to call already published
+    - related: same broad beat, but not the same story
+    - new: no useful recent match
+    """
+    text = normalize_topic_text(title + " " + desc)
+    article_specific = novelty_tokens(text)
+    article_broad = novelty_tokens(text, keep_generic=True)
+
+    for kw in PUBLISHED_KEYWORDS:
+        kw_norm = normalize_topic_text(kw)
+        kw_specific = novelty_tokens(kw_norm)
+        kw_broad = novelty_tokens(kw_norm, keep_generic=True)
+
+        if kw_norm and kw_norm in text:
+            return "duplicate"
+
+        specific_overlap = kw_specific & article_specific
+        broad_overlap = kw_broad & article_broad
+        if len(specific_overlap) >= 2 and len(specific_overlap) >= max(2, int(len(kw_specific) * 0.67)):
+            return "duplicate"
+        if specific_overlap and len(broad_overlap) >= 2:
+            return "related"
+
+    for slug in PUBLISHED_SLUGS:
+        slug_norm = normalize_topic_text(slug.replace("-", " "))
+        slug_specific = novelty_tokens(slug_norm)
+        slug_broad = novelty_tokens(slug_norm, keep_generic=True)
+        specific_overlap = slug_specific & article_specific
+        broad_overlap = slug_broad & article_broad
+        if len(specific_overlap) >= 3 or (len(specific_overlap) >= 2 and len(broad_overlap) >= 4):
+            return "related"
+
+    return "new"
+
+
 def novelty_score(title, desc=""):
     """Score 0-10 based on novelty vs published topics."""
-    text = normalize_topic_text(title + " " + desc)
-    
-    for kw in PUBLISHED_KEYWORDS:
-        # Check similarity, with common forex synonyms normalized.
-        words_pub = set(normalize_topic_text(kw).split())
-        words_art = set(text.split())
-        overlap = words_pub & words_art
-        if len(overlap) >= 2:
-            # Already published similar topic
-            return 2
-    
-    # Check for similar headlines
-    for slug in PUBLISHED_SLUGS:
-        slug_words = slug.replace("-", " ").split()
-        art_words = text.split()
-        common = set(slug_words) & set(art_words)
-        if len(common) >= 3:
-            return 3
-    
+    kind = novelty_match_kind(title, desc)
+    if kind == "duplicate":
+        return 2
+    if kind == "related":
+        return 5
     return 8
 
 
@@ -852,9 +902,11 @@ def categorize_topic(title, desc=""):
         return "Consumer Protection & Trade"
     if any(w in text for w in ["zig", "zimbabwe gold", "gold reserve", "rbz", "reserve bank"]):
         return "ZiG / Monetary Policy"
+    if any(w in text for w in ["bank", "banking", "ecocash", "financial", "finance facility", "sme finance", "afreximbank", "ecobank", "credit", "lending"]):
+        return "Banking & Finance"
     if any(w in text for w in ["mining", "mineral", "platinum", "lithium", "chrome", "diamond"]):
         return "Mining & Minerals"
-    if any(w in text for w in ["forex", "exchange rate", "currency", "usd", "dollar", "parallel market", "black market"]):
+    if any(w in text for w in ["forex", "exchange rate", "currency", "parallel market", "black market"]):
         return "Forex & Exchange Rates"
     if any(w in text for w in ["tax", "zimra", "revenue", "fiscal", "budget"]):
         return "Tax & Fiscal Policy"
@@ -880,22 +932,11 @@ def categorize_topic(title, desc=""):
 
 
 def novelty_label(title, desc=""):
-    text = normalize_topic_text(title + " " + desc)
-    
-    for kw in PUBLISHED_KEYWORDS:
-        words_pub = set(normalize_topic_text(kw).split())
-        words_art = set(text.split())
-        overlap = words_pub & words_art
-        if len(overlap) >= 2:
-            return "Already published ✅"
-    
-    for slug in PUBLISHED_SLUGS:
-        slug_words = set(slug.replace("-", " ").split())
-        art_words = set(text.split())
-        common = slug_words & art_words
-        if len(common) >= 3:
-            return "Related to recent coverage"
-    
+    kind = novelty_match_kind(title, desc)
+    if kind == "duplicate":
+        return "Already published ✅"
+    if kind == "related":
+        return "Related to recent coverage"
     return "New story"
 
 
@@ -907,9 +948,11 @@ def suggest_angle(title, desc=""):
         return "Consumer protection and formal retail standards"
     if any(w in text for w in ["zig", "gold", "rbz"]):
         angles.append("ZiG stability and gold backing analysis")
+    if any(w in text for w in ["afreximbank", "ecobank", "sme finance", "finance facility", "bank", "banking", "credit", "lending"]):
+        angles.append("SME credit access and bank funding conditions")
     if any(w in text for w in ["mining", "mineral"]):
         angles.append("Impact on Zimbabwe's mining export revenue")
-    if any(w in text for w in ["forex", "exchange rate", "parallel market", "black market", "usd", "dollar"]):
+    if any(w in text for w in ["forex", "exchange rate", "parallel market", "black market"]):
         angles.append("Parallel vs official rate dynamics")
     if any(w in text for w in ["inflation"]):
         angles.append("Inflation trajectory and purchasing power")
