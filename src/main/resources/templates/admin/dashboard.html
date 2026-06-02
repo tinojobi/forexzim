@@ -12,9 +12,7 @@
             <span class="admin-topbar-title">Dashboard</span>
             <div class="admin-topbar-actions">
                 <div class="admin-user-chip">
-                    <div class="admin-user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
+                    <div class="admin-user-avatar"><i class="fas fa-user"></i></div>
                     <span sec:authentication="name">admin</span>
                 </div>
             </div>
@@ -24,139 +22,354 @@
 
             <!-- Flash messages -->
             <div th:if="${success}" class="flash flash-success">
-                <i class="fas fa-circle-check"></i>
-                <span th:text="${success}"></span>
+                <i class="fas fa-circle-check"></i> <span th:text="${success}"></span>
             </div>
             <div th:if="${error}" class="flash flash-error">
-                <i class="fas fa-circle-exclamation"></i>
-                <span th:text="${error}"></span>
+                <i class="fas fa-circle-exclamation"></i> <span th:text="${error}"></span>
             </div>
 
-            <!-- Stats row -->
-            <div class="stat-grid">
+            <!-- Greeting -->
+            <div class="dash-greeting">
+                <div>
+                    <h1 class="dash-greeting-text">
+                        <span th:text="${greeting}">Good morning</span>,
+                        <span sec:authentication="name">admin</span>.
+                    </h1>
+                    <p class="dash-greeting-sub">Here's what's happening with ZimRate today.</p>
+                </div>
+                <div class="dash-greeting-date"
+                     th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Monday, 2 June 2026</div>
+            </div>
+
+            <!-- ── Stat cards ──────────────────────────────────────────────── -->
+            <div class="stat-grid" style="margin-bottom:20px;">
+
+                <!-- Content pipeline -->
                 <div class="stat-card">
                     <div class="stat-card-icon green"><i class="fas fa-newspaper"></i></div>
-                    <div class="stat-value" th:text="${publishedPosts}">0</div>
-                    <div class="stat-label">Published Posts</div>
-                    <div class="stat-sub" th:text="${totalPosts} + ' total'">0 total</div>
+                    <div class="stat-value" th:text="${totalPosts}">0</div>
+                    <div class="stat-label">Total Posts</div>
+                    <div class="pipeline-bar">
+                        <span class="pipeline-pill published"
+                              th:text="${publishedPosts} + ' pub'">0 pub</span>
+                        <span class="pipeline-pill draft"
+                              th:text="${draftPosts} + ' draft'">0 draft</span>
+                        <span class="pipeline-pill rejected" th:if="${rejectedPosts > 0}"
+                              th:text="${rejectedPosts} + ' rej'">0 rej</span>
+                    </div>
                 </div>
+
+                <!-- Newsletter -->
                 <div class="stat-card">
                     <div class="stat-card-icon gold"><i class="fas fa-envelope"></i></div>
                     <div class="stat-value" th:text="${newsletterActive}">0</div>
                     <div class="stat-label">Newsletter Subscribers</div>
                     <div class="stat-sub" th:text="${newsletterTotal} + ' total'">0 total</div>
                 </div>
+
+                <!-- Email alerts -->
                 <div class="stat-card">
                     <div class="stat-card-icon blue"><i class="fas fa-bell"></i></div>
                     <div class="stat-value" th:text="${alertActive}">0</div>
                     <div class="stat-label">Email Alerts</div>
                     <div class="stat-sub" th:text="${alertTotal} + ' total'">0 total</div>
                 </div>
+
+                <!-- Telegram -->
                 <div class="stat-card">
                     <div class="stat-card-icon teal"><i class="fab fa-telegram"></i></div>
                     <div class="stat-value" th:text="${telegramTotal}">0</div>
                     <div class="stat-label">Telegram Alerts</div>
-                    <div class="stat-sub">Personal bot alerts</div>
+                    <div class="stat-sub">Via @the_zimrate_bot</div>
                 </div>
             </div>
 
-            <div class="dashboard-grid">
+            <!-- ── Middle row: Rate + Health | Growth chart ────────────────── -->
+            <div class="dash-mid-grid" style="margin-bottom:20px;">
 
-                <!-- Recent posts -->
+                <!-- Live rate + scrape health -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">
-                            <i class="fas fa-clock-rotate-left"></i> Recent Posts
-                        </h2>
-                        <a th:href="@{/admin/blog/new}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> New Post
-                        </a>
+                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Live Rate</h2>
+                        <!-- Scrape health badge -->
+                        <span th:if="${scrapeStatus == 'healthy'}"
+                              class="health-badge health-badge--green">
+                            <span class="health-dot"></span> Healthy
+                        </span>
+                        <span th:if="${scrapeStatus == 'warning'}"
+                              class="health-badge health-badge--amber">
+                            <span class="health-dot"></span> Delayed
+                        </span>
+                        <span th:if="${scrapeStatus == 'danger'}"
+                              class="health-badge health-badge--red">
+                            <span class="health-dot"></span> Stale
+                        </span>
+                        <span th:if="${scrapeStatus == null}"
+                              class="health-badge health-badge--gray">
+                            <span class="health-dot"></span> No data
+                        </span>
                     </div>
-                    <div class="card-body" style="padding:0 22px;">
-                        <div class="mini-post-list" th:if="${!recentPosts.isEmpty()}">
-                            <div th:each="post : ${recentPosts}" class="mini-post">
-                                <div>
-                                    <div class="mini-post-title" th:text="${post.title}">Post title</div>
-                                    <div style="margin-top:3px;">
-                                        <span th:switch="${post.status.name()}">
-                                            <span th:case="'PUBLISHED'" class="badge badge-published">
-                                                <i class="fas fa-circle" style="font-size:6px;"></i> Published
-                                            </span>
-                                            <span th:case="'DRAFT'" class="badge badge-draft">
-                                                <i class="fas fa-circle" style="font-size:6px;"></i> Draft
-                                            </span>
-                                            <span th:case="'REJECTED'" class="badge badge-rejected">
-                                                <i class="fas fa-circle" style="font-size:6px;"></i> Rejected
-                                            </span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                                    <span class="mini-post-date"
-                                          th:text="${#temporals.format(post.createdAt, 'dd MMM')}">1 Jan</span>
-                                    <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
-                                       class="btn btn-outline btn-icon">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                </div>
+                    <div class="card-body">
+                        <!-- Rate display -->
+                        <div th:if="${liveRate != null}" class="rate-widget">
+                            <div class="rate-pair" th:text="${liveRate.currencyPair}">USD/ZiG</div>
+                            <div class="rate-value" th:text="${liveRate.buyRate}">—</div>
+                            <div class="rate-delta" th:if="${rateDelta != null}">
+                                <span th:if="${rateDelta.signum() >= 0}"
+                                      style="color:var(--green);">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span th:text="${rateDelta}">0</span>
+                                    (<span th:text="${rateDeltaPct}">0</span>%)
+                                </span>
+                                <span th:if="${rateDelta.signum() < 0}"
+                                      style="color:var(--red);">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span th:text="${rateDelta.abs()}">0</span>
+                                    (<span th:text="${rateDeltaPct.abs()}">0</span>%)
+                                </span>
+                                <span style="color:var(--muted);font-size:12px;margin-left:4px;">vs prev scrape</span>
                             </div>
+                            <div class="rate-source" th:text="${liveRate.source.name}">Source</div>
                         </div>
-                        <div th:if="${recentPosts.isEmpty()}" class="empty-state">
-                            <i class="fas fa-newspaper"></i>
-                            <p>No posts yet. <a th:href="@{/admin/blog/new}">Create your first one</a>.</p>
+                        <div th:if="${liveRate == null}" class="empty-state" style="padding:24px 0;">
+                            <i class="fas fa-chart-line"></i>
+                            <p>No rate data yet. Trigger a scrape.</p>
                         </div>
-                    </div>
-                    <div style="padding:14px 22px;border-top:1px solid var(--border);">
-                        <a th:href="@{/admin/blog}" class="btn btn-outline btn-sm">
-                            View all posts <i class="fas fa-arrow-right"></i>
-                        </a>
+
+                        <!-- Scrape time -->
+                        <div class="scrape-health-row" th:if="${lastScrape != null}">
+                            <span th:if="${scrapeStatus == 'healthy'}" class="health-dot-sm green"></span>
+                            <span th:if="${scrapeStatus == 'warning'}" class="health-dot-sm amber"></span>
+                            <span th:if="${scrapeStatus == 'danger'}"  class="health-dot-sm red"></span>
+                            <span style="font-size:12px;color:var(--muted);">
+                                Last scraped
+                                <strong th:if="${scrapeMinutesAgo == 0}">just now</strong>
+                                <strong th:if="${scrapeMinutesAgo > 0}"
+                                        th:text="${scrapeMinutesAgo} + ' min ago'">—</strong>
+                            </span>
+                            <form th:action="@{/admin/scrape}" method="post" style="margin-left:auto;">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-gold btn-sm">
+                                    <i class="fas fa-rotate"></i> Scrape Now
+                                </button>
+                            </form>
+                        </div>
+                        <div th:if="${lastScrape == null}" style="margin-top:12px;">
+                            <form th:action="@{/admin/scrape}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-gold btn-sm">
+                                    <i class="fas fa-rotate"></i> Scrape Now
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Right panel: scrape + quick links -->
+                <!-- Subscriber growth chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-users"></i> Newsletter Growth</h2>
+                        <span style="font-size:12px;color:var(--muted);">Last 6 months</span>
+                    </div>
+                    <div class="card-body" style="padding-bottom:8px;">
+                        <div id="growthChart"></div>
+                    </div>
+                </div>
+
+            </div><!-- /dash-mid-grid -->
+
+            <!-- ── Bottom grid: Posts | Health + Actions ───────────────────── -->
+            <div class="dashboard-grid">
+
+                <!-- Left: recent posts + quick-publish drafts -->
                 <div>
+                    <!-- Recent posts -->
                     <div class="card" style="margin-bottom:16px;">
                         <div class="card-header">
                             <h2 class="card-title">
-                                <i class="fas fa-rotate"></i> Data Scraper
+                                <i class="fas fa-clock-rotate-left"></i> Recent Posts
                             </h2>
+                            <a th:href="@{/admin/blog/new}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> New Post
+                            </a>
                         </div>
-                        <div class="card-body">
-                            <div class="scrape-box">
-                                <p>Manually refresh exchange rates from all active sources right now.</p>
-                                <form th:action="@{/admin/scrape}" method="post">
-                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                    <button type="submit" class="btn btn-gold">
-                                        <i class="fas fa-rotate"></i> Scrape Now
-                                    </button>
-                                </form>
+                        <div class="card-body" style="padding:0 22px;">
+                            <div class="mini-post-list" th:if="${!recentPosts.isEmpty()}">
+                                <div th:each="post : ${recentPosts}" class="mini-post">
+                                    <div style="min-width:0;flex:1;">
+                                        <div class="mini-post-title" th:text="${post.title}">Title</div>
+                                        <div style="margin-top:3px;">
+                                            <span th:switch="${post.status.name()}">
+                                                <span th:case="'PUBLISHED'" class="badge badge-published">
+                                                    <i class="fas fa-circle" style="font-size:6px;"></i> Published
+                                                </span>
+                                                <span th:case="'DRAFT'" class="badge badge-draft">
+                                                    <i class="fas fa-circle" style="font-size:6px;"></i> Draft
+                                                </span>
+                                                <span th:case="'REJECTED'" class="badge badge-rejected">
+                                                    <i class="fas fa-circle" style="font-size:6px;"></i> Rejected
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                                        <span class="mini-post-date"
+                                              th:text="${#temporals.format(post.createdAt, 'dd MMM')}">1 Jan</span>
+                                        <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
+                                           class="btn btn-outline btn-icon">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <p style="font-size:12px;color:var(--muted);margin-top:12px;">
-                                <i class="fas fa-info-circle"></i>
-                                Auto-scrapes every 30 minutes. Next scheduled run happens automatically.
-                            </p>
+                            <div th:if="${recentPosts.isEmpty()}" class="empty-state">
+                                <i class="fas fa-newspaper"></i>
+                                <p>No posts yet.</p>
+                            </div>
+                        </div>
+                        <div style="padding:14px 22px;border-top:1px solid var(--border);">
+                            <a th:href="@{/admin/blog}" class="btn btn-outline btn-sm">
+                                View all posts <i class="fas fa-arrow-right"></i>
+                            </a>
                         </div>
                     </div>
 
-                    <div class="card">
+                    <!-- Quick-publish drafts -->
+                    <div class="card" th:if="${!draftPostsList.isEmpty()}">
                         <div class="card-header">
                             <h2 class="card-title">
-                                <i class="fas fa-bolt"></i> Quick Links
+                                <i class="fas fa-inbox"></i> Drafts Ready to Publish
                             </h2>
+                            <span class="badge badge-draft" th:text="${draftPosts} + ' drafts'">0 drafts</span>
+                        </div>
+                        <div class="card-body" style="padding:0 22px;">
+                            <div class="mini-post-list">
+                                <div th:each="post : ${draftPostsList}" class="mini-post">
+                                    <div class="mini-post-title" th:text="${post.title}" style="flex:1;min-width:0;">Title</div>
+                                    <div style="display:flex;gap:6px;flex-shrink:0;">
+                                        <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
+                                           class="btn btn-outline btn-sm">Edit</a>
+                                        <form th:action="@{/admin/blog/{id}/publish(id=${post.id})}" method="post">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-upload"></i> Publish
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: system health + quick links -->
+                <div>
+                    <!-- System health -->
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-shield-halved"></i> System Health</h2>
+                        </div>
+                        <div class="card-body" style="padding:8px 22px;">
+                            <div class="health-rows">
+
+                                <div class="health-row">
+                                    <div class="health-row-left">
+                                        <i class="fas fa-envelope" style="color:var(--muted);width:16px;text-align:center;"></i>
+                                        <span>Email</span>
+                                    </div>
+                                    <span th:if="${emailHealthy}" class="health-badge health-badge--green">
+                                        <span class="health-dot"></span> Configured
+                                    </span>
+                                    <span th:unless="${emailHealthy}" class="health-badge health-badge--red">
+                                        <span class="health-dot"></span> Not set
+                                    </span>
+                                </div>
+
+                                <div class="health-row">
+                                    <div class="health-row-left">
+                                        <i class="fab fa-telegram" style="color:var(--muted);width:16px;text-align:center;"></i>
+                                        <span>Telegram Bot</span>
+                                    </div>
+                                    <span th:if="${telegramHealthy}" class="health-badge health-badge--green">
+                                        <span class="health-dot"></span> Active
+                                    </span>
+                                    <span th:unless="${telegramHealthy}" class="health-badge health-badge--red">
+                                        <span class="health-dot"></span> Not set
+                                    </span>
+                                </div>
+
+                                <div class="health-row">
+                                    <div class="health-row-left">
+                                        <i class="fas fa-image" style="color:var(--muted);width:16px;text-align:center;"></i>
+                                        <span>Image Uploads</span>
+                                    </div>
+                                    <span th:if="${uploadsHealthy}" class="health-badge health-badge--green">
+                                        <span class="health-dot"></span> Writable
+                                    </span>
+                                    <span th:unless="${uploadsHealthy}" class="health-badge health-badge--red">
+                                        <span class="health-dot"></span> Not writable
+                                    </span>
+                                </div>
+
+                                <div class="health-row">
+                                    <div class="health-row-left">
+                                        <i class="fas fa-rotate" style="color:var(--muted);width:16px;text-align:center;"></i>
+                                        <span>Scraper</span>
+                                    </div>
+                                    <span th:if="${scrapeStatus == 'healthy'}" class="health-badge health-badge--green">
+                                        <span class="health-dot"></span> On time
+                                    </span>
+                                    <span th:if="${scrapeStatus == 'warning'}" class="health-badge health-badge--amber">
+                                        <span class="health-dot"></span> Delayed
+                                    </span>
+                                    <span th:if="${scrapeStatus == 'danger'}" class="health-badge health-badge--red">
+                                        <span class="health-dot"></span> Stale data
+                                    </span>
+                                    <span th:if="${scrapeStatus == null}" class="health-badge health-badge--gray">
+                                        <span class="health-dot"></span> No data
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick links -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-bolt"></i> Quick Links</h2>
                         </div>
                         <div class="card-body" style="padding:8px 22px;">
                             <div class="mini-post-list">
                                 <a th:href="@{/}" target="_blank" class="mini-post">
-                                    <span class="mini-post-title"><i class="fas fa-house" style="margin-right:6px;"></i> Home page</span>
-                                    <i class="fas fa-arrow-up-right-from-square" style="color:var(--muted);font-size:11px;"></i>
+                                    <span class="mini-post-title">
+                                        <i class="fas fa-house" style="margin-right:6px;color:var(--muted);"></i> Home page
+                                    </span>
+                                    <i class="fas fa-arrow-up-right-from-square" style="color:var(--light);font-size:11px;"></i>
                                 </a>
                                 <a th:href="@{/blog}" target="_blank" class="mini-post">
-                                    <span class="mini-post-title"><i class="fas fa-newspaper" style="margin-right:6px;"></i> Blog listing</span>
-                                    <i class="fas fa-arrow-up-right-from-square" style="color:var(--muted);font-size:11px;"></i>
+                                    <span class="mini-post-title">
+                                        <i class="fas fa-newspaper" style="margin-right:6px;color:var(--muted);"></i> Blog listing
+                                    </span>
+                                    <i class="fas fa-arrow-up-right-from-square" style="color:var(--light);font-size:11px;"></i>
                                 </a>
                                 <a th:href="@{/admin/subscribers}" class="mini-post">
-                                    <span class="mini-post-title"><i class="fas fa-users" style="margin-right:6px;"></i> Subscriber stats</span>
-                                    <i class="fas fa-chevron-right" style="color:var(--muted);font-size:11px;"></i>
+                                    <span class="mini-post-title">
+                                        <i class="fas fa-users" style="margin-right:6px;color:var(--muted);"></i> Subscribers
+                                    </span>
+                                    <i class="fas fa-chevron-right" style="color:var(--light);font-size:11px;"></i>
+                                </a>
+                                <a th:href="@{/admin/rates}" class="mini-post">
+                                    <span class="mini-post-title">
+                                        <i class="fas fa-chart-line" style="margin-right:6px;color:var(--muted);"></i> Live Rates
+                                    </span>
+                                    <i class="fas fa-chevron-right" style="color:var(--light);font-size:11px;"></i>
+                                </a>
+                                <a th:href="@{/admin/newsletter}" class="mini-post">
+                                    <span class="mini-post-title">
+                                        <i class="fas fa-paper-plane" style="margin-right:6px;color:var(--muted);"></i> Newsletter
+                                    </span>
+                                    <i class="fas fa-chevron-right" style="color:var(--light);font-size:11px;"></i>
                                 </a>
                             </div>
                         </div>
@@ -167,5 +380,30 @@
         </div><!-- /admin-body -->
     </div><!-- /admin-main -->
 </div><!-- /admin-shell -->
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script th:inline="javascript">
+var labels = /*[[${chartLabels}]]*/ [];
+var values = /*[[${chartValues}]]*/ [];
+
+new ApexCharts(document.getElementById('growthChart'), {
+    chart: {
+        type: 'area',
+        height: 160,
+        toolbar: { show: false },
+        sparkline: { enabled: false },
+        animations: { enabled: true, speed: 400 }
+    },
+    series: [{ name: 'Signups', data: values }],
+    xaxis: { categories: labels, labels: { style: { fontSize: '11px', colors: '#9ca3af' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+    yaxis: { labels: { style: { fontSize: '11px', colors: '#9ca3af' } }, min: 0, forceNiceScale: true },
+    colors: ['#16a34a'],
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05, stops: [0, 100] } },
+    stroke: { curve: 'smooth', width: 2 },
+    dataLabels: { enabled: false },
+    grid: { borderColor: '#f3f4f6', strokeDashArray: 4, yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } } },
+    tooltip: { theme: 'light', y: { formatter: v => v + ' signups' } }
+}).render();
+</script>
 </body>
 </html>

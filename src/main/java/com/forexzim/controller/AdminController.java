@@ -3,6 +3,7 @@ package com.forexzim.controller;
 import com.forexzim.model.AlertSubscription;
 import com.forexzim.model.BlogPost;
 import com.forexzim.model.NewsletterSubscriber;
+import com.forexzim.model.Rate;
 import com.forexzim.model.TelegramAlert;
 import com.forexzim.repository.AlertSubscriptionRepository;
 import com.forexzim.repository.BlogRepository;
@@ -26,16 +27,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -43,6 +53,12 @@ public class AdminController {
 
     @Value("${zimrate.uploads.dir:./uploads/}")
     private String uploadsDir;
+
+    @Value("${spring.mail.username:}")
+    private String mailUsername;
+
+    @Value("${zimrate.telegram.bot-token:}")
+    private String telegramBotToken;
 
     private final BlogRepository blogRepository;
     private final NewsletterSubscriberRepository newsletterSubscriberRepository;
@@ -96,16 +112,100 @@ public class AdminController {
 
     @GetMapping({"", "/"})
     public String dashboard(Model model) {
+        // ── Greeting ──────────────────────────────────────────────────────────
+        int hour = LocalTime.now(ZoneId.of("Africa/Harare")).getHour();
+        model.addAttribute("greeting", hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening");
+
+        // ── Recent posts + quick-publish drafts ───────────────────────────────
         var top5 = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         model.addAttribute("recentPosts", blogRepository.findAll(top5).getContent());
-        model.addAttribute("newsletterActive", newsletterSubscriberRepository.findByActiveTrue().size());
-        model.addAttribute("newsletterTotal", newsletterSubscriberRepository.count());
-        model.addAttribute("alertActive", alertSubscriptionRepository.findByActiveTrue().size());
-        model.addAttribute("alertTotal", alertSubscriptionRepository.count());
+
+        List<BlogPost> allPosts = blogRepository.findAll();
+        long publishedCount  = allPosts.stream().filter(p -> p.getStatus() == BlogPost.Status.PUBLISHED).count();
+        long draftCount      = allPosts.stream().filter(p -> p.getStatus() == BlogPost.Status.DRAFT).count();
+        long rejectedCount   = allPosts.stream().filter(p -> p.getStatus() == BlogPost.Status.REJECTED).count();
+        model.addAttribute("totalPosts",    allPosts.size());
+        model.addAttribute("publishedPosts", publishedCount);
+        model.addAttribute("draftPosts",    draftCount);
+        model.addAttribute("rejectedPosts", rejectedCount);
+
+        List<BlogPost> draftPostsList = allPosts.stream()
+            .filter(p -> p.getStatus() == BlogPost.Status.DRAFT)
+            .sorted(Comparator.comparing(BlogPost::getCreatedAt).reversed())
+            .limit(5)
+            .collect(Collectors.toList());
+        model.addAttribute("draftPostsList", draftPostsList);
+
+        // ── Subscriber counts ─────────────────────────────────────────────────
+        List<NewsletterSubscriber> allSubs = newsletterSubscriberRepository.findAll();
+        long newsletterActive = allSubs.stream().filter(s -> Boolean.TRUE.equals(s.getActive())).count();
+        model.addAttribute("newsletterActive", newsletterActive);
+        model.addAttribute("newsletterTotal",  allSubs.size());
+        model.addAttribute("alertActive",  alertSubscriptionRepository.findByActiveTrue().size());
+        model.addAttribute("alertTotal",   alertSubscriptionRepository.count());
         model.addAttribute("telegramTotal", telegramAlertRepository.count());
-        model.addAttribute("totalPosts", blogRepository.count());
-        model.addAttribute("publishedPosts",
-            blogRepository.findByStatusOrderByPublishedAtDesc(BlogPost.Status.PUBLISHED).size());
+
+        // ── Subscriber growth chart (last 6 months) ───────────────────────────
+        LocalDate today = LocalDate.now(ZoneId.of("Africa/Harare"));
+        List<String> chartLabels = new ArrayList<>();
+        List<Long>   chartValues = new ArrayList<>();
+        for (int i = 5; i >= 0; i--) {
+            LocalDate start = today.minusMonths(i).withDayOfMonth(1);
+            LocalDate end   = start.plusMonths(1);
+            chartLabels.add(start.format(DateTimeFormatter.ofPattern("MMM yy")));
+            chartValues.add(allSubs.stream()
+                .filter(s -> s.getSubscribedAt() != null)
+                .filter(s -> { LocalDate d = s.getSubscribedAt().toLocalDate(); return !d.isBefore(start) && d.isBefore(end); })
+                .count());
+        }
+        model.addAttribute("chartLabels", chartLabels);
+        model.addAttribute("chartValues", chartValues);
+
+        // ── Live rate + scrape health ─────────────────────────────────────────
+        List<Rate> latestRates   = rateRepository.findLatestBySourceAndCurrencyPair();
+        List<Rate> previousRates = rateRepository.findPreviousBySourceAndCurrencyPair();
+
+        Rate liveRate = latestRates.stream()
+            .filter(r -> r.getCurrencyPair() != null &&
+                        (r.getCurrencyPair().toUpperCase().contains("ZWG") ||
+                         r.getCurrencyPair().toUpperCase().contains("ZIG")))
+            .findFirst().orElse(null);
+        model.addAttribute("liveRate", liveRate);
+
+        if (liveRate != null) {
+            previousRates.stream()
+                .filter(r -> r.getSource().getId().equals(liveRate.getSource().getId())
+                          && r.getCurrencyPair().equals(liveRate.getCurrencyPair()))
+                .findFirst()
+                .ifPresent(prev -> {
+                    if (liveRate.getBuyRate() != null && prev.getBuyRate() != null && prev.getBuyRate().compareTo(BigDecimal.ZERO) != 0) {
+                        BigDecimal delta = liveRate.getBuyRate().subtract(prev.getBuyRate());
+                        BigDecimal pct   = delta.divide(prev.getBuyRate(), 6, RoundingMode.HALF_UP)
+                                               .multiply(BigDecimal.valueOf(100))
+                                               .setScale(2, RoundingMode.HALF_UP);
+                        model.addAttribute("rateDelta",    delta.setScale(4, RoundingMode.HALF_UP));
+                        model.addAttribute("rateDeltaPct", pct);
+                    }
+                });
+        }
+
+        LocalDateTime lastScrape = latestRates.stream()
+            .map(Rate::getScrapedAt).filter(t -> t != null)
+            .max(Comparator.naturalOrder()).orElse(null);
+        model.addAttribute("lastScrape", lastScrape);
+        if (lastScrape != null) {
+            long mins = Duration.between(lastScrape, LocalDateTime.now()).toMinutes();
+            model.addAttribute("scrapeMinutesAgo", mins);
+            model.addAttribute("scrapeStatus", mins < 35 ? "healthy" : mins < 70 ? "warning" : "danger");
+        }
+
+        // ── System health ─────────────────────────────────────────────────────
+        boolean uploadsOk = false;
+        try { Path up = Paths.get(uploadsDir); Files.createDirectories(up); uploadsOk = Files.isWritable(up); } catch (Exception ignored) {}
+        model.addAttribute("emailHealthy",    mailUsername != null && !mailUsername.isBlank());
+        model.addAttribute("telegramHealthy", telegramBotToken != null && !telegramBotToken.isBlank());
+        model.addAttribute("uploadsHealthy",  uploadsOk);
+
         model.addAttribute("activePage", "dashboard");
         return "admin/dashboard";
     }

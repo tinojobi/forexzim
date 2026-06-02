@@ -879,6 +879,189 @@ textarea.form-control.mono {
     .stat-grid { grid-template-columns: 1fr 1fr; }
 }
 
+/* ── Dashboard greeting ───────────────────────────────────────────────────── */
+
+.dash-greeting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dash-greeting-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.dash-greeting-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 2px 0 0;
+}
+
+.dash-greeting-date {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ── Content pipeline pills ───────────────────────────────────────────────── */
+
+.pipeline-bar {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.pipeline-pill {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    letter-spacing: .02em;
+}
+
+.pipeline-pill.published { background: var(--green-lt); color: var(--green); }
+.pipeline-pill.draft     { background: var(--gray-lt);  color: var(--muted); }
+.pipeline-pill.rejected  { background: var(--red-lt);   color: var(--red); }
+
+/* ── Dashboard middle grid ────────────────────────────────────────────────── */
+
+.dash-mid-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 1000px) {
+    .dash-mid-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Live rate widget ─────────────────────────────────────────────────────── */
+
+.rate-widget {
+    text-align: center;
+    padding: 12px 0 16px;
+}
+
+.rate-pair {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.rate-value {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+}
+
+.rate-delta {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.rate-source {
+    font-size: 11px;
+    color: var(--light);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.scrape-health-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+
+.health-dot-sm {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+}
+
+.health-dot-sm.green  { background: var(--green); }
+.health-dot-sm.amber  { background: var(--amber); }
+.health-dot-sm.red    { background: var(--red); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .5; }
+}
+
+/* ── Health badges ────────────────────────────────────────────────────────── */
+
+.health-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.health-badge .health-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.health-badge--green { background: var(--green-lt); color: var(--green); }
+.health-badge--green .health-dot { background: var(--green); }
+
+.health-badge--amber { background: var(--amber-lt); color: var(--amber); }
+.health-badge--amber .health-dot { background: var(--amber); }
+
+.health-badge--red   { background: var(--red-lt);   color: var(--red); }
+.health-badge--red .health-dot   { background: var(--red); }
+
+.health-badge--gray  { background: var(--gray-lt);  color: var(--muted); }
+.health-badge--gray .health-dot  { background: var(--light); }
+
+/* ── System health rows ───────────────────────────────────────────────────── */
+
+.health-rows { display: flex; flex-direction: column; }
+
+.health-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+}
+
+.health-row:last-child { border-bottom: none; }
+
+.health-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+}
+
 /* ── Image upload ─────────────────────────────────────────────────────────── */
 
 .upload-row {
