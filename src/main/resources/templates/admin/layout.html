@@ -40,6 +40,20 @@
             <i class="fas fa-pen-to-square"></i> New Post
         </a>
 
+        <a th:href="@{/admin/newsletter}"
+           th:classappend="${activePage == 'newsletter'} ? ' active' : ''"
+           class="admin-nav-link">
+            <i class="fas fa-paper-plane"></i> Newsletter
+        </a>
+
+        <div class="admin-sidebar-section" style="margin-top:8px;">Data</div>
+
+        <a th:href="@{/admin/rates}"
+           th:classappend="${activePage == 'rates'} ? ' active' : ''"
+           class="admin-nav-link">
+            <i class="fas fa-chart-line"></i> Live Rates
+        </a>
+
         <div class="admin-sidebar-section" style="margin-top:8px;">Analytics</div>
 
         <a th:href="@{/admin/subscribers}"

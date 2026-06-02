@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Newsletter')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('newsletter')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title">Newsletter</span>
+        </div>
+
+        <div class="admin-body">
+
+            <div th:if="${success}" class="flash flash-success">
+                <i class="fas fa-circle-check"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="flash flash-error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="newsletter-grid">
+
+                <!-- Left: compose form -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-paper-plane"></i> Compose</h2>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="form-group">
+                                <label class="form-label" for="subject">Subject <span style="color:var(--red)">*</span></label>
+                                <input class="form-control" type="text" id="subject" name="subject"
+                                       placeholder="Your newsletter subject..." required>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="body">Body (HTML) <span style="color:var(--red)">*</span></label>
+                                <p class="form-hint">Write HTML email content. It will be wrapped in the ZimRate email template.</p>
+                                <textarea class="form-control" id="body" name="body" rows="18"
+                                          style="font-family:'Fira Code','Courier New',monospace;font-size:13px;"
+                                          placeholder="&lt;p&gt;Your email content here...&lt;/p&gt;"></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card" style="margin-top:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-bolt"></i> Actions</h2>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- Test email section -->
+                            <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                                    <div>
+                                        <div style="font-size:14px;font-weight:600;">Send Test Email</div>
+                                        <div style="font-size:12px;color:var(--muted);">Send a preview to yourself before publishing.</div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline btn-sm"
+                                            id="toggleTestPanel"
+                                            data-open="false">
+                                        <i class="fas fa-flask"></i> Send Test
+                                    </button>
+                                </div>
+                                <div id="testPanel" style="display:none;">
+                                    <form method="post" th:action="@{/admin/newsletter/send}" id="testForm">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <input type="hidden" name="testOnly" value="true">
+                                        <input type="hidden" name="subject" id="testSubjectHidden">
+                                        <input type="hidden" name="body" id="testBodyHidden">
+                                        <div style="display:flex;gap:8px;align-items:center;">
+                                            <input class="form-control" type="email" id="testEmail" name="testEmail"
+                                                   placeholder="your@email.com" style="flex:1;" required>
+                                            <button type="button" class="btn btn-outline btn-sm" id="submitTestBtn">
+                                                <i class="fas fa-paper-plane"></i> Send
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Send to all -->
+                            <div>
+                                <div style="margin-bottom:10px;">
+                                    <div style="font-size:14px;font-weight:600;">Send to All Subscribers</div>
+                                    <div style="font-size:12px;color:var(--muted);">Sends immediately to all active newsletter subscribers.</div>
+                                </div>
+                                <form method="post" th:action="@{/admin/newsletter/send}" id="sendAllForm">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input type="hidden" name="testOnly" value="false">
+                                    <input type="hidden" name="subject" id="sendAllSubjectHidden">
+                                    <input type="hidden" name="body" id="sendAllBodyHidden">
+                                    <button type="button" class="btn btn-primary" id="sendAllBtn">
+                                        <i class="fas fa-paper-plane"></i> Send to All
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: preview pane -->
+                <div>
+                    <div class="card" style="position:sticky;top:76px;">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-eye"></i> Preview</h2>
+                            <button type="button" class="btn btn-outline btn-sm" id="previewBtn">
+                                <i class="fas fa-rotate-right"></i> Refresh Preview
+                            </button>
+                        </div>
+                        <div style="padding:0;">
+                            <iframe id="previewFrame"
+                                    style="width:100%;height:600px;border:none;border-radius:0 0 12px 12px;"
+                                    srcdoc="<div style='padding:40px;text-align:center;color:#9ca3af;font-family:sans-serif;font-size:14px;'>Click &ldquo;Refresh Preview&rdquo; to see your email rendered.</div>">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.newsletter-grid {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 1100px) {
+    .newsletter-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+// Toggle test panel
+document.getElementById('toggleTestPanel').addEventListener('click', function() {
+    const panel = document.getElementById('testPanel');
+    const isOpen = this.dataset.open === 'true';
+    panel.style.display = isOpen ? 'none' : 'block';
+    this.dataset.open = isOpen ? 'false' : 'true';
+});
+
+// Preview button
+document.getElementById('previewBtn').addEventListener('click', async function() {
+    const subject = document.getElementById('subject').value;
+    const body = document.getElementById('body').value;
+    if (!body.trim()) {
+        alert('Please enter some body content first.');
+        return;
+    }
+
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    const csrfParam = document.querySelector('input[name="_csrf"]').name;
+
+    const formData = new FormData();
+    formData.append('subject', subject);
+    formData.append('body', body);
+    formData.append(csrfParam, csrfToken);
+
+    try {
+        const res = await fetch('/admin/newsletter/preview', { method: 'POST', body: formData });
+        const html = await res.text();
+        document.getElementById('previewFrame').srcdoc = html;
+    } catch (e) {
+        alert('Preview failed: ' + e.message);
+    }
+});
+
+// Send test button
+document.getElementById('submitTestBtn').addEventListener('click', function() {
+    const subject = document.getElementById('subject').value;
+    const body = document.getElementById('body').value;
+    const testEmail = document.getElementById('testEmail').value;
+
+    if (!subject.trim() || !body.trim()) {
+        alert('Please fill in the Subject and Body fields first.');
+        return;
+    }
+    if (!testEmail.trim()) {
+        alert('Please enter a test email address.');
+        return;
+    }
+
+    document.getElementById('testSubjectHidden').value = subject;
+    document.getElementById('testBodyHidden').value = body;
+    document.getElementById('testForm').submit();
+});
+
+// Send to all button
+document.getElementById('sendAllBtn').addEventListener('click', function() {
+    const subject = document.getElementById('subject').value;
+    const body = document.getElementById('body').value;
+
+    if (!subject.trim() || !body.trim()) {
+        alert('Please fill in the Subject and Body fields first.');
+        return;
+    }
+
+    if (!confirm('Send this newsletter to ALL active subscribers? This cannot be undone.')) {
+        return;
+    }
+
+    document.getElementById('sendAllSubjectHidden').value = subject;
+    document.getElementById('sendAllBodyHidden').value = body;
+    document.getElementById('sendAllForm').submit();
+});
+</script>
+</body>
+</html>

@@ -903,3 +903,43 @@ textarea.form-control.mono {
 .mb-0 { margin-bottom: 0 !important; }
 .gap-8 { gap: 8px; }
 .w-full { width: 100%; }
+
+/* ── Filter bar ────────────────────────────────────────────────────────────── */
+
+.filter-bar {
+    margin-bottom: 12px;
+}
+
+/* ── Quill editor ──────────────────────────────────────────────────────────── */
+
+.ql-toolbar.ql-snow {
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: var(--gray-lt);
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 8px 12px;
+}
+
+.ql-container.ql-snow {
+    border: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.ql-container.ql-snow:focus-within {
+    border-color: #15803d;
+    box-shadow: 0 0 0 3px rgba(21,128,61,0.12);
+}
+
+.ql-editor {
+    min-height: 380px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--light);
+    font-style: normal;
+}

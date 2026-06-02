@@ -3,6 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{admin/layout :: head(${isNew} ? 'New Post' : 'Edit Post')}"></head>
 <body>
+<link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css">
 <div class="admin-shell">
 
     <th:block th:replace="~{admin/layout :: sidebar('blog')}"></th:block>
@@ -72,9 +73,8 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group mb-0">
-                                <textarea class="form-control mono" id="content" name="content"
-                                          rows="22"
-                                          placeholder="Write your post content here..."
+                                <div id="quillEditor" style="min-height:380px;font-size:14px;line-height:1.7;"></div>
+                                <textarea id="content" name="content" style="display:none;"
                                           th:text="${post.content}"></textarea>
                             </div>
                         </div>
@@ -164,6 +164,7 @@
                                    placeholder="your-post-slug"
                                    pattern="[a-z0-9\-]+"
                                    required>
+                            <span id="slugStatus" style="font-size:12px;margin-top:4px;display:block;"></span>
                         </div>
 
                         <div class="form-group mb-0">
@@ -260,8 +261,32 @@
     </div>
 </div>
 
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
-// Auto-generate slug from title (new posts only)
+// ── Quill editor ────────────────────────────────────────────────────────────
+const quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    modules: {
+        toolbar: [
+            [{ header: [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link'],
+            ['clean']
+        ]
+    }
+});
+
+// Load existing content
+quill.clipboard.dangerouslyPasteHTML(document.getElementById('content').value || '');
+
+// On form submit, sync Quill HTML to hidden textarea
+document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('content').value = quill.root.innerHTML;
+});
+
+// ── Auto-generate slug from title (new posts only) ───────────────────────
 const isNew = /*[[${isNew}]]*/ true;
 
 function slugify(text) {
@@ -283,6 +308,27 @@ function autoSlug(title) {
 document.getElementById('slug').addEventListener('input', function() {
     const previewEl = document.getElementById('slugPreview');
     if (previewEl) previewEl.textContent = this.value || 'your-slug';
+});
+
+// ── Inline slug duplicate check ──────────────────────────────────────────
+let slugCheckTimer;
+document.getElementById('slug').addEventListener('input', function() {
+    clearTimeout(slugCheckTimer);
+    const val = this.value;
+    if (!val) { document.getElementById('slugStatus').textContent = ''; return; }
+    slugCheckTimer = setTimeout(async () => {
+        const postId = /*[[${post.id}]]*/ null;
+        const url = '/admin/blog/check-slug?slug=' + encodeURIComponent(val) + (postId ? '&excludeId=' + postId : '');
+        const data = await fetch(url).then(r => r.json());
+        const el = document.getElementById('slugStatus');
+        if (data.available) {
+            el.textContent = '✓ Available';
+            el.style.color = 'var(--green)';
+        } else {
+            el.textContent = '✗ Already in use';
+            el.style.color = 'var(--red)';
+        }
+    }, 400);
 });
 
 // Meta description character counter

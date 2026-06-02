@@ -184,6 +184,73 @@ public class NewsletterService {
         mailSender.send(mime);
     }
 
+    // ── Manual newsletter (admin compose & send) ───────────────────────────────
+
+    public int sendManualNewsletter(String subject, String bodyHtml) {
+        List<NewsletterSubscriber> subscribers = subscriberRepository.findByActiveTrue();
+        int sent = 0;
+        for (NewsletterSubscriber sub : subscribers) {
+            try {
+                String html = wrapInEmailTemplate(bodyHtml, sub.getToken());
+                MimeMessage mime = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(mime, "UTF-8");
+                helper.setFrom(fromEmail, "ZimRate");
+                helper.setTo(sub.getEmail());
+                helper.setSubject(subject);
+                helper.setText(html, true);
+                mailSender.send(mime);
+                sent++;
+            } catch (Exception e) {
+                log.error("Failed to send manual newsletter to {}: {}", sub.getEmail(), e.getMessage());
+            }
+        }
+        return sent;
+    }
+
+    public void sendTestEmail(String subject, String bodyHtml, String toEmail) throws Exception {
+        String html = wrapInEmailTemplate(bodyHtml, null);
+        MimeMessage mime = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mime, "UTF-8");
+        helper.setFrom(fromEmail, "ZimRate");
+        helper.setTo(toEmail);
+        helper.setSubject("[TEST] " + subject);
+        helper.setText(html, true);
+        mailSender.send(mime);
+    }
+
+    public String previewHtml(String subject, String bodyHtml) {
+        return wrapInEmailTemplate(bodyHtml, null);
+    }
+
+    private String wrapInEmailTemplate(String bodyHtml, String unsubscribeToken) {
+        String footerContent = unsubscribeToken != null
+            ? "<a href='" + baseUrl + "/unsubscribe/newsletter/" + unsubscribeToken + "' " +
+              "style='font-size:12px;color:#94a3b8;text-decoration:underline;'>Unsubscribe</a>"
+            : "<span style='font-size:12px;color:#94a3b8;'>[Test email — no unsubscribe link]</span>";
+
+        return "<!DOCTYPE html>" +
+            "<html lang='en'><head><meta charset='UTF-8'>" +
+            "<meta name='viewport' content='width=device-width,initial-scale=1'></head>" +
+            "<body style='margin:0;padding:0;background:#f1f5f9;font-family:Inter,Arial,sans-serif;'>" +
+            "<table width='100%' cellpadding='0' cellspacing='0' style='background:#f1f5f9;padding:40px 16px;'><tr><td align='center'>" +
+            "<table width='560' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);'>" +
+            "<tr><td style='background:linear-gradient(135deg,#14532d 0%,#166534 100%);padding:36px 40px;text-align:center;'>" +
+            "<div style='font-size:32px;font-weight:800;letter-spacing:-1px;'>" +
+            "<span style='color:#ffffff;'>Zim</span><span style='color:#ca8a04;'>Rate</span></div>" +
+            "<p style='margin:8px 0 0;color:rgba(255,255,255,0.7);font-size:13px;letter-spacing:0.3px;'>Zimbabwe Forex Rates</p>" +
+            "</td></tr>" +
+            "<tr><td style='padding:36px 40px;font-size:14px;color:#334155;line-height:1.7;'>" +
+            bodyHtml +
+            "</td></tr>" +
+            "<tr><td style='background:#f8fafc;padding:24px 40px;text-align:center;border-top:1px solid #e2e8f0;'>" +
+            "<p style='margin:0 0 10px;font-size:12px;color:#94a3b8;line-height:1.6;'>" +
+            "You're receiving this because you subscribed to ZimRate Blog updates.</p>" +
+            footerContent +
+            "</td></tr>" +
+            "</table></td></tr></table>" +
+            "</body></html>";
+    }
+
     private static String escapeHtml(String text) {
         if (text == null) return "";
         return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Live Rates')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('rates')}"></th:block>
+
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <span class="admin-topbar-title">Live Rates</span>
+        </div>
+
+        <div class="admin-body">
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        Latest Rates by Source
+                    </h2>
+                </div>
+
+                <div class="table-wrap" th:if="${!rates.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Currency Pair</th>
+                                <th>Buy Rate</th>
+                                <th>Sell Rate</th>
+                                <th>Scraped At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="rate : ${rates}">
+                                <td style="font-weight:500;" th:text="${rate.source.name}">Source</td>
+                                <td>
+                                    <span class="badge badge-gold" th:text="${rate.currencyPair}">USD/ZiG</span>
+                                </td>
+                                <td style="font-size:13px;">
+                                    <span th:if="${rate.buyRate != null}" th:text="${rate.buyRate}">—</span>
+                                    <span th:if="${rate.buyRate == null}" style="color:var(--light);">—</span>
+                                </td>
+                                <td style="font-size:13px;">
+                                    <span th:if="${rate.sellRate != null}" th:text="${rate.sellRate}">—</span>
+                                    <span th:if="${rate.sellRate == null}" style="color:var(--light);">—</span>
+                                </td>
+                                <td style="font-size:13px;color:var(--muted);"
+                                    th:text="${#temporals.format(rate.scrapedAt, 'dd MMM yyyy, HH:mm')}">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${rates.isEmpty()}" class="empty-state">
+                    <i class="fas fa-chart-line"></i>
+                    <p>No rate data available yet. <a th:href="@{/admin}">Trigger a scrape</a> from the dashboard.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

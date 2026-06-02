@@ -7,7 +7,9 @@ import com.forexzim.model.TelegramAlert;
 import com.forexzim.repository.AlertSubscriptionRepository;
 import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.NewsletterSubscriberRepository;
+import com.forexzim.repository.RateRepository;
 import com.forexzim.repository.TelegramAlertRepository;
+import com.forexzim.service.NewsletterService;
 import com.forexzim.service.ScheduledScraperService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -47,17 +49,23 @@ public class AdminController {
     private final AlertSubscriptionRepository alertSubscriptionRepository;
     private final TelegramAlertRepository telegramAlertRepository;
     private final ScheduledScraperService scheduledScraperService;
+    private final RateRepository rateRepository;
+    private final NewsletterService newsletterService;
 
     public AdminController(BlogRepository blogRepository,
                            NewsletterSubscriberRepository newsletterSubscriberRepository,
                            AlertSubscriptionRepository alertSubscriptionRepository,
                            TelegramAlertRepository telegramAlertRepository,
-                           ScheduledScraperService scheduledScraperService) {
+                           ScheduledScraperService scheduledScraperService,
+                           RateRepository rateRepository,
+                           NewsletterService newsletterService) {
         this.blogRepository = blogRepository;
         this.newsletterSubscriberRepository = newsletterSubscriberRepository;
         this.alertSubscriptionRepository = alertSubscriptionRepository;
         this.telegramAlertRepository = telegramAlertRepository;
         this.scheduledScraperService = scheduledScraperService;
+        this.rateRepository = rateRepository;
+        this.newsletterService = newsletterService;
     }
 
     @InitBinder
@@ -237,6 +245,61 @@ public class AdminController {
         blogRepository.deleteById(id);
         ra.addFlashAttribute("success", "Post deleted.");
         return "redirect:/admin/blog";
+    }
+
+    // ── Slug duplicate check ───────────────────────────────────────────────────
+
+    @GetMapping("/blog/check-slug")
+    @ResponseBody
+    public Map<String, Boolean> checkSlug(@RequestParam String slug,
+                                           @RequestParam(required = false) Long excludeId) {
+        boolean taken = excludeId != null
+            ? blogRepository.existsBySlugAndIdNot(slug, excludeId)
+            : blogRepository.existsBySlug(slug);
+        return Map.of("available", !taken);
+    }
+
+    // ── Rate data table ────────────────────────────────────────────────────────
+
+    @GetMapping("/rates")
+    public String rates(Model model) {
+        model.addAttribute("rates", rateRepository.findLatestBySourceAndCurrencyPair());
+        model.addAttribute("activePage", "rates");
+        return "admin/rates";
+    }
+
+    // ── Newsletter compose & send ──────────────────────────────────────────────
+
+    @GetMapping("/newsletter")
+    public String newsletterCompose(Model model) {
+        model.addAttribute("activePage", "newsletter");
+        return "admin/newsletter";
+    }
+
+    @PostMapping("/newsletter/send")
+    public String newsletterSend(@RequestParam String subject,
+                                  @RequestParam String body,
+                                  @RequestParam(defaultValue = "false") boolean testOnly,
+                                  @RequestParam(required = false) String testEmail,
+                                  RedirectAttributes ra) {
+        try {
+            if (testOnly && testEmail != null && !testEmail.isBlank()) {
+                newsletterService.sendTestEmail(subject, body, testEmail);
+                ra.addFlashAttribute("success", "Test email sent to " + testEmail);
+            } else {
+                int count = newsletterService.sendManualNewsletter(subject, body);
+                ra.addFlashAttribute("success", "Newsletter sent to " + count + " subscriber(s).");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Send failed: " + e.getMessage());
+        }
+        return "redirect:/admin/newsletter";
+    }
+
+    @PostMapping("/newsletter/preview")
+    @ResponseBody
+    public String newsletterPreview(@RequestParam String subject, @RequestParam String body) {
+        return newsletterService.previewHtml(subject, body);
     }
 
     // ── Image upload ───────────────────────────────────────────────────────────

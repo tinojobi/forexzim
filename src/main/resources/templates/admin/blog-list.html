@@ -36,6 +36,8 @@
                         <span class="badge badge-draft" style="font-size:11px;"
                               th:text="${posts.size()} + ' total'">0 total</span>
                     </h2>
+                    <input type="text" id="postFilter" class="form-control" placeholder="Filter posts..."
+                           style="max-width:220px;" oninput="filterPosts(this.value)">
                 </div>
 
                 <div class="table-wrap" th:if="${!posts.isEmpty()}">
@@ -162,6 +164,14 @@ function confirmDelete(btn) {
     if (confirm('Delete "' + title + '"? This cannot be undone.')) {
         document.getElementById('del-' + id).submit();
     }
+}
+
+function filterPosts(q) {
+    q = q.toLowerCase();
+    document.querySelectorAll('tbody tr').forEach(row => {
+        const title = row.querySelector('.cell-title')?.textContent.toLowerCase() || '';
+        row.style.display = title.includes(q) ? '' : 'none';
+    });
 }
 </script>
 </body>
