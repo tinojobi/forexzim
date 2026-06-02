@@ -9,25 +9,38 @@ import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.NewsletterSubscriberRepository;
 import com.forexzim.repository.TelegramAlertRepository;
 import com.forexzim.service.ScheduledScraperService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+    @Value("${zimrate.uploads.dir:./uploads/}")
+    private String uploadsDir;
 
     private final BlogRepository blogRepository;
     private final NewsletterSubscriberRepository newsletterSubscriberRepository;
@@ -224,6 +237,28 @@ public class AdminController {
         blogRepository.deleteById(id);
         ra.addFlashAttribute("success", "Post deleted.");
         return "redirect:/admin/blog";
+    }
+
+    // ── Image upload ───────────────────────────────────────────────────────────
+
+    @PostMapping("/upload")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Only image files are allowed."));
+        }
+        try {
+            String ext = StringUtils.getFilenameExtension(
+                StringUtils.cleanPath(file.getOriginalFilename() != null ? file.getOriginalFilename() : "img"));
+            String filename = UUID.randomUUID() + (ext != null && !ext.isBlank() ? "." + ext : "");
+            Path dir = Paths.get(uploadsDir);
+            Files.createDirectories(dir);
+            Files.copy(file.getInputStream(), dir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+            return ResponseEntity.ok(Map.of("url", "/uploads/" + filename));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", "Upload failed: " + e.getMessage()));
+        }
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────

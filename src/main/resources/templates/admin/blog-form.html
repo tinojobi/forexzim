@@ -179,22 +179,46 @@
                         <div class="form-panel-title"><i class="fas fa-image"></i> Media</div>
 
                         <div class="form-group">
-                            <label class="form-label" for="imageUrl">Featured Image URL</label>
-                            <input class="form-control" type="url" id="imageUrl" name="imageUrl"
-                                   th:value="${post.imageUrl}"
-                                   placeholder="https://...">
-                            <div th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
-                                 style="margin-top:8px;">
-                                <img th:src="${post.imageUrl}" alt="Preview"
+                            <label class="form-label" for="imageUrl">Featured Image</label>
+                            <div class="upload-row">
+                                <input class="form-control" type="url" id="imageUrl" name="imageUrl"
+                                       th:value="${post.imageUrl}"
+                                       placeholder="https://... or upload →">
+                                <button type="button" class="btn btn-outline btn-sm upload-trigger"
+                                        onclick="document.getElementById('imageFile').click()"
+                                        title="Upload image">
+                                    <i class="fas fa-arrow-up-from-bracket"></i>
+                                </button>
+                            </div>
+                            <input type="file" id="imageFile" accept="image/*" style="display:none"
+                                   onchange="handleUpload(this,'imageUrl','imagePreview')">
+                            <div id="imagePreview" style="margin-top:8px;">
+                                <img th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
+                                     th:src="${post.imageUrl}" alt="Preview"
                                      style="width:100%;border-radius:6px;border:1px solid var(--border);">
                             </div>
                         </div>
 
                         <div class="form-group mb-0">
-                            <label class="form-label" for="socialImageUrl">Social / OG Image URL</label>
-                            <input class="form-control" type="url" id="socialImageUrl" name="socialImageUrl"
-                                   th:value="${post.socialImageUrl}"
-                                   placeholder="https://... (1200×630)">
+                            <label class="form-label" for="socialImageUrl">Social / OG Image</label>
+                            <p class="form-hint">1200×630px for Twitter/Facebook sharing.</p>
+                            <div class="upload-row">
+                                <input class="form-control" type="url" id="socialImageUrl" name="socialImageUrl"
+                                       th:value="${post.socialImageUrl}"
+                                       placeholder="https://... or upload →">
+                                <button type="button" class="btn btn-outline btn-sm upload-trigger"
+                                        onclick="document.getElementById('socialImageFile').click()"
+                                        title="Upload image">
+                                    <i class="fas fa-arrow-up-from-bracket"></i>
+                                </button>
+                            </div>
+                            <input type="file" id="socialImageFile" accept="image/*" style="display:none"
+                                   onchange="handleUpload(this,'socialImageUrl','socialImagePreview')">
+                            <div id="socialImagePreview" style="margin-top:8px;">
+                                <img th:if="${post.socialImageUrl != null and !post.socialImageUrl.isEmpty()}"
+                                     th:src="${post.socialImageUrl}" alt="Preview"
+                                     style="width:100%;border-radius:6px;border:1px solid var(--border);">
+                            </div>
                         </div>
                     </div>
 
@@ -280,6 +304,39 @@ if (metaEl && metaEl.value) updateCounter(metaEl);
 const slugEl = document.getElementById('slug');
 const previewEl = document.getElementById('slugPreview');
 if (previewEl && slugEl) previewEl.textContent = slugEl.value || 'your-slug';
+
+// Image upload via fetch
+async function handleUpload(input, fieldId, previewId) {
+    if (!input.files.length) return;
+
+    const btn = input.previousElementSibling;
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+    formData.append('_csrf', document.querySelector('input[name="_csrf"]').value);
+
+    try {
+        const res = await fetch('/admin/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+        document.getElementById(fieldId).value = data.url;
+        document.getElementById(previewId).innerHTML =
+            '<img src="' + data.url + '" alt="Preview" style="width:100%;border-radius:6px;border:1px solid var(--border);">';
+
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.style.color = 'var(--green)';
+        setTimeout(() => { btn.innerHTML = originalHtml; btn.style.color = ''; btn.disabled = false; }, 2000);
+    } catch (err) {
+        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        btn.style.color = 'var(--red)';
+        setTimeout(() => { btn.innerHTML = originalHtml; btn.style.color = ''; btn.disabled = false; }, 2500);
+    }
+    input.value = '';
+}
 </script>
 </body>
 </html>

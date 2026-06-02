@@ -879,6 +879,21 @@ textarea.form-control.mono {
     .stat-grid { grid-template-columns: 1fr 1fr; }
 }
 
+/* ── Image upload ─────────────────────────────────────────────────────────── */
+
+.upload-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.upload-row .form-control { flex: 1; min-width: 0; }
+
+.upload-trigger {
+    flex-shrink: 0;
+    transition: color .15s, background .15s;
+}
+
 /* ── Utility ──────────────────────────────────────────────────────────────── */
 
 .text-muted { color: var(--muted); }

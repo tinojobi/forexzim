@@ -42,6 +42,7 @@
                     <table>
                         <thead>
                             <tr>
+                                <th style="width:56px;"></th>
                                 <th>Title</th>
                                 <th>Status</th>
                                 <th>Published</th>
@@ -52,6 +53,15 @@
                         </thead>
                         <tbody>
                             <tr th:each="post : ${posts}">
+                                <td style="padding:8px 8px 8px 14px;">
+                                    <img th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
+                                         th:src="${post.imageUrl}" alt=""
+                                         style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;">
+                                    <div th:unless="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
+                                         style="width:48px;height:48px;background:var(--gray-lt);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="fas fa-image" style="color:var(--light);font-size:16px;"></i>
+                                    </div>
+                                </td>
                                 <td class="cell-title">
                                     <a th:href="@{/admin/blog/{id}/edit(id=${post.id})}"
                                        th:text="${post.title}">Post title</a>
