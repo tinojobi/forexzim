@@ -10,12 +10,15 @@ import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.NewsletterSubscriberRepository;
 import com.forexzim.repository.RateRepository;
 import com.forexzim.repository.TelegramAlertRepository;
+import com.forexzim.service.GscService;
 import com.forexzim.service.NewsletterService;
 import com.forexzim.service.ScheduledScraperService;
+import com.forexzim.service.SystemEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,13 +63,18 @@ public class AdminController {
     @Value("${zimrate.telegram.bot-token:}")
     private String telegramBotToken;
 
+    @Value("${zimrate.admin.token:}")
+    private String adminToken;
+
     private final BlogRepository blogRepository;
     private final NewsletterSubscriberRepository newsletterSubscriberRepository;
     private final AlertSubscriptionRepository alertSubscriptionRepository;
     private final TelegramAlertRepository telegramAlertRepository;
     private final ScheduledScraperService scheduledScraperService;
     private final RateRepository rateRepository;
+    private final GscService gscService;
     private final NewsletterService newsletterService;
+    private final SystemEventService systemEventService;
 
     public AdminController(BlogRepository blogRepository,
                            NewsletterSubscriberRepository newsletterSubscriberRepository,
@@ -74,14 +82,18 @@ public class AdminController {
                            TelegramAlertRepository telegramAlertRepository,
                            ScheduledScraperService scheduledScraperService,
                            RateRepository rateRepository,
-                           NewsletterService newsletterService) {
+                           GscService gscService,
+                           NewsletterService newsletterService,
+                           SystemEventService systemEventService) {
         this.blogRepository = blogRepository;
         this.newsletterSubscriberRepository = newsletterSubscriberRepository;
         this.alertSubscriptionRepository = alertSubscriptionRepository;
         this.telegramAlertRepository = telegramAlertRepository;
         this.scheduledScraperService = scheduledScraperService;
         this.rateRepository = rateRepository;
+        this.gscService = gscService;
         this.newsletterService = newsletterService;
+        this.systemEventService = systemEventService;
     }
 
     @InitBinder
@@ -458,5 +470,39 @@ public class AdminController {
         model.addAttribute("telegramAlerts", telegramAlerts);
         model.addAttribute("activePage", "subscribers");
         return "admin/subscribers";
+    }
+
+    // ── Article Performance (GSC data) ─────────────────────────────────────────
+
+    @GetMapping("/article-performance")
+    @ResponseBody
+    public ResponseEntity<?> articlePerformance(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+
+        if (adminToken.isBlank() || !adminToken.equals(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Invalid or missing X-Admin-Token header."));
+        }
+
+        return ResponseEntity.ok(gscService.getArticlePerformance());
+    }
+
+    // ── Event Log ───────────────────────────────────────────────────────────────
+
+    @GetMapping("/events")
+    @ResponseBody
+    public ResponseEntity<?> getEvents(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String from,
+            @RequestParam(defaultValue = "50") int limit) {
+
+        if (adminToken.isBlank() || !adminToken.equals(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Invalid or missing X-Admin-Token header."));
+        }
+        return ResponseEntity.ok(Map.of(
+            "events", systemEventService.getEvents(type, from, limit)
+        ));
     }
 }

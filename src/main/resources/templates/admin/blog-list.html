@@ -6,17 +6,9 @@
 <div class="admin-shell">
 
     <th:block th:replace="~{admin/layout :: sidebar('blog')}"></th:block>
+    <th:block th:replace="~{admin/layout :: topbar('Blog Posts')}"></th:block>
 
     <div class="admin-main">
-        <div class="admin-topbar">
-            <span class="admin-topbar-title">Blog Posts</span>
-            <div class="admin-topbar-actions">
-                <a th:href="@{/admin/blog/new}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> New Post
-                </a>
-            </div>
-        </div>
-
         <div class="admin-body">
 
             <div th:if="${success}" class="flash flash-success">
@@ -32,30 +24,83 @@
                 <div class="card-header">
                     <h2 class="card-title">
                         <i class="fas fa-newspaper"></i>
-                        All Posts
+                        <span id="postsHeading">All Posts</span>
                         <span class="badge badge-draft" style="font-size:11px;"
                               th:text="${posts.size()} + ' total'">0 total</span>
                     </h2>
-                    <input type="text" id="postFilter" class="form-control" placeholder="Filter posts..."
-                           style="max-width:220px;" oninput="filterPosts(this.value)">
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <input type="text" id="postFilter" class="form-control" placeholder="Filter posts..."
+                               style="max-width:220px;" oninput="filterPosts(this.value)">
+                        <div style="display:none;" id="bulkEditBar">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="openBulkEdit()">
+                                <i class="fas fa-edit"></i> Bulk Edit
+                            </button>
+                            <span id="bulkCount" style="font-size:12px;color:var(--muted);"></span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="table-wrap" th:if="${!posts.isEmpty()}">
+                <!-- Tabs -->
+                <div class="tab-bar" style="padding:0 22px;border-bottom:1px solid var(--border);">
+                    <button class="tab-btn active" onclick="switchTab('all', this)">All <span class="tab-count" th:text="${posts.size()}"></span></button>
+                    <button class="tab-btn" onclick="switchTab('PUBLISHED', this)">Published <span class="tab-count" th:text="${posts.?[status.name() == 'PUBLISHED'].size()}"></span></button>
+                    <button class="tab-btn" onclick="switchTab('DRAFT', this)">Draft <span class="tab-count" th:text="${posts.?[status.name() == 'DRAFT'].size()}"></span></button>
+                    <button class="tab-btn" onclick="switchTab('featured', this)">Featured <span class="tab-count" id="featuredCount">0</span></button>
+                    <button class="tab-btn" onclick="switchTab('performance', this)">Performance</button>
+                </div>
+
+                <!-- Performance panel (hidden by default) -->
+                <div id="performancePanel" style="display:none;padding:20px 22px;">
+                    <div style="margin-bottom:14px;font-weight:600;font-size:14px;">
+                        <i class="fas fa-chart-bar" style="color:var(--accent);margin-right:6px;"></i>
+                        Article Performance (last 30 days)
+                    </div>
+                    <div id="perfError" class="flash flash-error" style="display:none;"></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th style="width:90px;">Clicks</th>
+                                    <th style="width:100px;">Impressions</th>
+                                    <th style="width:80px;">CTR</th>
+                                    <th style="width:100px;">Avg Position</th>
+                                </tr>
+                            </thead>
+                            <tbody id="perfTableBody">
+                                <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-wrap" th:if="${!posts.isEmpty()}" id="postsTableWrap">
                     <table>
                         <thead>
                             <tr>
+                                <th style="width:40px;">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                                </th>
                                 <th style="width:56px;"></th>
                                 <th>Title</th>
                                 <th>Status</th>
+                                <th style="width:70px;" title="Toggle featured">
+                                    <i class="fas fa-star" style="color:var(--accent);"></i>
+                                </th>
                                 <th>Published</th>
                                 <th>Author</th>
                                 <th>Updated</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr th:each="post : ${posts}">
+                        <tbody id="postsTableBody">
+                            <tr th:each="post : ${posts}" th:data-status="${post.status.name()}" th:data-featured="${post.featured}" th:data-slug="${post.slug}">
                                 <td style="padding:8px 8px 8px 14px;">
+                                    <input type="checkbox" class="post-check" th:data-slug="${post.slug}" th:data-id="${post.id}" onchange="updateBulkBar()">
+                                </td>
+                                <td style="padding:8px 8px 8px 0;">
                                     <img th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
                                          th:src="${post.imageUrl}" alt=""
                                          style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;">
@@ -82,6 +127,16 @@
                                             <i class="fas fa-circle" style="font-size:6px;"></i> Rejected
                                         </span>
                                     </span>
+                                </td>
+                                <td style="text-align:center;">
+                                    <button class="featured-btn"
+                                            th:data-slug="${post.slug}"
+                                            th:data-featured="${post.featured}"
+                                            onclick="toggleFeatured(this)"
+                                            th:title="${post.featured} ? 'Unpin from featured' : 'Pin to featured'">
+                                        <i th:class="${post.featured} ? 'fas fa-star' : 'far fa-star'"
+                                           th:style="${post.featured} ? 'color:var(--accent);' : 'color:var(--light);'"></i>
+                                    </button>
                                 </td>
                                 <td style="font-size:13px;color:var(--muted);">
                                     <span th:if="${post.publishedAt != null}"
@@ -157,7 +212,65 @@
     </div>
 </div>
 
+<!-- Bulk Edit Modal -->
+<div id="bulkEditModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+    <div style="background:var(--card);border-radius:var(--radius-lg);padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:16px;font-weight:700;"><i class="fas fa-edit" style="color:var(--accent);margin-right:8px;"></i>Bulk Edit Posts</h3>
+            <button onclick="closeBulkEdit()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="bulkEditError" class="flash flash-error" style="display:none;"></div>
+        <div style="margin-bottom:16px;font-size:13px;color:var(--muted);">
+            Updating <strong id="bulkEditCount">0</strong> selected posts.
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label" style="font-weight:600;margin-bottom:8px;display:block;">Fields to update</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;margin-bottom:8px;">
+                <input type="checkbox" id="bulkFieldCategory" checked> Category
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;">
+                <input type="checkbox" id="bulkFieldKeywords" checked> Keywords
+            </label>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label" for="bulkCategory">Category</label>
+            <select id="bulkCategory" class="form-control">
+                <option value="">— No change —</option>
+                <option>Economy</option>
+                <option>Forex</option>
+                <option>Mining</option>
+                <option>Energy</option>
+                <option>Trade</option>
+                <option>Finance</option>
+                <option>Agriculture</option>
+                <option>Uncategorized</option>
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+            <label class="form-label" for="bulkKeywords">Keywords</label>
+            <input type="text" id="bulkKeywords" class="form-control" placeholder="Comma-separated keywords, or leave blank for no change">
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onclick="closeBulkEdit()" class="btn btn-outline btn-sm">Cancel</button>
+            <button onclick="submitBulkEdit()" class="btn btn-primary btn-sm" id="bulkSubmitBtn">
+                <i class="fas fa-check"></i> Apply to All
+            </button>
+        </div>
+        <div id="bulkProgress" style="margin-top:14px;display:none;">
+            <div style="height:4px;background:var(--gray-lt);border-radius:2px;overflow:hidden;">
+                <div id="bulkProgressBar" style="height:100%;background:var(--green);width:0%;transition:width .3s;"></div>
+            </div>
+            <div id="bulkProgressText" style="font-size:12px;color:var(--muted);margin-top:6px;text-align:center;"></div>
+        </div>
+    </div>
+</div>
+
 <script>
+const ADMIN_TOKEN = '512d2584da6010b519f0183fe624d5f7';
+let currentTab = 'all';
+
 function confirmDelete(btn) {
     const id = btn.dataset.postId;
     const title = btn.dataset.postTitle;
@@ -168,11 +281,206 @@ function confirmDelete(btn) {
 
 function filterPosts(q) {
     q = q.toLowerCase();
-    document.querySelectorAll('tbody tr').forEach(row => {
+    document.querySelectorAll('#postsTableBody tr').forEach(row => {
         const title = row.querySelector('.cell-title')?.textContent.toLowerCase() || '';
         row.style.display = title.includes(q) ? '' : 'none';
     });
 }
+
+// Featured toggle
+async function toggleFeatured(btn) {
+    const slug = btn.dataset.slug;
+    const currentlyFeatured = btn.dataset.featured === 'true';
+    const newFeatured = !currentlyFeatured;
+    const icon = btn.querySelector('i');
+
+    icon.className = 'fas fa-spinner fa-spin';
+    try {
+        const res = await fetch('/api/blog/' + slug, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+            body: JSON.stringify({ featured: newFeatured })
+        });
+        if (!res.ok) throw new Error('Failed');
+        btn.dataset.featured = String(newFeatured);
+        icon.className = newFeatured ? 'fas fa-star' : 'far fa-star';
+        icon.style.color = newFeatured ? 'var(--accent)' : 'var(--light)';
+        btn.dataset.featured = String(newFeatured);
+        updateFeaturedCount();
+    } catch (e) {
+        icon.className = currentlyFeatured ? 'fas fa-star' : 'far fa-star';
+        icon.style.color = currentlyFeatured ? 'var(--accent)' : 'var(--light)';
+    }
+}
+
+// Tab switching
+function switchTab(tab, btn) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const perfPanel = document.getElementById('performancePanel');
+    const tableWrap = document.getElementById('postsTableWrap');
+
+    if (tab === 'performance') {
+        perfPanel.style.display = 'block';
+        tableWrap.style.display = 'none';
+        loadPerformance();
+    } else {
+        perfPanel.style.display = 'none';
+        tableWrap.style.display = '';
+        document.getElementById('postsHeading').textContent =
+            tab === 'all' ? 'All Posts' :
+            tab === 'featured' ? 'Featured Posts' :
+            tab === 'PUBLISHED' ? 'Published Posts' : 'Draft Posts';
+        applyTabFilter();
+    }
+}
+
+function applyTabFilter() {
+    const rows = document.querySelectorAll('#postsTableBody tr');
+    rows.forEach(row => {
+        const status = row.dataset.status;
+        const featured = row.dataset.featured === 'true';
+        if (currentTab === 'all') {
+            row.style.display = '';
+            sortByFeatured(row);
+        } else if (currentTab === 'featured') {
+            row.style.display = featured ? '' : 'none';
+        } else {
+            row.style.display = status === currentTab ? '' : 'none';
+        }
+    });
+}
+
+function sortByFeatured(row) {
+    // Featured rows already shown first via data attribute order; no-op for now
+}
+
+// Update featured count badge
+function updateFeaturedCount() {
+    let count = 0;
+    document.querySelectorAll('#postsTableBody tr').forEach(r => {
+        if (r.dataset.featured === 'true') count++;
+    });
+    const el = document.getElementById('featuredCount');
+    if (el) el.textContent = count;
+}
+
+// Multi-select
+function toggleSelectAll(cb) {
+    document.querySelectorAll('.post-check').forEach(c => c.checked = cb.checked);
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.post-check:checked');
+    const bar = document.getElementById('bulkEditBar');
+    const count = document.getElementById('bulkCount');
+    bar.style.display = checked.length > 0 ? 'inline-flex' : 'none';
+    count.textContent = checked.length + ' selected';
+}
+
+function openBulkEdit() {
+    const checked = document.querySelectorAll('.post-check:checked');
+    if (!checked.length) return;
+    document.getElementById('bulkEditCount').textContent = checked.length;
+    document.getElementById('bulkEditError').style.display = 'none';
+    document.getElementById('bulkProgress').style.display = 'none';
+    document.getElementById('bulkSubmitBtn').disabled = false;
+    document.getElementById('bulkEditModal').style.display = 'flex';
+}
+
+function closeBulkEdit() {
+    document.getElementById('bulkEditModal').style.display = 'none';
+}
+
+async function submitBulkEdit() {
+    const checked = document.querySelectorAll('.post-check:checked');
+    if (!checked.length) return;
+
+    const updateCategory = document.getElementById('bulkFieldCategory').checked;
+    const updateKeywords = document.getElementById('bulkFieldKeywords').checked;
+    const category = document.getElementById('bulkCategory').value;
+    const keywords = document.getElementById('bulkKeywords').value;
+
+    if (!updateCategory && !updateKeywords) {
+        const err = document.getElementById('bulkEditError');
+        err.textContent = 'Please select at least one field to update.';
+        err.style.display = 'flex';
+        return;
+    }
+
+    const body = {};
+    if (updateCategory && category) body.category = category;
+    if (updateKeywords && keywords.trim()) body.keywords = keywords;
+
+    document.getElementById('bulkSubmitBtn').disabled = true;
+    const progress = document.getElementById('bulkProgress');
+    const progressBar = document.getElementById('bulkProgressBar');
+    const progressText = document.getElementById('bulkProgressText');
+    progress.style.display = 'block';
+
+    let done = 0;
+    for (const cb of checked) {
+        const slug = cb.dataset.slug;
+        try {
+            await fetch('/api/blog/' + slug, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+                body: JSON.stringify(body)
+            });
+        } catch (e) { /* continue */ }
+        done++;
+        const pct = Math.round((done / checked.length) * 100);
+        progressBar.style.width = pct + '%';
+        progressText.textContent = done + ' / ' + checked.length + ' updated';
+    }
+
+    setTimeout(() => {
+        closeBulkEdit();
+        window.location.reload();
+    }, 600);
+}
+
+// Performance tab
+async function loadPerformance() {
+    const tbody = document.getElementById('perfTableBody');
+    const err = document.getElementById('perfError');
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+    err.style.display = 'none';
+    try {
+        const res = await fetch('/api/admin/article-performance', {
+            headers: { 'X-Admin-Token': ADMIN_TOKEN }
+        });
+        if (!res.ok) throw new Error('Failed to load');
+        const data = await res.json();
+        if (!data.articles || !data.articles.length) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">No performance data available.</td></tr>';
+            return;
+        }
+        data.articles.sort((a, b) => b.clicks - a.clicks);
+        tbody.innerHTML = data.articles.map(a => {
+            const ctrColor = a.ctr >= 1 ? 'color:var(--green)' : a.ctr >= 0.5 ? 'color:var(--amber)' : 'color:var(--red)';
+            const posColor = a.avgPosition < 10 ? 'color:var(--green)' : a.avgPosition <= 30 ? 'color:var(--amber)' : 'color:var(--red)';
+            return '<tr>' +
+                '<td class="cell-title"><a href="/blog/' + a.slug + '" target="_blank">' + a.title + '</a></td>' +
+                '<td style="font-weight:600;">' + a.clicks.toLocaleString() + '</td>' +
+                '<td>' + a.impressions.toLocaleString() + '</td>' +
+                '<td style="font-weight:600;' + ctrColor + '">' + a.ctr.toFixed(2) + '%</td>' +
+                '<td style="font-weight:600;' + posColor + '">' + a.avgPosition.toFixed(1) + '</td>' +
+                '</tr>';
+        }).join('');
+    } catch (e) {
+        err.textContent = 'Failed to load performance data: ' + e.message;
+        err.style.display = 'flex';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Error loading data.</td></tr>';
+    }
+}
+
+// Init featured count on load
+updateFeaturedCount();
 </script>
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
 </html>

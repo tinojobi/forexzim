@@ -499,6 +499,74 @@ td {
     font-size: 12px;
 }
 
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+
+.tab-bar {
+    display: flex;
+    gap: 0;
+    align-items: center;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color .15s, border-color .15s;
+    margin-bottom: -1px;
+}
+
+.tab-btn:hover { color: var(--text); }
+
+.tab-btn.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+}
+
+.tab-count {
+    background: var(--gray-lt);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.tab-btn.active .tab-count {
+    background: var(--green-lt);
+    color: var(--green);
+}
+
+/* ── Featured star button ────────────────────────────────────────────────── */
+
+.featured-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    line-height: 1;
+    transition: transform .15s;
+}
+
+.featured-btn:hover { transform: scale(1.2); }
+
+/* ── Bulk edit bar ──────────────────────────────────────────────────────── */
+
+#bulkEditBar {
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── Modal overlay ──────────────────────────────────────────────────────── */
+
 .btn-icon {
     padding: 6px 8px;
     font-size: 13px;
@@ -1125,4 +1193,125 @@ textarea.form-control.mono {
 .ql-editor.ql-blank::before {
     color: var(--light);
     font-style: normal;
+}
+
+/* ── Content Calendar ─────────────────────────────────────────────────── */
+
+.cal-day-header {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 0;
+}
+
+.cal-cell {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: background .1s;
+}
+
+.cal-cell.empty {
+    background: transparent;
+    border: none;
+}
+
+.cal-day-num {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.cal-day-num.today {
+    background: var(--green);
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+/* ── Dark mode ────────────────────────────────────────────────────────── */
+
+.admin-shell[data-theme="dark"] {
+    --bg: #111827;
+    --card: #1f2937;
+    --border: #374151;
+    --text: #f9fafb;
+    --muted: #9ca3af;
+    --light: #6b7280;
+    --gray-lt: #1f2937;
+    --green-bg: #145032;
+    --red-lt: #7f1d1d;
+    --amber-lt: #451a03;
+    --green-lt: #145032;
+}
+
+.admin-shell[data-theme="dark"] .card {
+    background: var(--card);
+    border-color: var(--border);
+}
+
+.admin-shell[data-theme="dark"] .admin-topbar {
+    background: var(--card);
+    border-color: var(--border);
+}
+
+.admin-shell[data-theme="dark"] .admin-topbar-title {
+    color: var(--text);
+}
+
+.admin-shell[data-theme="dark"] tbody tr:hover {
+    background: #1f2937;
+}
+
+.admin-shell[data-theme="dark"] .stat-card {
+    background: var(--card);
+    border-color: var(--border);
+}
+
+.admin-shell[data-theme="dark"] .stat-value {
+    color: var(--text);
+}
+
+.admin-shell[data-theme="dark"] .form-control {
+    background: #111827;
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.admin-shell[data-theme="dark"] .form-control::placeholder {
+    color: var(--muted);
+}
+
+.admin-shell[data-theme="dark"] .tab-bar {
+    border-color: var(--border);
+}
+
+.admin-shell[data-theme="dark"] .health-rows {
+    border-color: var(--border);
+}
+
+.admin-shell[data-theme="dark"] .ql-toolbar.ql-snow {
+    background: #111827;
+    border-color: var(--border);
+}
+
+.admin-shell[data-theme="dark"] .ql-container.ql-snow {
+    border-color: var(--border);
+    background: #111827;
+}
+
+.admin-shell[data-theme="dark"] .ql-editor {
+    color: var(--text);
 }

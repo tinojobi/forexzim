@@ -7,17 +7,9 @@
 
     <th:block th:replace="~{admin/layout :: sidebar('dashboard')}"></th:block>
 
-    <div class="admin-main">
-        <div class="admin-topbar">
-            <span class="admin-topbar-title">Dashboard</span>
-            <div class="admin-topbar-actions">
-                <div class="admin-user-chip">
-                    <div class="admin-user-avatar"><i class="fas fa-user"></i></div>
-                    <span sec:authentication="name">admin</span>
-                </div>
-            </div>
-        </div>
+    <th:block th:replace="~{admin/layout :: topbar('Dashboard')}"></th:block>
 
+    <div class="admin-main">
         <div class="admin-body">
 
             <!-- Flash messages -->
@@ -260,6 +252,37 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Content Calendar -->
+                    <div class="card" style="margin-top:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-calendar"></i> Content Calendar
+                            </h2>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <button class="btn btn-outline btn-sm" onclick="calNav(-1)">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span id="calMonthLabel" style="font-size:13px;font-weight:600;min-width:140px;text-align:center;"></span>
+                                <button class="btn btn-outline btn-sm" onclick="calNav(1)">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding:16px 22px;">
+                            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
+                                <div class="cal-day-header">Mon</div>
+                                <div class="cal-day-header">Tue</div>
+                                <div class="cal-day-header">Wed</div>
+                                <div class="cal-day-header">Thu</div>
+                                <div class="cal-day-header">Fri</div>
+                                <div class="cal-day-header">Sat</div>
+                                <div class="cal-day-header">Sun</div>
+                            </div>
+                            <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+                            <div id="calTooltip" style="display:none;position:fixed;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:12px;box-shadow:var(--shadow-md);z-index:200;max-width:200px;pointer-events:none;"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right: system health + quick links -->
@@ -268,8 +291,13 @@
                     <div class="card" style="margin-bottom:16px;">
                         <div class="card-header">
                             <h2 class="card-title"><i class="fas fa-shield-halved"></i> System Health</h2>
+                            <button class="btn btn-outline btn-sm" onclick="loadSourceHealth()">
+                                <i class="fas fa-rotate"></i> Refresh
+                            </button>
                         </div>
                         <div class="card-body" style="padding:8px 22px;">
+                            <div id="sourceHealthError" class="flash flash-error" style="display:none;margin-bottom:12px;"></div>
+                            <div id="sourceHealthTable" style="display:none;"></div>
                             <div class="health-rows">
 
                                 <div class="health-row">
@@ -404,6 +432,148 @@ new ApexCharts(document.getElementById('growthChart'), {
     grid: { borderColor: '#f3f4f6', strokeDashArray: 4, yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } } },
     tooltip: { theme: 'light', y: { formatter: v => v + ' signups' } }
 }).render();
+
+// ── Content Calendar ──────────────────────────────────────────────────
+const ADMIN_TOKEN = '512d2584da6010b519f0183fe624d5f7';
+let calYear, calMonth;
+let allPosts = [];
+
+async function initCalendar() {
+    calYear = new Date().getFullYear();
+    calMonth = new Date().getMonth(); // 0-indexed
+    try {
+        const res = await fetch('/api/blog?page=0&size=100');
+        const data = await res.json();
+        allPosts = data.content || data || [];
+    } catch (e) { allPosts = []; }
+    renderCalendar();
+}
+
+function calNav(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const label = document.getElementById('calMonthLabel');
+    const grid = document.getElementById('calGrid');
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    label.textContent = months[calMonth] + ' ' + calYear;
+
+    const firstDay = new Date(calYear, calMonth, 1);
+    // Monday-first: Monday=0 ... Sunday=6
+    let startDow = firstDay.getDay() - 1;
+    if (startDow < 0) startDow = 6;
+
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const today = new Date();
+
+    // Group posts by published date
+    const byDate = {};
+    allPosts.forEach(p => {
+        if (!p.publishedAt) return;
+        const d = new Date(p.publishedAt);
+        if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
+            const key = d.getDate();
+            if (!byDate[key]) byDate[key] = [];
+            byDate[key].push(p);
+        }
+    });
+
+    let html = '';
+    // Padding cells before first day
+    for (let i = 0; i < startDow; i++) {
+        html += '<div class="cal-cell empty"></div>';
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === day;
+        const posts = byDate[day] || [];
+        const hasPost = posts.length > 0;
+        const bg = isToday ? 'background:#f0fdf4;border-color:var(--green);' : 'background:var(--card);';
+        html += '<div class="cal-cell" style="' + bg + '"';
+        if (hasPost) {
+            const titles = posts.map(p => p.title).join(', ');
+            html += ' onmouseover="showCalTooltip(event,\'' + titles.replace(/'/g, "\\'") + '\')" onmouseout="hideCalTooltip()"';
+        }
+        html += '>';
+        html += '<span class="cal-day-num' + (isToday ? ' today' : '') + '">' + day + '</span>';
+        if (hasPost) {
+            html += '<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;">';
+            posts.forEach(p => {
+                const color = p.status === 'PUBLISHED' ? 'var(--green)' : 'var(--muted)';
+                html += '<div style="width:7px;height:7px;border-radius:50%;background:' + color + ';" title="' + p.title + '"></div>';
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+    grid.innerHTML = html;
+}
+
+function showCalTooltip(e, text) {
+    const tt = document.getElementById('calTooltip');
+    tt.textContent = text;
+    tt.style.display = 'block';
+    tt.style.left = (e.clientX + 10) + 'px';
+    tt.style.top = (e.clientY + 10) + 'px';
+}
+
+function hideCalTooltip() {
+    document.getElementById('calTooltip').style.display = 'none';
+}
+
+// ── Source Health Timeline ────────────────────────────────────────────
+async function loadSourceHealth() {
+    const err = document.getElementById('sourceHealthError');
+    const table = document.getElementById('sourceHealthTable');
+    err.style.display = 'none';
+    table.style.display = 'none';
+    try {
+        const res = await fetch('/api/admin/source-health', {
+            headers: { 'X-Admin-Token': ADMIN_TOKEN }
+        });
+        if (!res.ok) throw new Error('Failed to load');
+        const data = await res.json();
+        if (!Array.isArray(data) || !data.length) {
+            err.textContent = 'No source health data available.';
+            err.style.display = 'flex';
+            return;
+        }
+        table.innerHTML = '<table style="width:100%;font-size:13px;">' +
+            '<thead><tr style="border-bottom:1px solid var(--border);">' +
+            '<th style="padding:4px 8px;font-weight:600;color:var(--muted);text-align:left;">Source</th>' +
+            '<th style="padding:4px 8px;font-weight:600;color:var(--muted);text-align:left;">Last Success</th>' +
+            '<th style="padding:4px 8px;font-weight:600;color:var(--muted);text-align:left;">Last Failure</th>' +
+            '<th style="padding:4px 8px;font-weight:600;color:var(--muted);text-align:center;">Rate (7d)</th>' +
+            '<th style="padding:4px 8px;font-weight:600;color:var(--muted);text-align:center;">Status</th>' +
+            '</tr></thead><tbody>' +
+            data.map(s => {
+                const total = (s.successCount || 0) + (s.failureCount || 0);
+                const rate = total > 0 ? ((s.successCount || 0) / total * 100).toFixed(0) : '—';
+                const rateColor = rate === '—' ? 'var(--muted)' : rate > 80 ? 'var(--green)' : rate >= 50 ? 'var(--amber)' : 'var(--red)';
+                const onTime = s.lastSuccess && (Date.now() - new Date(s.lastSuccess).getTime()) < 2 * 3600 * 1000;
+                const onTimeColor = onTime ? 'var(--green)' : 'var(--amber)';
+                const fmt = d => d ? new Date(d).toLocaleString('en-GB', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+                return '<tr style="border-bottom:1px solid var(--border);">' +
+                    '<td style="padding:6px 8px;font-weight:500;">' + (s.source || '—') + '</td>' +
+                    '<td style="padding:6px 8px;color:var(--muted);">' + fmt(s.lastSuccess) + '</td>' +
+                    '<td style="padding:6px 8px;color:var(--muted);">' + fmt(s.lastFailure) + '</td>' +
+                    '<td style="padding:6px 8px;font-weight:600;color:' + rateColor + ';text-align:center;">' + (rate === '—' ? '—' : rate + '%') + '</td>' +
+                    '<td style="padding:6px 8px;text-align:center;">' +
+                    '<span style="color:' + onTimeColor + ';font-size:11px;font-weight:600;">' +
+                    (onTime ? '● ON TIME' : '○ LATE') + '</span></td></tr>';
+            }).join('') + '</tbody></table>';
+        table.style.display = 'block';
+    } catch (e) {
+        err.textContent = 'Failed to load source health: ' + e.message;
+        err.style.display = 'flex';
+    }
+}
+
+initCalendar();
 </script>
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
 </html>

@@ -12,6 +12,10 @@
         <div class="admin-topbar">
             <span class="admin-topbar-title" th:text="${isNew} ? 'New Post' : 'Edit Post'">Post</span>
             <div class="admin-topbar-actions">
+                <button onclick="toggleDarkMode()" title="Toggle dark mode"
+                        style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:6px 8px;border-radius:6px;transition:background .15s;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
                 <a th:href="@{/admin/blog}" class="btn btn-outline btn-sm">
                     <i class="fas fa-arrow-left"></i> All Posts
                 </a>
@@ -70,6 +74,9 @@
                         <div class="card-header">
                             <h2 class="card-title"><i class="fas fa-align-left"></i> Content</h2>
                             <span style="font-size:12px;color:var(--muted);">HTML or plain text</span>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="openLinkPicker()">
+                                <i class="fas fa-link"></i> Insert Link
+                            </button>
                         </div>
                         <div class="card-body">
                             <div class="form-group mb-0">
@@ -190,13 +197,18 @@
                                         title="Upload image">
                                     <i class="fas fa-arrow-up-from-bracket"></i>
                                 </button>
+                                <button type="button" class="btn btn-outline btn-sm"
+                                        onclick="openImageLibrary()"
+                                        title="Browse image library">
+                                    <i class="fas fa-images"></i>
+                                </button>
                             </div>
                             <input type="file" id="imageFile" accept="image/*" style="display:none"
                                    onchange="handleUpload(this,'imageUrl','imagePreview')">
                             <div id="imagePreview" style="margin-top:8px;">
                                 <img th:if="${post.imageUrl != null and !post.imageUrl.isEmpty()}"
                                      th:src="${post.imageUrl}" alt="Preview"
-                                     style="width:100%;border-radius:6px;border:1px solid var(--border);">
+                                     style="width:100%;max-width:200px;border-radius:6px;border:1px solid var(--border);">
                             </div>
                         </div>
 
@@ -263,6 +275,15 @@
 
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
+// ── Debounce ─────────────────────────────────────────────────────────────
+function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
 // ── Quill editor ────────────────────────────────────────────────────────────
 const quill = new Quill('#quillEditor', {
     theme: 'snow',
@@ -383,6 +404,178 @@ async function handleUpload(input, fieldId, previewId) {
     }
     input.value = '';
 }
+
+// ── Image Library Modal ─────────────────────────────────────────────────
+function openImageLibrary() {
+    document.getElementById('imageLibraryModal').style.display = 'flex';
+    document.getElementById('imgLibR2Input').value = '';
+    document.getElementById('imgLibError').style.display = 'none';
+    loadRecentImages();
+}
+
+function closeImageLibrary() {
+    document.getElementById('imageLibraryModal').style.display = 'none';
+}
+
+async function loadRecentImages() {
+    const container = document.getElementById('recentImagesList');
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+    try {
+        const res = await fetch('/api/blog?page=0&size=10');
+        const data = await res.json();
+        const images = (data.content || data || []).map(p => p.imageUrl).filter(Boolean);
+        if (!images.length) {
+            container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">No images found in recent posts.</div>';
+            return;
+        }
+        container.innerHTML = images.map(url => '<img src="' + url + '" alt="" onclick="selectImage(\'' + url.replace(/'/g, "\\'") + '\')" style="width:100px;height:70px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border-color .15s;" onmouseover="this.style.borderColor=\'var(--green)\'" onmouseout="this.style.borderColor=\'transparent\'">').join('');
+    } catch (e) {
+        container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Failed to load recent images.</div>';
+    }
+}
+
+function selectImage(url) {
+    document.getElementById('imageUrl').value = url;
+    document.getElementById('imagePreview').innerHTML = '<img src="' + url + '" alt="Preview" style="width:100%;max-width:200px;border-radius:6px;border:1px solid var(--border);">';
+    closeImageLibrary();
+}
+
+function useR2Url() {
+    const url = document.getElementById('imgLibR2Input').value.trim();
+    if (!url) {
+        const err = document.getElementById('imgLibError');
+        err.textContent = 'Please enter a URL.';
+        err.style.display = 'flex';
+        return;
+    }
+    selectImage(url);
+}
+
+// ── Internal Link Picker Modal ──────────────────────────────────────────
+function openLinkPicker() {
+    document.getElementById('linkPickerModal').style.display = 'flex';
+    document.getElementById('linkSearchInput').value = '';
+    document.getElementById('linkSearchError').style.display = 'none';
+    loadRecentPostsForLinks();
+}
+
+function closeLinkPicker() {
+    document.getElementById('linkPickerModal').style.display = 'none';
+}
+
+async function loadRecentPostsForLinks() {
+    const container = document.getElementById('linkResults');
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const res = await fetch('/api/blog');
+        const data = await res.json();
+        const posts = (data.content || data || []).filter(p => p.status === 'PUBLISHED').slice(0, 5);
+        renderLinkResults(posts, true);
+    } catch (e) {
+        container.innerHTML = '<div style="padding:16px;color:var(--red);font-size:13px;">Failed to load posts.</div>';
+    }
+}
+
+const doLinkSearch = debounce(async function(q) {
+    const container = document.getElementById('linkResults');
+    if (!q.trim()) { loadRecentPostsForLinks(); return; }
+    container.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const res = await fetch('/api/blog?page=0&size=50');
+        const data = await res.json();
+        const posts = (data.content || data || []).filter(p =>
+            p.title.toLowerCase().includes(q.toLowerCase()) ||
+            (p.slug && p.slug.toLowerCase().includes(q.toLowerCase()))
+        );
+        renderLinkResults(posts, false);
+    } catch (e) {
+        container.innerHTML = '<div style="padding:16px;color:var(--red);font-size:13px;">Search failed.</div>';
+    }
+}, 300);
+
+function renderLinkResults(posts, isRecent) {
+    const container = document.getElementById('linkResults');
+    if (!posts.length) {
+        container.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center;">No posts found.</div>';
+        return;
+    }
+    container.innerHTML = (isRecent ? '<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:6px 0 10px;border-bottom:1px solid var(--border);margin-bottom:8px;">Recently Published</div>' : '') +
+        posts.map(p => '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;" onclick="insertLink(\'' + p.slug + '\', \'' + p.title.replace(/'/g, "\\'") + '\')">' +
+            '<i class="fas fa-file-lines" style="color:var(--muted);width:16px;text-align:center;flex-shrink:0;"></i>' +
+            '<div style="min-width:0;"><div style="font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.title + '</div>' +
+            '<div style="font-size:11px;color:var(--muted);">/' + p.slug + '</div></div></div>'
+        ).join('');
+}
+
+function insertLink(slug, title) {
+    const url = 'https://zimrate.com/blog/' + slug;
+    const linkHtml = '<a href="' + url + '">' + title + '</a>';
+    quill.root.innerHTML += linkHtml;
+    document.getElementById('content').value = quill.root.innerHTML;
+    closeLinkPicker();
+}
+</script>
+
+<!-- Image Library Modal -->
+<div id="imageLibraryModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+    <div style="background:var(--card);border-radius:var(--radius-lg);padding:28px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:16px;font-weight:700;"><i class="fas fa-images" style="color:var(--accent);margin-right:8px;"></i>Image Library</h3>
+            <button onclick="closeImageLibrary()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="imgLibError" class="flash flash-error" style="display:none;"></div>
+        <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label" for="imgLibR2Input">R2 Bucket URL</label>
+            <div style="display:flex;gap:8px;">
+                <input type="url" id="imgLibR2Input" class="form-control" placeholder="https://pub-...r2.dev/blobs/...">
+                <button onclick="useR2Url()" class="btn btn-primary btn-sm">Use this URL</button>
+            </div>
+        </div>
+        <div style="margin-bottom:10px;font-size:13px;font-weight:600;color:var(--muted);">Recent Images</div>
+        <div id="recentImagesList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+</div>
+
+<!-- Internal Link Picker Modal -->
+<div id="linkPickerModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+    <div style="background:var(--card);border-radius:var(--radius-lg);padding:28px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h3 style="font-size:16px;font-weight:700;"><i class="fas fa-link" style="color:var(--accent);margin-right:8px;"></i>Insert Link</h3>
+            <button onclick="closeLinkPicker()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="linkSearchError" class="flash flash-error" style="display:none;"></div>
+        <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label" for="linkSearchInput">Search posts</label>
+            <input type="text" id="linkSearchInput" class="form-control" placeholder="Search by title or slug..." oninput="doLinkSearch(this.value)">
+        </div>
+        <div id="linkResults" style="border:1px solid var(--border);border-radius:var(--radius);max-height:320px;overflow-y:auto;"></div>
+    </div>
+</div>
+
+<script>
+// ── Dark mode ──────────────────────────────────────────────────────────
+function toggleDarkMode() {
+    const shell = document.querySelector('.admin-shell');
+    const icon = document.getElementById('themeIcon');
+    const isDark = shell.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        shell.removeAttribute('data-theme');
+        localStorage.setItem('admin_theme', 'light');
+        if (icon) icon.className = 'fas fa-moon';
+    } else {
+        shell.setAttribute('data-theme', 'dark');
+        localStorage.setItem('admin_theme', 'dark');
+        if (icon) icon.className = 'fas fa-sun';
+    }
+}
+(function() {
+    const saved = localStorage.getItem('admin_theme') || 'light';
+    if (saved === 'dark') {
+        document.querySelector('.admin-shell')?.setAttribute('data-theme', 'dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.className = 'fas fa-sun';
+    }
+})();
 </script>
 </body>
 </html>

@@ -76,4 +76,46 @@
         </form>
     </div>
 </aside>
+
+<!-- Topbar fragment: includes dark mode toggle -->
+<div class="admin-topbar" th:fragment="topbar(pageTitle)">
+    <span class="admin-topbar-title" th:text="${pageTitle}"></span>
+    <div class="admin-topbar-actions">
+        <button id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle dark mode"
+                style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:6px 8px;border-radius:6px;transition:background .15s;">
+            <i id="themeIcon" class="fas fa-moon"></i>
+        </button>
+        <div class="admin-user-chip">
+            <div class="admin-user-avatar"><i class="fas fa-user"></i></div>
+            <span sec:authentication="name">admin</span>
+        </div>
+    </div>
+</div>
+
+<script th:fragment="darkModeScript">
+// ── Dark mode ──────────────────────────────────────────────────────────
+function toggleDarkMode() {
+    const shell = document.querySelector('.admin-shell');
+    const icon = document.getElementById('themeIcon');
+    const isDark = shell.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+        shell.removeAttribute('data-theme');
+        localStorage.setItem('admin_theme', 'light');
+        icon.className = 'fas fa-moon';
+    } else {
+        shell.setAttribute('data-theme', 'dark');
+        localStorage.setItem('admin_theme', 'dark');
+        icon.className = 'fas fa-sun';
+    }
+}
+
+(function() {
+    const saved = localStorage.getItem('admin_theme') || 'light';
+    if (saved === 'dark') {
+        document.querySelector('.admin-shell')?.setAttribute('data-theme', 'dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.className = 'fas fa-sun';
+    }
+})();
+</script>
 </html>
