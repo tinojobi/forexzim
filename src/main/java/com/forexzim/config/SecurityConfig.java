@@ -1,5 +1,8 @@
 package com.forexzim.config;
 
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +16,23 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
     @Value("${zimrate.admin.username}")
     private String adminUsername;
 
     @Value("${zimrate.admin.password}")
     private String adminPassword;
+
+    @PostConstruct
+    public void warnIfDefaultCredentials() {
+        if ("changeme".equals(adminPassword)) {
+            log.warn("=================================================================");
+            log.warn("  SECURITY WARNING: Admin dashboard is using the default password.");
+            log.warn("  Set ADMIN_PASSWORD env var before exposing this to the internet.");
+            log.warn("=================================================================");
+        }
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
