@@ -2,14 +2,18 @@ package com.forexzim.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -22,7 +26,10 @@ import java.util.*;
 public class GscService {
 
     private static final Logger log = LoggerFactory.getLogger(GscService.class);
-    private static final String GSC_API = "https://www.googleapis.com/webmasters/v3/sites/https%3A%2F%2Fzimrate.com/searchAnalytics/query";
+    private static final String GSC_API = "https://www.googleapis.com/webmasters/v3/sites/{siteUrl}/searchAnalytics/query";
+    // site URL — URL-encoded for the GSC API path segment
+    // "https://zimrate.com" → "https%3A%2F%2Fzimrate.com"
+    private static final String SITE_URL = "https%3A%2F%2Fzimrate.com";
     private static final String TOKEN_PATH = System.getProperty("user.home") + "/.hermes/google_token.json";
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -49,17 +56,22 @@ public class GscService {
             requestBody.put("dimensions", List.of("page"));
             requestBody.put("rowLimit", 1000);
 
-            Map<String, String> headers = new HashMap<>();
-            headers.put("Authorization", "Bearer " + token);
-            headers.put("Content-Type", "application/json");
+            HttpHeaders reqHeaders = new HttpHeaders();
+            reqHeaders.setContentType(MediaType.APPLICATION_JSON);
+            reqHeaders.setBearerAuth(token);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, reqHeaders);
 
-            // Call GSC API
-            String response = restTemplate.postForObject(GSC_API, requestBody, String.class);
-            if (response == null || response.isBlank()) {
+            // Use the fully-built URI string directly — RestTemplate won't re-encode it
+            URI gscUri = URI.create(GSC_API.replace("{siteUrl}", SITE_URL));
+
+            ResponseEntity<String> apiResponse = restTemplate.exchange(
+                gscUri, HttpMethod.POST, entity, String.class);
+
+            if (apiResponse.getBody() == null || apiResponse.getBody().isBlank()) {
                 return Map.of("articles", List.of());
             }
 
-            JsonNode root = objectMapper.readTree(response);
+            JsonNode root = objectMapper.readTree(apiResponse.getBody());
             JsonNode rows = root.path("rows");
 
             List<Map<String, Object>> articles = new ArrayList<>();
@@ -103,16 +115,27 @@ public class GscService {
                 return null;
             }
             JsonNode node = objectMapper.readTree(tokenPath.toFile());
-            String token = node.path("token").asText(null);
-            String expiry = node.path("expiry").asText(null);
 
-            // Check if token is expired (expiry format: 2026-06-02T14:53:55.487285Z)
-            if (expiry != null && expiry.compareTo(java.time.Instant.now().toString()) < 0) {
-                log.info("GSC token expired, attempting refresh");
-                String refreshed = refreshToken(node);
-                return refreshed;
+            // Check if expired — try to refresh before returning null
+            String expiryStr = node.path("expiry").asText(null);
+            if (expiryStr != null && !expiryStr.isBlank()) {
+                try {
+                    Instant expiry = Instant.parse(expiryStr);
+                    if (Instant.now().isAfter(expiry.minusSeconds(60))) {
+                        log.info("GSC token expired or close to expiry, attempting refresh...");
+                        String refreshed = refreshToken(node);
+                        if (refreshed != null) return refreshed;
+                    }
+                } catch (Exception ignored) {}
             }
-            return token;
+
+            // Try access_token first (standard), then 'token' field
+            String token = node.path("access_token").asText(null);
+            if (token != null && !token.isBlank()) return token;
+            token = node.path("token").asText(null);
+            if (token != null && !token.isBlank()) return token;
+
+            return null;
         } catch (Exception e) {
             log.error("Failed to load GSC token: {}", e.getMessage());
             return null;
@@ -121,26 +144,39 @@ public class GscService {
 
     private String refreshToken(JsonNode tokenJson) {
         try {
-            String refreshToken = tokenJson.path("refresh_token").asText();
-            String tokenUri = tokenJson.path("token_uri").asText();
-            String clientId = tokenJson.path("client_id").asText();
-            String clientSecret = tokenJson.path("client_secret").asText();
+            String refreshToken = tokenJson.path("refresh_token").asText(null);
+            String tokenUri = tokenJson.path("token_uri").asText(null);
+            String clientId = tokenJson.path("client_id").asText(null);
+            String clientSecret = tokenJson.path("client_secret").asText(null);
 
-            if (refreshToken == null || tokenUri == null) return null;
+            if (refreshToken == null || tokenUri == null || clientId == null || clientSecret == null) {
+                log.error("Missing OAuth fields in token file — need: refresh_token, token_uri, client_id, client_secret");
+                return null;
+            }
 
+            // Strip trailing slash from token URI (common copy-paste artifact)
+            if (tokenUri.endsWith("/")) tokenUri = tokenUri.substring(0, tokenUri.length() - 1);
+
+            // Google OAuth2 requires form-encoded body, NOT JSON
             Map<String, String> body = new HashMap<>();
             body.put("client_id", clientId);
             body.put("client_secret", clientSecret);
             body.put("refresh_token", refreshToken);
             body.put("grant_type", "refresh_token");
 
-            String response = restTemplate.postForObject(tokenUri, body, String.class);
-            if (response != null) {
-                JsonNode node = objectMapper.readTree(response);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                tokenUri, HttpMethod.POST, entity, String.class);
+
+            if (response.getBody() != null) {
+                JsonNode node = objectMapper.readTree(response.getBody());
                 String newToken = node.path("access_token").asText(null);
-                if (newToken != null) {
-                    // Update the token file
-                    updateTokenFile(newToken);
+                if (newToken != null && !newToken.isBlank()) {
+                    long expiresIn = node.path("expires_in").asLong(3600);
+                    updateTokenFile(newToken, expiresIn);
                     log.info("GSC token refreshed successfully");
                     return newToken;
                 }
@@ -151,12 +187,14 @@ public class GscService {
         return null;
     }
 
-    private void updateTokenFile(String newToken) {
+    private void updateTokenFile(String newAccessToken, long expiresIn) {
         try {
             Path tokenPath = Paths.get(TOKEN_PATH);
             JsonNode node = objectMapper.readTree(tokenPath.toFile());
-            ((com.fasterxml.jackson.databind.node.ObjectNode) node).put("token", newToken);
-            objectMapper.writeValue(tokenPath.toFile(), node);
+            ObjectNode update = (ObjectNode) node;
+            update.put("access_token", newAccessToken);
+            update.put("expiry", Instant.now().plusSeconds(expiresIn).toString());
+            objectMapper.writeValue(tokenPath.toFile(), update);
         } catch (Exception e) {
             log.error("Failed to update token file: {}", e.getMessage());
         }
