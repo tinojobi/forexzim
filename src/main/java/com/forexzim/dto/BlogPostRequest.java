@@ -47,4 +47,10 @@ public class BlogPostRequest {
 
     /** Optional: URL used only for OG/Twitter previews. Falls back to imageUrl. */
     private String socialImageUrl;
+
+    /** Optional: article category e.g. "Economy", "Trade", "Mining" */
+    private String category;
+
+    /** Optional: comma-separated keywords for SEO and structured data */
+    private String keywords;
 }

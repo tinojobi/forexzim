@@ -141,6 +141,28 @@ public class BlogApiController {
     }
 
     /** Full update of an existing post. Slug is immutable. */
+    @PatchMapping("/{slug}")
+    public ResponseEntity<?> patch(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token,
+            @PathVariable String slug,
+            @RequestBody Map<String, String> body) {
+
+        ResponseEntity<?> auth = checkAuth(token);
+        if (auth != null) return auth;
+
+        Optional<BlogPost> existing = blogRepository.findBySlug(slug);
+        if (existing.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(error("No post found with slug: " + slug));
+        }
+
+        BlogPost post = existing.get();
+        if (body.containsKey("category")) post.setCategory(body.get("category"));
+        if (body.containsKey("keywords")) post.setKeywords(body.get("keywords"));
+        post.setUpdatedAt(LocalDateTime.now());
+        return ResponseEntity.ok(toResponse(blogRepository.save(post)));
+    }
+
     @PutMapping("/{slug}")
     public ResponseEntity<?> update(
             @RequestHeader(value = "X-Admin-Token", required = false) String token,
