@@ -75,6 +75,16 @@ public class AdminApiController {
         return ResponseEntity.ok(gscService.getArticlePerformance());
     }
 
+    @GetMapping("/gsc/queries")
+    public ResponseEntity<?> gscQueries(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token) {
+
+        ResponseEntity<?> auth = checkAuth(token);
+        if (auth != null) return auth;
+
+        return ResponseEntity.ok(gscService.getTopQueries());
+    }
+
     // ── Taxonomy (category / keyword) management ───────────────────────────────
 
     @PatchMapping("/taxonomy")

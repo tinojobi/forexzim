@@ -556,21 +556,39 @@ function insertLink(slug, title) {
 </div>
 
 <script>
+// ── Sidebar toggle ────────────────────────────────────────────────────
+function toggleSidebar() {
+    const shell = document.querySelector('.admin-shell');
+    shell.classList.toggle('sidebar-collapsed');
+    localStorage.setItem('admin_sidebar', shell.classList.contains('sidebar-collapsed') ? 'collapsed' : 'expanded');
+}
+(function() {
+    if (localStorage.getItem('admin_sidebar') === 'collapsed')
+        document.querySelector('.admin-shell')?.classList.add('sidebar-collapsed');
+})();
+
 // ── Dark mode ──────────────────────────────────────────────────────────
 function toggleDarkMode() {
     const shell = document.querySelector('.admin-shell');
+    const icon  = document.getElementById('themeIcon');
     const isDark = shell.getAttribute('data-theme') === 'dark';
     if (isDark) {
-        shell.removeAttribute('data-theme');
+        shell.setAttribute('data-theme', 'light');
         localStorage.setItem('admin_theme', 'light');
+        if (icon) icon.className = 'fas fa-moon';
     } else {
         shell.setAttribute('data-theme', 'dark');
         localStorage.setItem('admin_theme', 'dark');
+        if (icon) icon.className = 'fas fa-sun';
     }
 }
 (function() {
-    if (localStorage.getItem('admin_theme') === 'dark') {
+    const saved = localStorage.getItem('admin_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved ? saved === 'dark' : prefersDark) {
         document.querySelector('.admin-shell')?.setAttribute('data-theme', 'dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.className = 'fas fa-sun';
     }
 })();
 </script>

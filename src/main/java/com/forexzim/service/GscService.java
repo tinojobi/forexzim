@@ -107,6 +107,67 @@ public class GscService {
         }
     }
 
+    /**
+     * Returns the top 100 search queries for the last 30 days.
+     */
+    public Map<String, Object> getTopQueries() {
+        try {
+            String token = loadToken();
+            if (token == null || token.isBlank()) {
+                return Map.of("queries", List.of());
+            }
+
+            LocalDate endDate   = LocalDate.now();
+            LocalDate startDate = endDate.minusDays(30);
+
+            Map<String, Object> requestBody = new LinkedHashMap<>();
+            requestBody.put("startDate",  startDate.format(DateTimeFormatter.ISO_DATE));
+            requestBody.put("endDate",    endDate.format(DateTimeFormatter.ISO_DATE));
+            requestBody.put("dimensions", List.of("query"));
+            requestBody.put("rowLimit",   100);
+
+            HttpHeaders reqHeaders = new HttpHeaders();
+            reqHeaders.setContentType(MediaType.APPLICATION_JSON);
+            reqHeaders.setBearerAuth(token);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, reqHeaders);
+
+            URI gscUri = URI.create(GSC_API.replace("{siteUrl}", SITE_URL));
+            ResponseEntity<String> apiResponse = restTemplate.exchange(
+                gscUri, HttpMethod.POST, entity, String.class);
+
+            if (apiResponse.getBody() == null || apiResponse.getBody().isBlank()) {
+                return Map.of("queries", List.of());
+            }
+
+            JsonNode root = objectMapper.readTree(apiResponse.getBody());
+            JsonNode rows = root.path("rows");
+
+            List<Map<String, Object>> queries = new ArrayList<>();
+            if (rows.isArray()) {
+                for (JsonNode row : rows) {
+                    String query     = row.path("keys").get(0).asText();
+                    int    clicks    = row.path("clicks").asInt(0);
+                    int    impressions = row.path("impressions").asInt(0);
+                    double ctr       = row.path("ctr").asDouble(0);
+                    double position  = row.path("position").asDouble(0);
+
+                    Map<String, Object> q = new LinkedHashMap<>();
+                    q.put("query",       query);
+                    q.put("clicks",      clicks);
+                    q.put("impressions", impressions);
+                    q.put("ctr",         Math.round(ctr * 10000) / 100.0);
+                    q.put("avgPosition", Math.round(position * 100) / 100.0);
+                    queries.add(q);
+                }
+            }
+
+            return Map.of("queries", queries);
+        } catch (Exception e) {
+            log.error("Failed to fetch GSC queries: {}", e.getMessage(), e);
+            return Map.of("queries", List.of(), "error", e.getMessage());
+        }
+    }
+
     private String loadToken() {
         try {
             Path tokenPath = Paths.get(TOKEN_PATH);

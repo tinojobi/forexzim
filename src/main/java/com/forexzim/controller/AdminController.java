@@ -524,6 +524,24 @@ public class AdminController {
         return ResponseEntity.ok(Map.of("sent", count));
     }
 
+    // ── GSC Insights page ─────────────────────────────────────────────────────
+
+    @GetMapping("/gsc")
+    public String gscPage(Model model) {
+        model.addAttribute("adminToken", adminToken);
+        model.addAttribute("activePage", "gsc");
+        return "admin/gsc";
+    }
+
+    // ── Error Log page ────────────────────────────────────────────────────────
+
+    @GetMapping("/error-log")
+    public String errorLog(Model model) {
+        model.addAttribute("adminToken", adminToken);
+        model.addAttribute("activePage", "error-log");
+        return "admin/error-log";
+    }
+
     // ── Audit Log page ────────────────────────────────────────────────────────
 
     @GetMapping("/audit-log")
