@@ -6,9 +6,8 @@
 <div class="admin-shell">
 
     <th:block th:replace="~{admin/layout :: sidebar('blog')}"></th:block>
-    <th:block th:replace="~{admin/layout :: topbar('Blog Posts')}"></th:block>
-
     <div class="admin-main">
+        <th:block th:replace="~{admin/layout :: topbar('Blog Posts')}"></th:block>
         <div class="admin-body">
 
             <div th:if="${success}" class="flash flash-success">

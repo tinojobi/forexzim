@@ -14,19 +14,21 @@
 
     /* Accent (gold) */
     --accent:     #ca8a04;
+    --accent-dk:  #a16207;
     --accent-lt:  #fde047;
+    --accent-bg:  #fef9c3;
 
     /* Surface */
-    --bg:         #f3f4f6;
+    --bg:         #f1f5f9;
     --card:       #ffffff;
-    --border:     #e5e7eb;
-    --shadow:     0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md:  0 4px 12px rgba(0,0,0,0.08);
+    --border:     #e2e8f0;
+    --shadow:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:  0 4px 16px rgba(0,0,0,0.08);
 
     /* Text */
-    --text:       #111827;
-    --muted:      #6b7280;
-    --light:      #9ca3af;
+    --text:       #0f172a;
+    --muted:      #64748b;
+    --light:      #94a3b8;
 
     /* Status colors */
     --green:      #16a34a;
@@ -36,18 +38,16 @@
     --red-lt:     #fee2e2;
     --amber:      #d97706;
     --amber-lt:   #fef3c7;
-    --gray-lt:    #f3f4f6;
+    --gray-lt:    #f1f5f9;
 
-    --radius:     8px;
-    --radius-lg:  12px;
+    --radius:     10px;
+    --radius-lg:  16px;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -56,6 +56,8 @@ body {
 .admin-shell {
     display: flex;
     min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
 }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────────── */
@@ -195,6 +197,7 @@ body {
     height: var(--topbar-h);
     background: var(--card);
     border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 0 var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -835,9 +838,10 @@ textarea.form-control.mono {
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--accent);
-    background: #fef9c3;
+    background: rgba(202,138,4,0.15);
     padding: 3px 10px;
     border-radius: 20px;
+    border: 1px solid rgba(202,138,4,0.3);
 }
 
 .login-card h1 {
@@ -1230,7 +1234,7 @@ textarea.form-control.mono {
 }
 
 .cal-day-num.today {
-    background: var(--green);
+    background: var(--accent);
     color: #fff;
     width: 22px;
     height: 22px;
@@ -1241,20 +1245,87 @@ textarea.form-control.mono {
     font-size: 11px;
 }
 
+/* ── Theme toggle switch ──────────────────────────────────────────────── */
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+}
+
+.theme-toggle:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+.theme-toggle-track {
+    position: relative;
+    width: 52px;
+    height: 26px;
+    background: var(--gray-lt);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    transition: background .25s, border-color .25s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7px;
+}
+
+.theme-toggle-track i {
+    font-size: 11px;
+    line-height: 1;
+    z-index: 1;
+    transition: color .25s, opacity .25s;
+}
+
+.theme-icon-sun  { color: #f59e0b; }
+.theme-icon-moon { color: var(--light); opacity: 0.5; }
+
+.theme-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: transform .25s ease;
+}
+
+.admin-shell[data-theme="dark"] .theme-toggle-track {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.admin-shell[data-theme="dark"] .theme-icon-sun  { color: var(--light); opacity: 0.5; }
+.admin-shell[data-theme="dark"] .theme-icon-moon { color: #fde047; opacity: 1; }
+
+.admin-shell[data-theme="dark"] .theme-toggle-thumb {
+    transform: translateX(26px);
+    background: var(--sb-bg);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
 /* ── Dark mode ────────────────────────────────────────────────────────── */
 
 .admin-shell[data-theme="dark"] {
-    --bg: #111827;
-    --card: #1f2937;
-    --border: #374151;
-    --text: #f9fafb;
-    --muted: #9ca3af;
-    --light: #6b7280;
-    --gray-lt: #1f2937;
-    --green-bg: #145032;
-    --red-lt: #7f1d1d;
-    --amber-lt: #451a03;
-    --green-lt: #145032;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --light: #64748b;
+    --gray-lt: #1e293b;
+    --green-bg: #052e16;
+    --red-lt: #450a0a;
+    --amber-lt: #431407;
+    --green-lt: #052e16;
 }
 
 .admin-shell[data-theme="dark"] .card {
@@ -1272,7 +1343,7 @@ textarea.form-control.mono {
 }
 
 .admin-shell[data-theme="dark"] tbody tr:hover {
-    background: #1f2937;
+    background: #1e293b;
 }
 
 .admin-shell[data-theme="dark"] .stat-card {
@@ -1285,7 +1356,7 @@ textarea.form-control.mono {
 }
 
 .admin-shell[data-theme="dark"] .form-control {
-    background: #111827;
+    background: #0f172a;
     border-color: var(--border);
     color: var(--text);
 }
@@ -1303,13 +1374,13 @@ textarea.form-control.mono {
 }
 
 .admin-shell[data-theme="dark"] .ql-toolbar.ql-snow {
-    background: #111827;
+    background: #0f172a;
     border-color: var(--border);
 }
 
 .admin-shell[data-theme="dark"] .ql-container.ql-snow {
     border-color: var(--border);
-    background: #111827;
+    background: #0f172a;
 }
 
 .admin-shell[data-theme="dark"] .ql-editor {

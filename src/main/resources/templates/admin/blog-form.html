@@ -12,9 +12,12 @@
         <div class="admin-topbar">
             <span class="admin-topbar-title" th:text="${isNew} ? 'New Post' : 'Edit Post'">Post</span>
             <div class="admin-topbar-actions">
-                <button onclick="toggleDarkMode()" title="Toggle dark mode"
-                        style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:6px 8px;border-radius:6px;transition:background .15s;">
-                    <i class="fas fa-moon" id="themeIcon"></i>
+                <button class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode" aria-label="Toggle dark mode">
+                    <span class="theme-toggle-track">
+                        <i class="fas fa-sun theme-icon-sun"></i>
+                        <span class="theme-toggle-thumb"></span>
+                        <i class="fas fa-moon theme-icon-moon"></i>
+                    </span>
                 </button>
                 <a th:href="@{/admin/blog}" class="btn btn-outline btn-sm">
                     <i class="fas fa-arrow-left"></i> All Posts
@@ -556,24 +559,18 @@ function insertLink(slug, title) {
 // ── Dark mode ──────────────────────────────────────────────────────────
 function toggleDarkMode() {
     const shell = document.querySelector('.admin-shell');
-    const icon = document.getElementById('themeIcon');
     const isDark = shell.getAttribute('data-theme') === 'dark';
     if (isDark) {
         shell.removeAttribute('data-theme');
         localStorage.setItem('admin_theme', 'light');
-        if (icon) icon.className = 'fas fa-moon';
     } else {
         shell.setAttribute('data-theme', 'dark');
         localStorage.setItem('admin_theme', 'dark');
-        if (icon) icon.className = 'fas fa-sun';
     }
 }
 (function() {
-    const saved = localStorage.getItem('admin_theme') || 'light';
-    if (saved === 'dark') {
+    if (localStorage.getItem('admin_theme') === 'dark') {
         document.querySelector('.admin-shell')?.setAttribute('data-theme', 'dark');
-        const icon = document.getElementById('themeIcon');
-        if (icon) icon.className = 'fas fa-sun';
     }
 })();
 </script>

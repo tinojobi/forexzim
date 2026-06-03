@@ -7,9 +7,7 @@
     <th:block th:replace="~{admin/layout :: sidebar('')}"></th:block>
 
     <div class="admin-main">
-        <div class="admin-topbar">
-            <span class="admin-topbar-title">Error</span>
-        </div>
+        <th:block th:replace="~{admin/layout :: topbar('Error')}"></th:block>
 
         <div class="admin-body">
             <div style="max-width:480px;margin:60px auto;text-align:center;">
@@ -39,5 +37,6 @@
         </div>
     </div>
 </div>
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
 </html>

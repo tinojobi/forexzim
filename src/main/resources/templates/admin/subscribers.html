@@ -7,9 +7,7 @@
     <th:block th:replace="~{admin/layout :: sidebar('subscribers')}"></th:block>
 
     <div class="admin-main">
-        <div class="admin-topbar">
-            <span class="admin-topbar-title">Subscribers</span>
-        </div>
+        <th:block th:replace="~{admin/layout :: topbar('Subscribers')}"></th:block>
 
         <div class="admin-body">
 
@@ -297,5 +295,6 @@ function showTab(name, btn) {
     btn.classList.add('active');
 }
 </script>
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
 </html>

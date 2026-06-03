@@ -7,9 +7,7 @@
     <th:block th:replace="~{admin/layout :: sidebar('rates')}"></th:block>
 
     <div class="admin-main">
-        <div class="admin-topbar">
-            <span class="admin-topbar-title">Live Rates</span>
-        </div>
+        <th:block th:replace="~{admin/layout :: topbar('Live Rates')}"></th:block>
 
         <div class="admin-body">
 
@@ -62,5 +60,6 @@
         </div>
     </div>
 </div>
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
 </html>
