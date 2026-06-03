@@ -26,7 +26,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Build
+      - name: Build (CI validation)
         run: ./gradlew bootJar --no-daemon
 
       - name: Deploy to VPS
@@ -35,10 +35,9 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 5m
           script: |
             cd /opt/forexzim
+            # git pull triggers post-merge hook which does clean build + restart
+            # with health check. No need for manual build/restart here.
             git pull origin main
-            ./gradlew bootJar --no-daemon
-            systemctl stop forexzim || true
-            sleep 2
-            systemctl start forexzim
