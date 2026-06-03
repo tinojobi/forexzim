@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -219,15 +221,15 @@ public class GscService {
             if (tokenUri.endsWith("/")) tokenUri = tokenUri.substring(0, tokenUri.length() - 1);
 
             // Google OAuth2 requires form-encoded body, NOT JSON
-            Map<String, String> body = new HashMap<>();
-            body.put("client_id", clientId);
-            body.put("client_secret", clientSecret);
-            body.put("refresh_token", refreshToken);
-            body.put("grant_type", "refresh_token");
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("client_id", clientId);
+            body.add("client_secret", clientSecret);
+            body.add("refresh_token", refreshToken);
+            body.add("grant_type", "refresh_token");
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(
                 tokenUri, HttpMethod.POST, entity, String.class);
