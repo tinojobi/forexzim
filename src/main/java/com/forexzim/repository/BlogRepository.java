@@ -2,8 +2,10 @@ package com.forexzim.repository;
 
 import com.forexzim.model.BlogPost;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,4 +33,17 @@ public interface BlogRepository extends JpaRepository<BlogPost, Long> {
     List<BlogPost> findTop3ByStatusAndIdNotOrderByPublishedAtDesc(BlogPost.Status status, Long id);
 
     List<BlogPost> findTop3ByStatusOrderByPublishedAtDesc(BlogPost.Status status);
+
+    @Query("SELECT b.category, COUNT(b) FROM BlogPost b WHERE b.category IS NOT NULL AND b.category <> '' GROUP BY b.category ORDER BY COUNT(b) DESC")
+    List<Object[]> findCategoryStats();
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE BlogPost b SET b.category = :newName WHERE b.category = :oldName")
+    int renameCategory(@Param("oldName") String oldName, @Param("newName") String newName);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE BlogPost b SET b.category = null WHERE b.category = :name")
+    int clearCategory(@Param("name") String name);
 }

@@ -11,6 +11,34 @@
 
         <div class="admin-body">
 
+            <!-- Rate History Chart -->
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-chart-area"></i> Rate History</h2>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <select id="chartSource" class="form-control" style="width:160px;padding:5px 8px;font-size:13px;" onchange="loadChart()">
+                            <option value="ZimPriceCheck">ZimPriceCheck</option>
+                            <option value="RBZ">RBZ</option>
+                            <option value="CBZ">CBZ</option>
+                            <option value="FBC">FBC</option>
+                            <option value="ExchangeRateApi">ExchangeRateApi</option>
+                        </select>
+                        <div style="display:flex;gap:4px;">
+                            <button class="btn btn-sm btn-outline days-btn active" onclick="setDays(this,7)">7d</button>
+                            <button class="btn btn-sm btn-outline days-btn" onclick="setDays(this,30)">30d</button>
+                            <button class="btn btn-sm btn-outline days-btn" onclick="setDays(this,90)">90d</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" style="padding-bottom:8px;">
+                    <div id="rateHistoryChart"></div>
+                    <div id="rateChartEmpty" class="empty-state" style="display:none;padding:32px 0;">
+                        <i class="fas fa-chart-area"></i>
+                        <p>No history data for this source / period.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">
@@ -60,6 +88,54 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+let chartDays = 7;
+let chart = null;
+
+async function loadChart() {
+    const source = document.getElementById('chartSource').value;
+    const empty  = document.getElementById('rateChartEmpty');
+    try {
+        const res  = await fetch('/api/rates/history?source=' + encodeURIComponent(source) + '&pair=USD%2FZiG&days=' + chartDays);
+        const data = await res.json();
+        if (!data.length) {
+            empty.style.display = 'block';
+            if (chart) { chart.destroy(); chart = null; }
+            return;
+        }
+        empty.style.display = 'none';
+        const labels = data.map(d => d.day);
+        const values = data.map(d => parseFloat(d.avgRate));
+        const opts = {
+            chart:       { type: 'area', height: 180, toolbar: { show: false }, animations: { enabled: true, speed: 400 } },
+            series:      [{ name: 'Avg Buy Rate', data: values }],
+            xaxis:       { categories: labels, labels: { style: { fontSize: '11px', colors: '#94a3b8' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+            yaxis:       { labels: { style: { fontSize: '11px', colors: '#94a3b8' }, formatter: v => v.toFixed(2) }, min: 0, forceNiceScale: true },
+            colors:      ['#16a34a'],
+            fill:        { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.03, stops: [0,100] } },
+            stroke:      { curve: 'smooth', width: 2 },
+            dataLabels:  { enabled: false },
+            grid:        { borderColor: '#e2e8f0', strokeDashArray: 4, yaxis: { lines: { show: true } }, xaxis: { lines: { show: false } } },
+            tooltip:     { theme: 'light', y: { formatter: v => v.toFixed(4) + ' ZiG' } },
+            annotations: { yaxis: [] }
+        };
+        if (chart) { chart.updateOptions(opts); chart.updateSeries([{ data: values }]); }
+        else { chart = new ApexCharts(document.getElementById('rateHistoryChart'), opts); chart.render(); }
+    } catch (e) {
+        empty.style.display = 'block';
+    }
+}
+
+function setDays(btn, days) {
+    chartDays = days;
+    document.querySelectorAll('.days-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadChart();
+}
+
+loadChart();
+</script>
 <th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
 </html>

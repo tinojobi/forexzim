@@ -159,6 +159,41 @@
                 </div>
             </div>
 
+            <!-- Telegram Blast card -->
+            <div class="card" style="margin-bottom:16px;" th:if="${telegramBotConfigured}">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fab fa-telegram"></i> Telegram Blast</h2>
+                    <span class="badge badge-teal">
+                        <span th:text="${telegramBlastCount}">0</span> recipients
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label class="form-label" for="blastMessage">Message</label>
+                        <textarea id="blastMessage" class="form-control" rows="4" maxlength="4096"
+                                  placeholder="Write your message here… HTML tags (bold, italic, links) are supported."
+                                  oninput="updateBlastCounter(this)"></textarea>
+                        <div class="char-counter" id="blastCounter">0 / 4096</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                        <button class="btn btn-primary" onclick="sendBlast(this)">
+                            <i class="fab fa-telegram"></i> Send to all bot users
+                        </button>
+                        <span id="blastResult" style="font-size:13px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:16px;" th:unless="${telegramBotConfigured}">
+                <div class="card-body" style="display:flex;align-items:center;gap:12px;padding:16px 22px;">
+                    <i class="fab fa-telegram" style="font-size:24px;color:var(--light);"></i>
+                    <div>
+                        <div style="font-size:14px;font-weight:600;">Telegram Blast</div>
+                        <div style="font-size:13px;color:var(--muted);">Set <code>TELEGRAM_BOT_TOKEN</code> to enable direct messaging to bot users.</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Telegram Alerts table -->
             <div id="tab-telegram" class="sub-tab-panel card" style="display:none;">
                 <div class="card-header">
@@ -293,6 +328,39 @@ function showTab(name, btn) {
     document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).style.display = 'block';
     btn.classList.add('active');
+}
+
+function updateBlastCounter(el) {
+    const counter = document.getElementById('blastCounter');
+    const len = el.value.length;
+    counter.textContent = len + ' / 4096';
+    counter.className = 'char-counter' + (len > 3800 ? ' warn' : len === 4096 ? ' over' : '');
+}
+
+async function sendBlast(btn) {
+    const msg = document.getElementById('blastMessage').value.trim();
+    if (!msg) { alert('Please enter a message.'); return; }
+    if (!confirm('Send this message to all Telegram bot users?')) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-rotate fa-spin"></i> Sending…';
+    const result = document.getElementById('blastResult');
+    try {
+        const res = await fetch('/admin/telegram/blast', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Send failed');
+        result.innerHTML = '<span style="color:var(--green);font-weight:600;"><i class="fas fa-circle-check"></i> Sent to ' + data.sent + ' user(s)</span>';
+        document.getElementById('blastMessage').value = '';
+        updateBlastCounter(document.getElementById('blastMessage'));
+    } catch (e) {
+        result.innerHTML = '<span style="color:var(--red);"><i class="fas fa-circle-exclamation"></i> ' + e.message + '</span>';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fab fa-telegram"></i> Send to all bot users';
+    }
 }
 </script>
 <th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>

@@ -14,6 +14,7 @@ import com.forexzim.service.GscService;
 import com.forexzim.service.NewsletterService;
 import com.forexzim.service.ScheduledScraperService;
 import com.forexzim.service.SystemEventService;
+import com.forexzim.service.TelegramBotService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.domain.PageRequest;
@@ -75,6 +76,7 @@ public class AdminController {
     private final GscService gscService;
     private final NewsletterService newsletterService;
     private final SystemEventService systemEventService;
+    private final TelegramBotService telegramBotService;
 
     public AdminController(BlogRepository blogRepository,
                            NewsletterSubscriberRepository newsletterSubscriberRepository,
@@ -84,7 +86,8 @@ public class AdminController {
                            RateRepository rateRepository,
                            GscService gscService,
                            NewsletterService newsletterService,
-                           SystemEventService systemEventService) {
+                           SystemEventService systemEventService,
+                           TelegramBotService telegramBotService) {
         this.blogRepository = blogRepository;
         this.newsletterSubscriberRepository = newsletterSubscriberRepository;
         this.alertSubscriptionRepository = alertSubscriptionRepository;
@@ -94,6 +97,7 @@ public class AdminController {
         this.gscService = gscService;
         this.newsletterService = newsletterService;
         this.systemEventService = systemEventService;
+        this.telegramBotService = telegramBotService;
     }
 
     @InitBinder
@@ -468,8 +472,65 @@ public class AdminController {
         model.addAttribute("newsletterSubs", newsletterSubs);
         model.addAttribute("emailAlerts", emailAlerts);
         model.addAttribute("telegramAlerts", telegramAlerts);
+        model.addAttribute("telegramBotConfigured", telegramBotService.isConfigured());
+        model.addAttribute("telegramBlastCount", telegramBotService.getBlastRecipientCount());
         model.addAttribute("activePage", "subscribers");
         return "admin/subscribers";
+    }
+
+    // ── Telegram blast ────────────────────────────────────────────────────────
+
+    @PostMapping("/telegram/blast")
+    @ResponseBody
+    public ResponseEntity<?> telegramBlast(@RequestBody Map<String, String> body) {
+        String message = body.get("message");
+        if (message == null || message.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "message is required"));
+        }
+        if (!telegramBotService.isConfigured()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Telegram bot is not configured"));
+        }
+        int count = telegramBotService.sendBlast(message);
+        return ResponseEntity.ok(Map.of("sent", count));
+    }
+
+    // ── Audit Log page ────────────────────────────────────────────────────────
+
+    @GetMapping("/audit-log")
+    public String auditLog(Model model) {
+        model.addAttribute("adminToken", adminToken);
+        model.addAttribute("activePage", "audit-log");
+        return "admin/audit-log";
+    }
+
+    // ── Tag/Category Manager ──────────────────────────────────────────────────
+
+    @GetMapping("/categories")
+    public String categories(Model model) {
+        List<BlogPost> allPosts = blogRepository.findAll();
+
+        List<Map.Entry<String, Long>> categories = allPosts.stream()
+            .filter(p -> p.getCategory() != null && !p.getCategory().isBlank())
+            .collect(Collectors.groupingBy(BlogPost::getCategory, Collectors.counting()))
+            .entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+            .collect(Collectors.toList());
+
+        List<Map.Entry<String, Long>> keywords = allPosts.stream()
+            .filter(p -> p.getKeywords() != null && !p.getKeywords().isBlank())
+            .flatMap(p -> java.util.Arrays.stream(p.getKeywords().split(",")))
+            .map(String::trim)
+            .filter(k -> !k.isBlank())
+            .collect(Collectors.groupingBy(k -> k, Collectors.counting()))
+            .entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+            .collect(Collectors.toList());
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("keywords", keywords);
+        model.addAttribute("adminToken", adminToken);
+        model.addAttribute("activePage", "categories");
+        return "admin/categories";
     }
 
     // ── Article Performance (GSC data) ─────────────────────────────────────────

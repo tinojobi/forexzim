@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Categories')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('categories')}"></th:block>
+
+    <div class="admin-main">
+        <th:block th:replace="~{admin/layout :: topbar('Categories')}"  ></th:block>
+
+        <div class="admin-body">
+
+            <div class="page-header">
+                <div>
+                    <h1>Categories &amp; Keywords</h1>
+                    <p>Rename or remove taxonomy labels across all blog posts.</p>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            <div id="flashSuccess" class="flash flash-success" style="display:none;">
+                <i class="fas fa-circle-check"></i> <span id="flashSuccessMsg"></span>
+            </div>
+            <div id="flashError" class="flash flash-error" style="display:none;">
+                <i class="fas fa-circle-exclamation"></i> <span id="flashErrorMsg"></span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+                <!-- Categories card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-folder"></i> Categories</h2>
+                        <span class="badge badge-draft" th:text="${#lists.size(categories)} + ' categories'">0 categories</span>
+                    </div>
+                    <div th:if="${#lists.isEmpty(categories)}" class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No categories assigned yet. Edit a post to add one.</p>
+                    </div>
+                    <div class="table-wrap" th:if="${!#lists.isEmpty(categories)}">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th style="width:70px;text-align:center;">Posts</th>
+                                    <th style="width:100px;text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="cat : ${categories}" th:data-name="${cat.key}">
+                                    <td>
+                                        <span class="cat-name" th:text="${cat.key}">Category</span>
+                                        <input class="form-control cat-rename-input" type="text"
+                                               th:value="${cat.key}" style="display:none;max-width:200px;padding:5px 8px;">
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <a th:href="@{/admin/blog}" class="badge badge-gold"
+                                           th:text="${cat.value}">0</a>
+                                    </td>
+                                    <td>
+                                        <div class="action-row" style="justify-content:flex-end;">
+                                            <button class="btn btn-sm btn-outline btn-icon cat-edit-btn"
+                                                    onclick="startRename(this, 'category')" title="Rename">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline btn-icon cat-save-btn"
+                                                    onclick="saveRename(this, 'category')" style="display:none;" title="Save">
+                                                <i class="fas fa-check" style="color:var(--green);"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline btn-icon cat-cancel-btn"
+                                                    onclick="cancelRename(this)" style="display:none;" title="Cancel">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger btn-icon"
+                                                    onclick="deleteTaxonomy(this, 'category')" title="Remove from all posts">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Keywords card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-tags"></i> Keywords</h2>
+                        <span class="badge badge-draft" th:text="${#lists.size(keywords)} + ' keywords'">0 keywords</span>
+                    </div>
+                    <div th:if="${#lists.isEmpty(keywords)}" class="empty-state">
+                        <i class="fas fa-tags"></i>
+                        <p>No keywords assigned yet. Edit a post to add some.</p>
+                    </div>
+                    <div class="table-wrap" th:if="${!#lists.isEmpty(keywords)}">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Keyword</th>
+                                    <th style="width:70px;text-align:center;">Posts</th>
+                                    <th style="width:100px;text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="kw : ${keywords}" th:data-name="${kw.key}">
+                                    <td>
+                                        <span class="cat-name" th:text="${kw.key}">Keyword</span>
+                                        <input class="form-control cat-rename-input" type="text"
+                                               th:value="${kw.key}" style="display:none;max-width:200px;padding:5px 8px;">
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <span class="badge badge-draft" th:text="${kw.value}">0</span>
+                                    </td>
+                                    <td>
+                                        <div class="action-row" style="justify-content:flex-end;">
+                                            <button class="btn btn-sm btn-outline btn-icon cat-edit-btn"
+                                                    onclick="startRename(this, 'keyword')" title="Rename">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline btn-icon cat-save-btn"
+                                                    onclick="saveRename(this, 'keyword')" style="display:none;" title="Save">
+                                                <i class="fas fa-check" style="color:var(--green);"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline btn-icon cat-cancel-btn"
+                                                    onclick="cancelRename(this)" style="display:none;" title="Cancel">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger btn-icon"
+                                                    onclick="deleteTaxonomy(this, 'keyword')" title="Remove from all posts">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+const ADMIN_TOKEN = /*[[${adminToken}]]*/ '';
+
+function startRename(btn, type) {
+    const row = btn.closest('tr');
+    row.querySelector('.cat-name').style.display = 'none';
+    row.querySelector('.cat-rename-input').style.display = 'inline-block';
+    row.querySelector('.cat-rename-input').focus();
+    row.querySelector('.cat-edit-btn').style.display = 'none';
+    row.querySelector('.cat-save-btn').style.display = 'inline-flex';
+    row.querySelector('.cat-cancel-btn').style.display = 'inline-flex';
+}
+
+function cancelRename(btn) {
+    const row = btn.closest('tr');
+    const input = row.querySelector('.cat-rename-input');
+    input.value = row.dataset.name;
+    row.querySelector('.cat-name').style.display = '';
+    input.style.display = 'none';
+    row.querySelector('.cat-edit-btn').style.display = 'inline-flex';
+    row.querySelector('.cat-save-btn').style.display = 'none';
+    row.querySelector('.cat-cancel-btn').style.display = 'none';
+}
+
+async function saveRename(btn, type) {
+    const row = btn.closest('tr');
+    const from = row.dataset.name;
+    const to = row.querySelector('.cat-rename-input').value.trim();
+    if (!to || to === from) { cancelRename(btn); return; }
+
+    btn.disabled = true;
+    try {
+        const res = await fetch('/api/admin/taxonomy', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+            body: JSON.stringify({ type, action: 'rename', from, to })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Rename failed');
+        row.dataset.name = to;
+        row.querySelector('.cat-name').textContent = to;
+        row.querySelector('.cat-rename-input').value = to;
+        showFlash('success', 'Renamed "' + from + '" → "' + to + '" across ' + data.updated + ' post(s).');
+        cancelRename(btn);
+    } catch (e) {
+        showFlash('error', e.message);
+        btn.disabled = false;
+    }
+}
+
+async function deleteTaxonomy(btn, type) {
+    const row = btn.closest('tr');
+    const name = row.dataset.name;
+    if (!confirm('Remove "' + name + '" from all posts? This cannot be undone.')) return;
+    btn.disabled = true;
+    try {
+        const res = await fetch('/api/admin/taxonomy', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+            body: JSON.stringify({ type, action: 'delete', from: name })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Delete failed');
+        row.remove();
+        showFlash('success', 'Removed "' + name + '" from ' + data.updated + ' post(s).');
+    } catch (e) {
+        showFlash('error', e.message);
+        btn.disabled = false;
+    }
+}
+
+function showFlash(type, msg) {
+    const el = document.getElementById(type === 'success' ? 'flashSuccess' : 'flashError');
+    const msgEl = document.getElementById(type === 'success' ? 'flashSuccessMsg' : 'flashErrorMsg');
+    msgEl.textContent = msg;
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+}
+</script>
+
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
+</body>
+</html>

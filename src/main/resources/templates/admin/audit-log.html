@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Audit Log')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('audit-log')}"></th:block>
+
+    <div class="admin-main">
+        <th:block th:replace="~{admin/layout :: topbar('Audit Log')}"></th:block>
+
+        <div class="admin-body">
+
+            <!-- Controls row -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                <div style="display:flex;gap:6px;align-items:center;">
+                    <span style="font-size:13px;color:var(--muted);font-weight:500;">Show:</span>
+                    <div style="display:flex;gap:4px;">
+                        <button class="btn btn-sm btn-outline range-btn active" onclick="setRange(this,'7')">7d</button>
+                        <button class="btn btn-sm btn-outline range-btn" onclick="setRange(this,'1')">24h</button>
+                        <button class="btn btn-sm btn-outline range-btn" onclick="setRange(this,'30')">30d</button>
+                        <button class="btn btn-sm btn-outline range-btn" onclick="setRange(this,'all')">All</button>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span id="lastRefreshed" style="font-size:12px;color:var(--light);"></span>
+                    <button id="autoRefreshBtn" class="btn btn-sm btn-outline" onclick="toggleAutoRefresh()">
+                        <i class="fas fa-rotate"></i> Auto-refresh: Off
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="loadEvents()">
+                        <i class="fas fa-rotate"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main card -->
+            <div class="card">
+                <!-- Tab bar -->
+                <div class="card-header" style="padding-bottom:0;border-bottom:none;">
+                    <div class="tab-bar" style="border-bottom:1px solid var(--border);width:100%;overflow-x:auto;">
+                        <button class="tab-btn active" onclick="setTab(this,'all')">
+                            All <span class="tab-count" id="cnt-all">—</span>
+                        </button>
+                        <button class="tab-btn" onclick="setTab(this,'scrapes')">
+                            <i class="fas fa-rotate" style="font-size:11px;"></i> Scrapes
+                            <span class="tab-count" id="cnt-scrapes">—</span>
+                        </button>
+                        <button class="tab-btn" onclick="setTab(this,'content')">
+                            <i class="fas fa-newspaper" style="font-size:11px;"></i> Content
+                            <span class="tab-count" id="cnt-content">—</span>
+                        </button>
+                        <button class="tab-btn" onclick="setTab(this,'alerts')">
+                            <i class="fas fa-bell" style="font-size:11px;"></i> Alerts
+                            <span class="tab-count" id="cnt-alerts">—</span>
+                        </button>
+                        <button class="tab-btn" onclick="setTab(this,'system')">
+                            <i class="fas fa-gear" style="font-size:11px;"></i> System
+                            <span class="tab-count" id="cnt-system">—</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrap" id="eventTableWrap">
+                    <table id="eventTable">
+                        <thead>
+                            <tr>
+                                <th style="width:160px;">Time</th>
+                                <th style="width:160px;">Event</th>
+                                <th>Message</th>
+                                <th style="width:60px;text-align:center;">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventTableBody">
+                            <tr><td colspan="4" class="empty-state" style="padding:48px 0;">
+                                <i class="fas fa-rotate fa-spin"></i>
+                                <p>Loading events…</p>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="emptyState" class="empty-state" style="display:none;">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>No events found for this filter.</p>
+                </div>
+            </div>
+
+            <!-- Detail modal -->
+            <div id="detailModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-md);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                        <h3 style="font-size:15px;font-weight:600;">Event Details</h3>
+                        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);padding:4px;">×</button>
+                    </div>
+                    <pre id="detailContent" style="font-family:'Fira Code',monospace;font-size:12px;background:var(--gray-lt);padding:16px;border-radius:var(--radius);overflow-x:auto;white-space:pre-wrap;color:var(--text);"></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+const ADMIN_TOKEN = /*[[${adminToken}]]*/ '';
+
+const TAB_TYPES = {
+    all:     null,
+    scrapes: ['SCRAPE_SUCCESS','SCRAPE_FAILURE'],
+    content: ['PUBLISH','UNPUBLISH','DELETE'],
+    alerts:  ['ALERT_SENT','ALERT_FAILED','SUBSCRIBE','UNSUBSCRIBE'],
+    system:  ['LOGIN','LOGOUT','ERROR','INFO']
+};
+
+const BADGE = {
+    SCRAPE_SUCCESS: {cls:'badge-published', label:'Scrape OK'},
+    SCRAPE_FAILURE: {cls:'badge-rejected',  label:'Scrape Fail'},
+    PUBLISH:        {cls:'badge-published', label:'Publish'},
+    UNPUBLISH:      {cls:'badge-gold',      label:'Unpublish'},
+    DELETE:         {cls:'badge-rejected',  label:'Delete'},
+    ALERT_SENT:     {cls:'badge-blue',      label:'Alert Sent'},
+    ALERT_FAILED:   {cls:'badge-rejected',  label:'Alert Fail'},
+    SUBSCRIBE:      {cls:'badge-teal',      label:'Subscribe'},
+    UNSUBSCRIBE:    {cls:'badge-draft',     label:'Unsubscribe'},
+    LOGIN:          {cls:'badge-teal',      label:'Login'},
+    LOGOUT:         {cls:'badge-draft',     label:'Logout'},
+    ERROR:          {cls:'badge-rejected',  label:'Error'},
+    INFO:           {cls:'badge-blue',      label:'Info'}
+};
+
+let allEvents = [];
+let currentTab = 'all';
+let currentRange = '7';
+let autoRefreshTimer = null;
+
+async function loadEvents() {
+    let url = '/api/admin/events?limit=200';
+    if (currentRange !== 'all') {
+        const from = new Date();
+        from.setDate(from.getDate() - (currentRange === '1' ? 1 : parseInt(currentRange)));
+        url += '&from=' + from.toISOString();
+    }
+    try {
+        const res = await fetch(url, { headers: { 'X-Admin-Token': ADMIN_TOKEN } });
+        const data = await res.json();
+        allEvents = data.events || [];
+        updateCounts();
+        renderTable();
+        document.getElementById('lastRefreshed').textContent = 'Updated ' + new Date().toLocaleTimeString();
+    } catch (e) {
+        document.getElementById('eventTableBody').innerHTML =
+            '<tr><td colspan="4" style="padding:24px;text-align:center;color:var(--red);">Failed to load events: ' + e.message + '</td></tr>';
+    }
+}
+
+function updateCounts() {
+    document.getElementById('cnt-all').textContent = allEvents.length;
+    for (const [key, types] of Object.entries(TAB_TYPES)) {
+        if (!types) continue;
+        const el = document.getElementById('cnt-' + key);
+        if (el) el.textContent = allEvents.filter(e => types.includes(e.eventType)).length;
+    }
+}
+
+function renderTable() {
+    const types = TAB_TYPES[currentTab];
+    const filtered = types ? allEvents.filter(e => types.includes(e.eventType)) : allEvents;
+    const tbody = document.getElementById('eventTableBody');
+    const empty = document.getElementById('emptyState');
+
+    if (!filtered.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map((ev, i) => {
+        const badge = BADGE[ev.eventType] || {cls:'badge-draft', label: ev.eventType};
+        const ts = new Date(ev.createdAt).toLocaleString('en-GB', {
+            day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', second:'2-digit'
+        });
+        const hasDetail = ev.metadata && ev.metadata !== 'null';
+        return '<tr>' +
+            '<td style="font-size:12px;color:var(--muted);white-space:nowrap;">' + ts + '</td>' +
+            '<td><span class="badge ' + badge.cls + '">' + badge.label + '</span></td>' +
+            '<td style="font-size:13px;">' + esc(ev.message || '') + '</td>' +
+            '<td style="text-align:center;">' +
+                (hasDetail ? '<button class="btn btn-sm btn-outline btn-icon" onclick="showDetail(' + i + ')" title="View metadata"><i class="fas fa-ellipsis"></i></button>' : '<span style="color:var(--light);">—</span>') +
+            '</td>' +
+        '</tr>';
+    }).join('');
+}
+
+function setTab(btn, tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+}
+
+function setRange(btn, range) {
+    currentRange = range;
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadEvents();
+}
+
+function showDetail(idx) {
+    const types = TAB_TYPES[currentTab];
+    const filtered = types ? allEvents.filter(e => types.includes(e.eventType)) : allEvents;
+    const ev = filtered[idx];
+    if (!ev) return;
+    let detail = { eventType: ev.eventType, message: ev.message, createdAt: ev.createdAt };
+    try { detail.metadata = JSON.parse(ev.metadata); } catch { detail.metadata = ev.metadata; }
+    document.getElementById('detailContent').textContent = JSON.stringify(detail, null, 2);
+    document.getElementById('detailModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+function toggleAutoRefresh() {
+    const btn = document.getElementById('autoRefreshBtn');
+    if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+        btn.innerHTML = '<i class="fas fa-rotate"></i> Auto-refresh: Off';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+    } else {
+        autoRefreshTimer = setInterval(loadEvents, 30000);
+        btn.innerHTML = '<i class="fas fa-rotate fa-spin"></i> Auto-refresh: On';
+        btn.classList.remove('btn-outline');
+        btn.classList.add('btn-primary');
+    }
+}
+
+function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.getElementById('detailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+loadEvents();
+</script>
+
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
+</body>
+</html>

@@ -448,6 +448,8 @@ td {
 .badge-draft     { background: var(--gray-lt);  color: var(--muted); }
 .badge-rejected  { background: var(--red-lt);   color: var(--red); }
 .badge-gold      { background: #fef9c3;         color: var(--accent); }
+.badge-blue      { background: #dbeafe;         color: #2563eb; }
+.badge-teal      { background: #ccfbf1;         color: #0d9488; }
 
 /* ── Buttons ──────────────────────────────────────────────────────────────── */
 

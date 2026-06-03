@@ -347,6 +347,23 @@ public class TelegramBotService {
             "🔗 <a href=\"https://zimrate.com\">zimrate.com</a>");
     }
 
+    // ── Admin blast ───────────────────────────────────────────────────────────
+
+    public int sendBlast(String message) {
+        if (!isConfigured()) return 0;
+        List<Long> chatIds = alertRepository.findDistinctChatIds();
+        for (Long chatId : chatIds) {
+            send(chatId, message);
+        }
+        log.info("Telegram blast sent to {} users", chatIds.size());
+        return chatIds.size();
+    }
+
+    public int getBlastRecipientCount() {
+        if (!isConfigured()) return 0;
+        return alertRepository.findDistinctChatIds().size();
+    }
+
     // ── Internal send ─────────────────────────────────────────────────────────
 
     @SuppressWarnings("unchecked")
