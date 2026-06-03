@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Content Calendar')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('calendar')}"></th:block>
+
+    <div class="admin-main">
+        <th:block th:replace="~{admin/layout :: topbar('Content Calendar')}"></th:block>
+
+        <div class="admin-body">
+
+            <!-- Header row -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <button class="btn btn-outline btn-sm" onclick="navMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <h2 id="monthLabel" style="font-size:18px;font-weight:700;min-width:180px;text-align:center;"></h2>
+                    <button class="btn btn-outline btn-sm" onclick="navMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                    <button class="btn btn-outline btn-sm" onclick="goToday()">Today</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);">
+                        <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;"></span> Published
+                        <span style="width:10px;height:10px;border-radius:50%;background:var(--muted);display:inline-block;margin-left:4px;"></span> Draft
+                    </div>
+                    <a th:href="@{/admin/blog/new}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> New Post
+                    </a>
+                </div>
+            </div>
+
+            <!-- Calendar card -->
+            <div class="card">
+                <div class="card-body" style="padding:16px;">
+                    <!-- Day headers -->
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px;">
+                        <div class="cal-day-header">Mon</div>
+                        <div class="cal-day-header">Tue</div>
+                        <div class="cal-day-header">Wed</div>
+                        <div class="cal-day-header">Thu</div>
+                        <div class="cal-day-header">Fri</div>
+                        <div class="cal-day-header">Sat</div>
+                        <div class="cal-day-header">Sun</div>
+                    </div>
+                    <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+                </div>
+            </div>
+
+            <!-- Selected day panel -->
+            <div id="dayPanel" class="card" style="display:none;margin-top:16px;">
+                <div class="card-header">
+                    <h2 class="card-title" id="dayPanelTitle"><i class="fas fa-calendar-day"></i> Posts</h2>
+                    <button onclick="document.getElementById('dayPanel').style.display='none'"
+                            style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:4px;">×</button>
+                </div>
+                <div id="dayPanelBody" class="card-body" style="padding:0 22px;"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Tooltip -->
+<div id="calTooltip" style="display:none;position:fixed;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:12px;box-shadow:var(--shadow-md);z-index:200;max-width:220px;pointer-events:none;"></div>
+
+<script>
+let calYear, calMonth, allPosts = [];
+
+async function init() {
+    const today = new Date();
+    calYear  = today.getFullYear();
+    calMonth = today.getMonth();
+    try {
+        const res  = await fetch('/api/blog?page=0&size=500');
+        const data = await res.json();
+        allPosts = data.content || data || [];
+    } catch { allPosts = []; }
+    render();
+}
+
+function navMonth(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0)  { calMonth = 11; calYear--; }
+    render();
+    document.getElementById('dayPanel').style.display = 'none';
+}
+
+function goToday() {
+    const t = new Date();
+    calYear  = t.getFullYear();
+    calMonth = t.getMonth();
+    render();
+    document.getElementById('dayPanel').style.display = 'none';
+}
+
+function render() {
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('monthLabel').textContent = MONTHS[calMonth] + ' ' + calYear;
+
+    const firstDay = new Date(calYear, calMonth, 1);
+    let startDow = firstDay.getDay() - 1;
+    if (startDow < 0) startDow = 6;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const today = new Date();
+
+    // Group posts by date key YYYY-MM-DD
+    const byDate = {};
+    allPosts.forEach(p => {
+        const dateStr = p.publishedAt || p.publishAt || p.createdAt;
+        if (!dateStr) return;
+        const d = new Date(dateStr);
+        if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
+            const key = d.getDate();
+            (byDate[key] = byDate[key] || []).push(p);
+        }
+    });
+
+    let html = '';
+    for (let i = 0; i < startDow; i++) html += '<div class="cal-cell empty"></div>';
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === day;
+        const posts   = byDate[day] || [];
+        const hasPosts = posts.length > 0;
+        const bg = isToday ? 'background:var(--green-bg);border-color:var(--green);' : '';
+
+        html += '<div class="cal-cell" style="cursor:' + (hasPosts ? 'pointer' : 'default') + ';min-height:72px;' + bg + '"';
+        if (hasPosts) html += ' onclick="showDay(' + day + ')"';
+        html += '>';
+        html += '<span class="cal-day-num' + (isToday ? ' today' : '') + '">' + day + '</span>';
+
+        if (hasPosts) {
+            const max = 3;
+            html += '<div style="margin-top:4px;display:flex;flex-direction:column;gap:2px;">';
+            posts.slice(0, max).forEach(p => {
+                const color = p.status === 'PUBLISHED' ? 'var(--green)' : 'var(--muted)';
+                const label = (p.title || 'Untitled').substring(0, 22) + (p.title && p.title.length > 22 ? '…' : '');
+                html += '<div style="font-size:10px;font-weight:500;color:' + color + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
+                      + '● ' + esc(label) + '</div>';
+            });
+            if (posts.length > max) {
+                html += '<div style="font-size:10px;color:var(--light);">+' + (posts.length - max) + ' more</div>';
+            }
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+
+    document.getElementById('calGrid').innerHTML = html;
+}
+
+function showDay(day) {
+    const posts = (allPosts.filter(p => {
+        const dateStr = p.publishedAt || p.publishAt || p.createdAt;
+        if (!dateStr) return false;
+        const d = new Date(dateStr);
+        return d.getFullYear() === calYear && d.getMonth() === calMonth && d.getDate() === day;
+    }));
+
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('dayPanelTitle').innerHTML = '<i class="fas fa-calendar-day"></i> ' + day + ' ' + MONTHS[calMonth] + ' ' + calYear;
+
+    const body = document.getElementById('dayPanelBody');
+    body.innerHTML = posts.map(p =>
+        '<div class="mini-post" style="padding:12px 0;">' +
+            '<div style="flex:1;min-width:0;">' +
+                '<div class="mini-post-title" style="white-space:normal;">' + esc(p.title || 'Untitled') + '</div>' +
+                '<div style="margin-top:4px;">' +
+                    (p.status === 'PUBLISHED'
+                        ? '<span class="badge badge-published"><i class="fas fa-circle" style="font-size:6px;"></i> Published</span>'
+                        : '<span class="badge badge-draft"><i class="fas fa-circle" style="font-size:6px;"></i> Draft</span>') +
+                '</div>' +
+            '</div>' +
+            '<a href="/admin/blog/' + p.id + '/edit" class="btn btn-outline btn-sm btn-icon"><i class="fas fa-pen"></i></a>' +
+        '</div>'
+    ).join('');
+
+    document.getElementById('dayPanel').style.display = 'block';
+    document.getElementById('dayPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+init();
+</script>
+
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('Error Log')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('error-log')}"></th:block>
+
+    <div class="admin-main">
+        <th:block th:replace="~{admin/layout :: topbar('Error Log')}"></th:block>
+
+        <div class="admin-body">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                <div style="display:flex;gap:6px;align-items:center;">
+                    <span style="font-size:13px;color:var(--muted);font-weight:500;">Period:</span>
+                    <div style="display:flex;gap:4px;">
+                        <button class="btn btn-sm btn-outline range-btn active" onclick="setRange(this,'1')">24h</button>
+                        <button class="btn btn-sm btn-outline range-btn" onclick="setRange(this,'7')">7d</button>
+                        <button class="btn btn-sm btn-outline range-btn" onclick="setRange(this,'30')">30d</button>
+                        <button class="btn btn-sm btn-outline range-btn" onclick="setRange(this,'all')">All time</button>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span id="lastRefreshed" style="font-size:12px;color:var(--light);"></span>
+                    <button id="autoRefreshBtn" class="btn btn-sm btn-primary" onclick="toggleAutoRefresh()">
+                        <i class="fas fa-rotate fa-spin"></i> Live: On
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="load()">
+                        <i class="fas fa-rotate"></i> Refresh now
+                    </button>
+                </div>
+            </div>
+
+            <!-- All-clear banner -->
+            <div id="allClear" class="card" style="display:none;padding:48px 24px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:12px;">✅</div>
+                <div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:4px;">All Clear</div>
+                <div style="font-size:14px;color:var(--muted);">No errors or failures in this period.</div>
+            </div>
+
+            <!-- Error table -->
+            <div class="card" id="errorCard">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-triangle-exclamation" style="color:var(--red);"></i>
+                        Errors &amp; Failures
+                    </h2>
+                    <span class="badge badge-rejected" id="errorCount">—</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:160px;">Time</th>
+                                <th style="width:140px;">Type</th>
+                                <th>Message</th>
+                                <th style="width:60px;text-align:center;">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="errorBody">
+                            <tr><td colspan="4" class="empty-state" style="padding:48px 0;">
+                                <i class="fas fa-rotate fa-spin"></i>
+                                <p>Loading…</p>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Detail modal -->
+            <div id="detailModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+                <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-md);">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                        <h3 style="font-size:15px;font-weight:600;color:var(--red);">
+                            <i class="fas fa-triangle-exclamation"></i> Error Details
+                        </h3>
+                        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);padding:4px;">×</button>
+                    </div>
+                    <pre id="detailContent" style="font-family:'Fira Code',monospace;font-size:12px;background:var(--gray-lt);padding:16px;border-radius:var(--radius);overflow-x:auto;white-space:pre-wrap;color:var(--text);"></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+const ADMIN_TOKEN = /*[[${adminToken}]]*/ '';
+
+const ERROR_TYPES = ['ERROR', 'SCRAPE_FAILURE', 'ALERT_FAILED'];
+
+const BADGE = {
+    ERROR:         { cls: 'badge-rejected', label: 'App Error' },
+    SCRAPE_FAILURE:{ cls: 'badge-rejected', label: 'Scrape Fail' },
+    ALERT_FAILED:  { cls: 'badge-rejected', label: 'Alert Failed' }
+};
+
+let currentRange  = '1';
+let allErrors     = [];
+let autoRefTimer  = null;
+
+async function load() {
+    let url = '/api/admin/events?limit=500';
+    if (currentRange !== 'all') {
+        const from = new Date();
+        from.setDate(from.getDate() - (currentRange === '1' ? 1 : parseInt(currentRange)));
+        url += '&from=' + from.toISOString();
+    }
+    try {
+        const res  = await fetch(url, { headers: { 'X-Admin-Token': ADMIN_TOKEN } });
+        const data = await res.json();
+        allErrors  = (data.events || []).filter(e => ERROR_TYPES.includes(e.eventType));
+        render();
+        document.getElementById('lastRefreshed').textContent = 'Updated ' + new Date().toLocaleTimeString();
+    } catch (e) {
+        document.getElementById('errorBody').innerHTML =
+            '<tr><td colspan="4" style="padding:24px;text-align:center;color:var(--red);">Failed to load: ' + e.message + '</td></tr>';
+    }
+}
+
+function render() {
+    const count    = document.getElementById('errorCount');
+    const tbody    = document.getElementById('errorBody');
+    const allClear = document.getElementById('allClear');
+    const card     = document.getElementById('errorCard');
+
+    count.textContent = allErrors.length + (allErrors.length === 1 ? ' error' : ' errors');
+
+    if (!allErrors.length) {
+        card.style.display     = 'none';
+        allClear.style.display = 'block';
+        return;
+    }
+
+    card.style.display     = 'block';
+    allClear.style.display = 'none';
+
+    tbody.innerHTML = allErrors.map((ev, i) => {
+        const badge = BADGE[ev.eventType] || { cls: 'badge-rejected', label: ev.eventType };
+        const ts    = new Date(ev.createdAt).toLocaleString('en-GB', {
+            day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', second:'2-digit'
+        });
+        const hasDetail = ev.metadata && ev.metadata !== 'null';
+        return '<tr>' +
+            '<td style="font-size:12px;color:var(--muted);white-space:nowrap;">' + ts + '</td>' +
+            '<td><span class="badge ' + badge.cls + '">' + badge.label + '</span></td>' +
+            '<td style="font-size:13px;">' + esc(ev.message || '') + '</td>' +
+            '<td style="text-align:center;">' +
+                (hasDetail
+                    ? '<button class="btn btn-sm btn-outline btn-icon" onclick="showDetail(' + i + ')"><i class="fas fa-ellipsis"></i></button>'
+                    : '<span style="color:var(--light);">—</span>') +
+            '</td>' +
+        '</tr>';
+    }).join('');
+}
+
+function setRange(btn, range) {
+    currentRange = range;
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    load();
+}
+
+function showDetail(idx) {
+    const ev = allErrors[idx];
+    if (!ev) return;
+    let detail = { type: ev.eventType, message: ev.message, time: ev.createdAt };
+    try { detail.metadata = JSON.parse(ev.metadata); } catch { detail.metadata = ev.metadata; }
+    document.getElementById('detailContent').textContent = JSON.stringify(detail, null, 2);
+    document.getElementById('detailModal').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
+
+function toggleAutoRefresh() {
+    const btn = document.getElementById('autoRefreshBtn');
+    if (autoRefTimer) {
+        clearInterval(autoRefTimer);
+        autoRefTimer = null;
+        btn.innerHTML = '<i class="fas fa-rotate"></i> Live: Off';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+    } else {
+        autoRefTimer = setInterval(load, 30000);
+        btn.innerHTML = '<i class="fas fa-rotate fa-spin"></i> Live: On';
+        btn.classList.remove('btn-outline');
+        btn.classList.add('btn-primary');
+    }
+}
+
+function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.getElementById('detailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+// Start with live on
+autoRefTimer = setInterval(load, 30000);
+load();
+</script>
+
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
+</body>
+</html>

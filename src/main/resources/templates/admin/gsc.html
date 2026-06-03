@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout :: head('GSC Insights')}"></head>
+<body>
+<div class="admin-shell">
+
+    <th:block th:replace="~{admin/layout :: sidebar('gsc')}"></th:block>
+
+    <div class="admin-main">
+        <th:block th:replace="~{admin/layout :: topbar('GSC Insights')}"></th:block>
+
+        <div class="admin-body">
+
+            <div class="page-header">
+                <div>
+                    <h1>Search Console Insights</h1>
+                    <p style="color:var(--muted);font-size:14px;">Last 30 days · zimrate.com</p>
+                </div>
+                <button class="btn btn-primary" onclick="loadAll()">
+                    <i class="fas fa-rotate"></i> Refresh
+                </button>
+            </div>
+
+            <!-- Not-connected banner (shown when no data) -->
+            <div id="notConnected" class="flash" style="display:none;background:var(--amber-lt);color:var(--amber);border:1px solid #fcd34d;margin-bottom:20px;">
+                <i class="fas fa-triangle-exclamation"></i>
+                <span>Google Search Console is not connected — no token found at <code>~/.hermes/google_token.json</code>.</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+                <!-- Top Pages -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-file-lines"></i> Top Pages</h2>
+                        <span class="badge badge-draft" id="pageCount">Loading…</span>
+                    </div>
+                    <div id="pagesWrap" class="table-wrap" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Page / Slug</th>
+                                    <th style="width:70px;text-align:right;">Clicks</th>
+                                    <th style="width:80px;text-align:right;">Impr.</th>
+                                    <th style="width:60px;text-align:right;">CTR%</th>
+                                    <th style="width:60px;text-align:right;">Pos.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagesBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="pagesEmpty" class="empty-state" style="display:none;">
+                        <i class="fas fa-file-lines"></i>
+                        <p>No page data available.</p>
+                    </div>
+                    <div id="pagesLoading" class="empty-state">
+                        <i class="fas fa-rotate fa-spin"></i>
+                        <p>Loading…</p>
+                    </div>
+                </div>
+
+                <!-- Top Queries -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-magnifying-glass"></i> Top Queries</h2>
+                        <span class="badge badge-draft" id="queryCount">Loading…</span>
+                    </div>
+                    <div id="queriesWrap" class="table-wrap" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Search Query</th>
+                                    <th style="width:70px;text-align:right;">Clicks</th>
+                                    <th style="width:80px;text-align:right;">Impr.</th>
+                                    <th style="width:60px;text-align:right;">CTR%</th>
+                                    <th style="width:60px;text-align:right;">Pos.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queriesBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="queriesEmpty" class="empty-state" style="display:none;">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <p>No query data available.</p>
+                    </div>
+                    <div id="queriesLoading" class="empty-state">
+                        <i class="fas fa-rotate fa-spin"></i>
+                        <p>Loading…</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+const ADMIN_TOKEN = /*[[${adminToken}]]*/ '';
+
+function posColor(pos) {
+    if (pos <= 3)  return 'var(--green)';
+    if (pos <= 10) return 'var(--accent)';
+    return 'var(--muted)';
+}
+
+function ctrColor(ctr) {
+    if (ctr >= 5)  return 'var(--green)';
+    if (ctr >= 2)  return 'var(--accent)';
+    return 'var(--muted)';
+}
+
+function num(n) { return n.toLocaleString(); }
+
+async function loadPages() {
+    const loading = document.getElementById('pagesLoading');
+    const wrap    = document.getElementById('pagesWrap');
+    const empty   = document.getElementById('pagesEmpty');
+    const count   = document.getElementById('pageCount');
+    const tbody   = document.getElementById('pagesBody');
+
+    try {
+        const res  = await fetch('/api/admin/article-performance', { headers: { 'X-Admin-Token': ADMIN_TOKEN } });
+        const data = await res.json();
+        const articles = data.articles || [];
+
+        loading.style.display = 'none';
+
+        if (!articles.length) {
+            if (data.error) document.getElementById('notConnected').style.display = 'flex';
+            empty.style.display = 'block';
+            count.textContent = '0 pages';
+            return;
+        }
+
+        count.textContent = articles.length + ' pages';
+        tbody.innerHTML = articles.map(a => `
+            <tr>
+                <td>
+                    <div style="font-size:13px;font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        <a href="/blog/${esc(a.slug)}" target="_blank" style="color:var(--text);text-decoration:none;" title="${esc(a.slug)}">
+                            ${esc(a.slug)}
+                        </a>
+                    </div>
+                </td>
+                <td style="text-align:right;font-weight:600;font-size:13px;">${num(a.clicks)}</td>
+                <td style="text-align:right;font-size:13px;color:var(--muted);">${num(a.impressions)}</td>
+                <td style="text-align:right;font-size:13px;font-weight:600;color:${ctrColor(a.ctr)};">${a.ctr}%</td>
+                <td style="text-align:right;font-size:13px;font-weight:600;color:${posColor(a.avgPosition)};">${a.avgPosition}</td>
+            </tr>
+        `).join('');
+        wrap.style.display = 'block';
+    } catch (e) {
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        count.textContent = 'Error';
+    }
+}
+
+async function loadQueries() {
+    const loading = document.getElementById('queriesLoading');
+    const wrap    = document.getElementById('queriesWrap');
+    const empty   = document.getElementById('queriesEmpty');
+    const count   = document.getElementById('queryCount');
+    const tbody   = document.getElementById('queriesBody');
+
+    try {
+        const res  = await fetch('/api/admin/gsc/queries', { headers: { 'X-Admin-Token': ADMIN_TOKEN } });
+        const data = await res.json();
+        const queries = data.queries || [];
+
+        loading.style.display = 'none';
+
+        if (!queries.length) {
+            empty.style.display = 'block';
+            count.textContent = '0 queries';
+            return;
+        }
+
+        count.textContent = queries.length + ' queries';
+        tbody.innerHTML = queries.map(q => `
+            <tr>
+                <td style="font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+                    title="${esc(q.query)}">${esc(q.query)}</td>
+                <td style="text-align:right;font-weight:600;font-size:13px;">${num(q.clicks)}</td>
+                <td style="text-align:right;font-size:13px;color:var(--muted);">${num(q.impressions)}</td>
+                <td style="text-align:right;font-size:13px;font-weight:600;color:${ctrColor(q.ctr)};">${q.ctr}%</td>
+                <td style="text-align:right;font-size:13px;font-weight:600;color:${posColor(q.avgPosition)};">${q.avgPosition}</td>
+            </tr>
+        `).join('');
+        wrap.style.display = 'block';
+    } catch (e) {
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        count.textContent = 'Error';
+    }
+}
+
+function loadAll() {
+    document.getElementById('pagesLoading').style.display = 'block';
+    document.getElementById('pagesWrap').style.display    = 'none';
+    document.getElementById('pagesEmpty').style.display   = 'none';
+    document.getElementById('queriesLoading').style.display = 'block';
+    document.getElementById('queriesWrap').style.display    = 'none';
+    document.getElementById('queriesEmpty').style.display   = 'none';
+    loadPages();
+    loadQueries();
+}
+
+function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+loadAll();
+</script>
+
+<th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
+</body>
+</html>
