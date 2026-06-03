@@ -109,38 +109,52 @@ def parse_rates(text: str) -> dict:
 
     Returns dict with keys:
         - date: str (e.g. "Tuesday, 26 May 2026")
-        - rates: list of dicts with currency, indices, bid, ask, mid,
-                 bid_zwg, ask_zwg, mid_zwg, interbank fields
+        - rates: list of dicts with currency, bid, ask, mid, bid_zwg, ask_zwg, mid_zwg
     """
     lines = text.strip().split("\n")
     result = {"date": None, "rates": []}
 
-    # Extract date from first line
+    # Extract date from first few lines
+    date_pattern = re.compile(
+        r"\d{1,2}\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}",
+        re.I,
+    )
     for line in lines[:5]:
-        line = line.strip()
-        if re.search(r"\d{1,2}\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}", line, re.I):
-            result["date"] = line
+        m = date_pattern.search(line)
+        if m:
+            result["date"] = m.group(0)
             break
 
-    # Find data lines — look for currency codes
-    # The PDF table has columns: CURRENCY | INDICES | BID | ASK | MID RATE |
-    #                            BID RATE ZWG | ASK RATE ZWG | MID RATE ZWG | INTERBANK RATE
-    currency_pattern = re.compile(r"^\s*([A-Z]{3}(?:/[A-Z]{3})?)\s+")
+    # The RBZ PDF table columns (pdftotext -layout):
+    # CURRENCY | INDICES | BID | ASK | MID | BID ZWG | ASK ZWG | MID ZWG | [INTERBANK]
+    # CZK      1.73   14.8400  15.6200  15.2300  4.6899   4.9380   4.8140
+    # GBP      *    1.733670  1.740230  1.736950  5.4770   5.5010   5.4890
+
+    # Detect column layout from a line that has currency + at least 3 numbers
+    # Pattern: starts with a 3-letter currency code at column start
+    currency_pattern = re.compile(r"^(?:USD|EUR|GBP|ZAR|AUD|JPY|CHF|CAD|HKD|SGD|NZD|"
+                                   r"JMD|CAD|INR|CNY|ZMW|BWP|KES|TZS|UGX|RWF|NAD|"
+                                   r"SZL|MWK|MZN|AED|SAR|SEK|NOK|DKK|PLN|CZK|HUF|"
+                                   r"RON|RUB|TRY|ILS|EGP|KRW|SYP|LRD|GHS|NGN|ZMW|"
+                                   r"BHD|KWD|QAR|OMR|JOD|LBH|SAR|MUR|NAD|SZL|ZIG|"
+                                   r"[A-Z]{3})\b", re.IGNORECASE)
 
     for line in lines:
-        m = currency_pattern.match(line)
+        line_stripped = line.strip()
+        # Currency code must be at start (after optional whitespace)
+        m = currency_pattern.match(line_stripped)
         if not m:
             continue
 
-        currency = m.group(1)
-        rest = line[m.end():].strip()
+        currency = m.group(0).upper()
+        rest = line_stripped[m.end():].strip()
 
-        # Split the rest into tokens — numbers separated by whitespace
-        # But some numbers have commas (e.g. 1,733.67000)
-        # Strategy: extract all number-like tokens
-        tokens = re.findall(r"[\d,]+\.?\d*|\*", rest)
+        # Extract all decimal/comma numbers — tokens like "1.733670", "15.8400", "*"
+        raw_tokens = re.findall(r"[\d,]+\.\d+|[\d,]+\d*|\*", rest)
+        # Strip commas from numbers
+        tokens = [t.replace(",", "") for t in raw_tokens]
 
-        if len(tokens) < 3:
+        if len(tokens) < 4:
             continue
 
         entry = {
@@ -154,12 +168,30 @@ def parse_rates(text: str) -> dict:
             "mid_zwg": None,
         }
 
-        # Parse based on token count
-        # Normal layout: INDICES BID ASK MID BID_ZWG ASK_ZWG MID_ZWG [INTERBANK]
-        # Some currencies have * for indices (e.g. USD, GBP, EUR)
-        vals = [parse_decimal(t) for t in tokens]
+        vals = []
+        for t in tokens:
+            if t == "*":
+                vals.append(None)
+            else:
+                try:
+                    vals.append(Decimal(t))
+                except InvalidOperation:
+                    vals.append(None)
 
-        if len(vals) >= 7:
+        # Layout: [INDICES] BID ASK MID [BID_ZWG ASK_ZWG MID_ZWG] [INTERBANK]
+        # Index is often "*" for major currencies
+        # First 3 non-None values after index are BID/ASK/MID
+        # Next 3 are ZWG values
+        none_count = sum(1 for v in vals if v is None)
+        if none_count >= 3 and len(vals) >= 6:
+            # Likely: [INDEX(=*)] [BID ASK MID] [BID_ZWG ASK_ZWG MID_ZWG]
+            entry["bid"] = vals[0]
+            entry["ask"] = vals[1]
+            entry["mid"] = vals[2]
+            entry["bid_zwg"] = vals[3]
+            entry["ask_zwg"] = vals[4]
+            entry["mid_zwg"] = vals[5]
+        elif len(vals) >= 7:
             entry["indices"] = vals[0]
             entry["bid"] = vals[1]
             entry["ask"] = vals[2]
@@ -168,7 +200,6 @@ def parse_rates(text: str) -> dict:
             entry["ask_zwg"] = vals[5]
             entry["mid_zwg"] = vals[6]
         elif len(vals) >= 4:
-            # Some rows may have fewer columns
             entry["bid"] = vals[0]
             entry["ask"] = vals[1]
             entry["mid"] = vals[2]
@@ -307,7 +338,7 @@ def main() -> int:
         inserted = insert_rates(parsed, target_date)
         log(f"Inserted {inserted} rate rows for {target_date}")
         print(f"\n✓ {inserted} rates saved to database for {target_date}")
-        return 0
+        return 0  # success even if 0 (already up to date)
 
     finally:
         tmp_path.unlink(missing_ok=True)

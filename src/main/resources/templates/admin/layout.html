@@ -46,10 +46,10 @@
             <i class="fas fa-paper-plane"></i> Newsletter
         </a>
 
-        <a th:href="@{/admin/categories}"
-           th:classappend="${activePage == 'categories'} ? ' active' : ''"
+        <a th:href="@{/admin/calendar}"
+           th:classappend="${activePage == 'calendar'} ? ' active' : ''"
            class="admin-nav-link">
-            <i class="fas fa-tags"></i> Categories
+            <i class="fas fa-calendar"></i> Content Calendar
         </a>
 
         <div class="admin-sidebar-section" style="margin-top:8px;">Data</div>
@@ -67,14 +67,6 @@
            class="admin-nav-link">
             <i class="fas fa-users"></i> Subscribers
         </a>
-
-        <div class="admin-sidebar-section" style="margin-top:8px;">Operations</div>
-
-        <a th:href="@{/admin/audit-log}"
-           th:classappend="${activePage == 'audit-log'} ? ' active' : ''"
-           class="admin-nav-link">
-            <i class="fas fa-clipboard-list"></i> Audit Log
-        </a>
     </nav>
 
     <div class="admin-sidebar-footer">
@@ -91,16 +83,19 @@
     </div>
 </aside>
 
-<!-- Topbar fragment: includes dark mode toggle -->
+<!-- Topbar fragment: includes sidebar toggle + dark mode toggle -->
 <div class="admin-topbar" th:fragment="topbar(pageTitle)">
-    <span class="admin-topbar-title" th:text="${pageTitle}"></span>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sidebarToggle" onclick="toggleSidebar()" title="Toggle sidebar"
+                style="background:none;border:1px solid var(--border);cursor:pointer;font-size:15px;color:var(--muted);padding:7px 10px;border-radius:6px;transition:all .15s;line-height:1;">
+            <i class="fas fa-bars"></i>
+        </button>
+        <span class="admin-topbar-title" th:text="${pageTitle}"></span>
+    </div>
     <div class="admin-topbar-actions">
-        <button class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode" aria-label="Toggle dark mode">
-            <span class="theme-toggle-track">
-                <i class="fas fa-sun theme-icon-sun"></i>
-                <span class="theme-toggle-thumb"></span>
-                <i class="fas fa-moon theme-icon-moon"></i>
-            </span>
+        <button id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle dark mode"
+                style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:6px 8px;border-radius:6px;transition:background .15s;">
+            <i id="themeIcon" class="fas fa-moon"></i>
         </button>
         <div class="admin-user-chip">
             <div class="admin-user-avatar"><i class="fas fa-user"></i></div>
@@ -110,23 +105,61 @@
 </div>
 
 <script th:fragment="darkModeScript">
+// ── Sidebar toggle ────────────────────────────────────────────────────
+function toggleSidebar() {
+    const shell = document.querySelector('.admin-shell');
+    shell.classList.toggle('sidebar-collapsed');
+    const collapsed = shell.classList.contains('sidebar-collapsed');
+    localStorage.setItem('admin_sidebar', collapsed ? 'collapsed' : 'expanded');
+}
+
+(function() {
+    const saved = localStorage.getItem('admin_sidebar');
+    if (saved === 'collapsed') {
+        document.querySelector('.admin-shell')?.classList.add('sidebar-collapsed');
+    }
+})();
+
 // ── Dark mode ──────────────────────────────────────────────────────────
 function toggleDarkMode() {
     const shell = document.querySelector('.admin-shell');
+    const icon = document.getElementById('themeIcon');
     const isDark = shell.getAttribute('data-theme') === 'dark';
     if (isDark) {
-        shell.removeAttribute('data-theme');
+        shell.setAttribute('data-theme', 'light');
         localStorage.setItem('admin_theme', 'light');
+        icon.className = 'fas fa-moon';
     } else {
         shell.setAttribute('data-theme', 'dark');
         localStorage.setItem('admin_theme', 'dark');
+        icon.className = 'fas fa-sun';
     }
 }
 
 (function() {
-    if (localStorage.getItem('admin_theme') === 'dark') {
+    const saved = localStorage.getItem('admin_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const useDark = saved ? saved === 'dark' : prefersDark;
+    if (useDark) {
         document.querySelector('.admin-shell')?.setAttribute('data-theme', 'dark');
+        const icon = document.getElementById('themeIcon');
+        if (icon) icon.className = 'fas fa-sun';
     }
 })();
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    if (!localStorage.getItem('admin_theme')) {
+        const shell = document.querySelector('.admin-shell');
+        const icon = document.getElementById('themeIcon');
+        if (e.matches) {
+            shell?.setAttribute('data-theme', 'dark');
+            if (icon) icon.className = 'fas fa-sun';
+        } else {
+            shell?.setAttribute('data-theme', 'light');
+            if (icon) icon.className = 'fas fa-moon';
+        }
+    }
+});
 </script>
 </html>

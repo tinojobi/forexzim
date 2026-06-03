@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -222,6 +223,30 @@ public class AdminController {
         model.addAttribute("telegramHealthy", telegramBotToken != null && !telegramBotToken.isBlank());
         model.addAttribute("uploadsHealthy",  uploadsOk);
 
+        // ── Last published post freshness ─────────────────────────────────────
+        Optional<BlogPost> lastPublished = allPosts.stream()
+            .filter(p -> p.getStatus() == BlogPost.Status.PUBLISHED && p.getPublishedAt() != null)
+            .max(Comparator.comparing(BlogPost::getPublishedAt));
+        if (lastPublished.isPresent()) {
+            long days = Duration.between(lastPublished.get().getPublishedAt(), LocalDateTime.now()).toDays();
+            model.addAttribute("lastPublishedDaysAgo", (int) days);
+        }
+
+        // ── Posts published this week ────────────────────────────────────────
+        long postsThisWeek = allPosts.stream()
+            .filter(p -> p.getStatus() == BlogPost.Status.PUBLISHED && p.getPublishedAt() != null)
+            .filter(p -> p.getPublishedAt().isAfter(LocalDateTime.now().minusDays(7)))
+            .count();
+        model.addAttribute("postsThisWeek", (int) postsThisWeek);
+
+        // ── 7-day rate trend (CBZ USD/ZWG) ──────────────────────────────────
+        try {
+            List<Object[]> trend = rateRepository.findDailyAverages("CBZ", "USD/ZWG", 7);
+            model.addAttribute("rateTrend7d", trend);
+        } catch (Exception e) {
+            model.addAttribute("rateTrend7d", java.util.Collections.emptyList());
+        }
+
         model.addAttribute("activePage", "dashboard");
         return "admin/dashboard";
     }
@@ -376,6 +401,11 @@ public class AdminController {
     }
 
     // ── Rate data table ────────────────────────────────────────────────────────
+
+    @GetMapping("/calendar")
+    public String calendar() {
+        return "admin/calendar";
+    }
 
     @GetMapping("/rates")
     public String rates(Model model) {

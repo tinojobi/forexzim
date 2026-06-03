@@ -19,7 +19,9 @@
                 <i class="fas fa-circle-exclamation"></i> <span th:text="${error}"></span>
             </div>
 
-            <!-- Greeting -->
+            <!-- ════════════════════════════════════════════════════════════
+                 1. GREETING ROW
+                 ════════════════════════════════════════════════════════════ -->
             <div class="dash-greeting">
                 <div>
                     <h1 class="dash-greeting-text">
@@ -28,60 +30,139 @@
                     </h1>
                     <p class="dash-greeting-sub">Here's what's happening with ZimRate today.</p>
                 </div>
-                <div class="dash-greeting-date"
-                     th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Monday, 2 June 2026</div>
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div class="dash-greeting-date"
+                         th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Monday, 2 June 2026</div>
+
+                    <!-- Quick Actions dropdown -->
+                    <div class="quick-actions-wrap" style="position:relative;">
+                        <button class="btn btn-gold btn-sm" onclick="toggleQuickActions()" id="quickActionsBtn">
+                            <i class="fas fa-bolt"></i> Quick Actions <i class="fas fa-caret-down" style="margin-left:2px;font-size:11px;"></i>
+                        </button>
+                        <div id="quickActionsMenu" class="quick-actions-menu" style="display:none;">
+                            <form th:action="@{/admin/scrape}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="quick-action-item">
+                                    <i class="fas fa-rotate" style="color:var(--accent);"></i> Scrape Now
+                                </button>
+                            </form>
+                            <a th:href="@{/admin/blog/new}" class="quick-action-item">
+                                <i class="fas fa-pen-to-square" style="color:var(--green);"></i> New Post
+                            </a>
+                            <a th:href="@{/admin/newsletter}" class="quick-action-item">
+                                <i class="fas fa-paper-plane" style="color:#2563eb;"></i> Send Newsletter
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- ── Stat cards ──────────────────────────────────────────────── -->
-            <div class="stat-grid" style="margin-bottom:20px;">
+            <!-- ════════════════════════════════════════════════════════════
+                 2. ALERTS / ACTION QUEUE
+                 ════════════════════════════════════════════════════════════ -->
+            <div class="alert-queue" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
 
-                <!-- Content pipeline -->
-                <div class="stat-card">
+                <!-- Alert: No post published in X days -->
+                <div th:if="${lastPublishedDaysAgo != null && lastPublishedDaysAgo > 3}"
+                     class="alert-card alert-card--amber">
+                    <div class="alert-card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="alert-card-body">
+                        <div class="alert-card-msg">No post published in <strong th:text="${lastPublishedDaysAgo}">X</strong> days</div>
+                        <div class="alert-card-hint">Your audience is waiting for fresh content.</div>
+                    </div>
+                    <a th:href="@{/admin/blog/new}" class="btn btn-sm btn-gold">
+                        <i class="fas fa-pen"></i> Write Post
+                    </a>
+                </div>
+
+                <!-- Alert: Drafts waiting -->
+                <div th:if="${draftPosts != null && draftPosts > 0}"
+                     class="alert-card alert-card--blue">
+                    <div class="alert-card-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <div class="alert-card-body">
+                        <div class="alert-card-msg"><strong th:text="${draftPosts}">X</strong> draft<span th:if="${draftPosts > 1}">s</span> waiting to publish</div>
+                        <div class="alert-card-hint">Review and push them live.</div>
+                    </div>
+                    <a href="#drafts-section" class="btn btn-sm btn-outline">
+                        <i class="fas fa-eye"></i> Review
+                    </a>
+                </div>
+
+                <!-- Alert: Scraper unhealthy -->
+                <div th:if="${scrapeStatus != null && (scrapeStatus == 'warning' || scrapeStatus == 'danger')}"
+                     class="alert-card alert-card--red">
+                    <div class="alert-card-icon">
+                        <i class="fas fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="alert-card-body">
+                        <div class="alert-card-msg">Scraper is <strong th:text="${scrapeStatus == 'warning' ? 'delayed' : 'stale'}">unhealthy</strong></div>
+                        <div class="alert-card-hint">Rate data may be outdated. Trigger a manual scrape.</div>
+                    </div>
+                    <form th:action="@{/admin/scrape}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="fas fa-rotate"></i> Fix Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ════════════════════════════════════════════════════════════
+                 3. STAT CARDS ROW
+                 ════════════════════════════════════════════════════════════ -->
+            <div class="stat-grid stat-grid--premium" style="margin-bottom:20px;">
+
+                <!-- Total Posts -->
+                <div class="stat-card stat-card--gradient-green">
                     <div class="stat-card-icon green"><i class="fas fa-newspaper"></i></div>
-                    <div class="stat-value" th:text="${totalPosts}">0</div>
+                    <div class="stat-value stat-value--lg" th:text="${totalPosts}">0</div>
                     <div class="stat-label">Total Posts</div>
                     <div class="pipeline-bar">
                         <span class="pipeline-pill published"
                               th:text="${publishedPosts} + ' pub'">0 pub</span>
                         <span class="pipeline-pill draft"
                               th:text="${draftPosts} + ' draft'">0 draft</span>
-                        <span class="pipeline-pill rejected" th:if="${rejectedPosts > 0}"
+                        <span class="pipeline-pill rejected" th:if="${rejectedPosts != null && rejectedPosts > 0}"
                               th:text="${rejectedPosts} + ' rej'">0 rej</span>
                     </div>
                 </div>
 
                 <!-- Newsletter -->
-                <div class="stat-card">
+                <div class="stat-card stat-card--gradient-gold">
                     <div class="stat-card-icon gold"><i class="fas fa-envelope"></i></div>
-                    <div class="stat-value" th:text="${newsletterActive}">0</div>
+                    <div class="stat-value stat-value--lg" th:text="${newsletterActive}">0</div>
                     <div class="stat-label">Newsletter Subscribers</div>
                     <div class="stat-sub" th:text="${newsletterTotal} + ' total'">0 total</div>
                 </div>
 
-                <!-- Email alerts -->
-                <div class="stat-card">
+                <!-- Email Alerts -->
+                <div class="stat-card stat-card--gradient-blue">
                     <div class="stat-card-icon blue"><i class="fas fa-bell"></i></div>
-                    <div class="stat-value" th:text="${alertActive}">0</div>
+                    <div class="stat-value stat-value--lg" th:text="${alertActive}">0</div>
                     <div class="stat-label">Email Alerts</div>
                     <div class="stat-sub" th:text="${alertTotal} + ' total'">0 total</div>
                 </div>
 
                 <!-- Telegram -->
-                <div class="stat-card">
+                <div class="stat-card stat-card--gradient-teal">
                     <div class="stat-card-icon teal"><i class="fab fa-telegram"></i></div>
-                    <div class="stat-value" th:text="${telegramTotal}">0</div>
+                    <div class="stat-value stat-value--lg" th:text="${telegramTotal}">0</div>
                     <div class="stat-label">Telegram Alerts</div>
                     <div class="stat-sub">Via @the_zimrate_bot</div>
                 </div>
             </div>
 
-            <!-- ── Middle row: Rate + Health | Growth chart ────────────────── -->
-            <div class="dash-mid-grid" style="margin-bottom:20px;">
-
-                <!-- Live rate + scrape health -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Live Rate</h2>
+            <!-- ════════════════════════════════════════════════════════════
+                 4. RATE CARD (Full Width + Sparkline)
+                 ════════════════════════════════════════════════════════════ -->
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-chart-line"></i> Live Rate — USD / ZWG</h2>
+                    <div style="display:flex;align-items:center;gap:10px;">
                         <!-- Scrape health badge -->
                         <span th:if="${scrapeStatus == 'healthy'}"
                               class="health-badge health-badge--green">
@@ -99,82 +180,143 @@
                               class="health-badge health-badge--gray">
                             <span class="health-dot"></span> No data
                         </span>
+                        <form th:action="@{/admin/scrape}" method="post" style="display:inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn btn-gold btn-sm">
+                                <i class="fas fa-rotate"></i> Scrape Now
+                            </button>
+                        </form>
                     </div>
-                    <div class="card-body">
-                        <!-- Rate display -->
-                        <div th:if="${liveRate != null}" class="rate-widget">
+                </div>
+                <div class="card-body">
+                    <div class="rate-card-row">
+                        <!-- Left: big rate -->
+                        <div th:if="${liveRate != null}" class="rate-card-main">
                             <div class="rate-pair" th:text="${liveRate.currencyPair}">USD/ZiG</div>
-                            <div class="rate-value" th:text="${liveRate.buyRate}">—</div>
+                            <div class="rate-value rate-value--hero" th:text="${liveRate.buyRate}">—</div>
                             <div class="rate-delta" th:if="${rateDelta != null}">
                                 <span th:if="${rateDelta.signum() >= 0}"
-                                      style="color:var(--green);">
+                                      style="color:var(--green);font-size:15px;font-weight:700;">
                                     <i class="fas fa-arrow-up"></i>
                                     <span th:text="${rateDelta}">0</span>
                                     (<span th:text="${rateDeltaPct}">0</span>%)
                                 </span>
                                 <span th:if="${rateDelta.signum() < 0}"
-                                      style="color:var(--red);">
+                                      style="color:var(--red);font-size:15px;font-weight:700;">
                                     <i class="fas fa-arrow-down"></i>
                                     <span th:text="${rateDelta.abs()}">0</span>
                                     (<span th:text="${rateDeltaPct.abs()}">0</span>%)
                                 </span>
-                                <span style="color:var(--muted);font-size:12px;margin-left:4px;">vs prev scrape</span>
+                                <span style="color:var(--muted);font-size:12px;margin-left:6px;">vs prev scrape</span>
                             </div>
-                            <div class="rate-source" th:text="${liveRate.source.name}">Source</div>
+                            <div style="display:flex;align-items:center;gap:16px;margin-top:10px;">
+                                <div class="rate-source" th:text="${liveRate.source.name}">Source</div>
+                                <span th:if="${lastScrape != null}" style="font-size:12px;color:var(--muted);">
+                                    Last scraped
+                                    <strong th:if="${scrapeMinutesAgo == 0}">just now</strong>
+                                    <strong th:if="${scrapeMinutesAgo != null && scrapeMinutesAgo > 0}"
+                                            th:text="${scrapeMinutesAgo} + ' min ago'">—</strong>
+                                </span>
+                            </div>
                         </div>
-                        <div th:if="${liveRate == null}" class="empty-state" style="padding:24px 0;">
-                            <i class="fas fa-chart-line"></i>
-                            <p>No rate data yet. Trigger a scrape.</p>
+                        <div th:if="${liveRate == null}" class="rate-card-main">
+                            <div class="empty-state" style="padding:24px 0;">
+                                <i class="fas fa-chart-line"></i>
+                                <p>No rate data yet. Trigger a scrape.</p>
+                            </div>
                         </div>
 
-                        <!-- Scrape time -->
-                        <div class="scrape-health-row" th:if="${lastScrape != null}">
-                            <span th:if="${scrapeStatus == 'healthy'}" class="health-dot-sm green"></span>
-                            <span th:if="${scrapeStatus == 'warning'}" class="health-dot-sm amber"></span>
-                            <span th:if="${scrapeStatus == 'danger'}"  class="health-dot-sm red"></span>
-                            <span style="font-size:12px;color:var(--muted);">
-                                Last scraped
-                                <strong th:if="${scrapeMinutesAgo == 0}">just now</strong>
-                                <strong th:if="${scrapeMinutesAgo > 0}"
-                                        th:text="${scrapeMinutesAgo} + ' min ago'">—</strong>
-                            </span>
-                            <form th:action="@{/admin/scrape}" method="post" style="margin-left:auto;">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button type="submit" class="btn btn-gold btn-sm">
-                                    <i class="fas fa-rotate"></i> Scrape Now
-                                </button>
-                            </form>
-                        </div>
-                        <div th:if="${lastScrape == null}" style="margin-top:12px;">
-                            <form th:action="@{/admin/scrape}" method="post">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button type="submit" class="btn btn-gold btn-sm">
-                                    <i class="fas fa-rotate"></i> Scrape Now
-                                </button>
-                            </form>
+                        <!-- Right: sparkline -->
+                        <div class="rate-card-sparkline">
+                            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">14-Day Trend</div>
+                            <div id="rateSparkline"></div>
+                            <div id="rateSparklineEmpty" style="display:none;padding:20px 0;text-align:center;color:var(--light);font-size:12px;">
+                                <i class="fas fa-chart-area" style="opacity:.4;"></i> Trend data loading...
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Subscriber growth chart -->
+            <!-- ════════════════════════════════════════════════════════════
+                 5. MIDDLE ROW: Top Articles + Traffic Snapshot
+                 ════════════════════════════════════════════════════════════ -->
+            <div class="dash-mid-grid" style="margin-bottom:20px;">
+
+                <!-- LEFT: Top Performing Articles -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-users"></i> Newsletter Growth</h2>
-                        <span style="font-size:12px;color:var(--muted);">Last 6 months</span>
+                        <h2 class="card-title"><i class="fas fa-fire"></i> Top Articles</h2>
+                        <span style="font-size:11px;color:var(--muted);">By clicks (GSC)</span>
                     </div>
-                    <div class="card-body" style="padding-bottom:8px;">
-                        <div id="growthChart"></div>
+                    <div class="card-body" style="padding:0 22px;">
+                        <div id="topArticlesLoading" class="empty-state" style="padding:24px 0;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading article data...</p>
+                        </div>
+                        <div id="topArticlesError" style="display:none;padding:16px 0;">
+                            <div class="flash flash-error" style="margin:0;">
+                                <i class="fas fa-circle-exclamation"></i>
+                                <span id="topArticlesErrorMsg">Failed to load data.</span>
+                            </div>
+                        </div>
+                        <div id="topArticlesList" class="mini-post-list" style="display:none;"></div>
                     </div>
                 </div>
 
-            </div><!-- /dash-mid-grid -->
+                <!-- RIGHT: Traffic Snapshot -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Traffic Snapshot</h2>
+                        <span style="font-size:11px;color:var(--muted);">Last 28 days (GSC)</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="trafficLoading" class="empty-state" style="padding:24px 0;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading traffic data...</p>
+                        </div>
+                        <div id="trafficError" style="display:none;padding:16px 0;">
+                            <div class="flash flash-error" style="margin:0;">
+                                <i class="fas fa-circle-exclamation"></i>
+                                <span id="trafficErrorMsg">Failed to load data.</span>
+                            </div>
+                        </div>
+                        <div id="trafficStats" style="display:none;">
+                            <div class="traffic-stat-row">
+                                <div class="traffic-stat-card">
+                                    <div class="traffic-stat-icon" style="background:var(--green-lt);color:var(--green);">
+                                        <i class="fas fa-mouse-pointer"></i>
+                                    </div>
+                                    <div class="traffic-stat-value" id="trafficClicks">0</div>
+                                    <div class="traffic-stat-label">Total Clicks</div>
+                                </div>
+                                <div class="traffic-stat-card">
+                                    <div class="traffic-stat-icon" style="background:#dbeafe;color:#2563eb;">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div class="traffic-stat-value" id="trafficImpressions">0</div>
+                                    <div class="traffic-stat-label">Impressions</div>
+                                </div>
+                                <div class="traffic-stat-card">
+                                    <div class="traffic-stat-icon" style="background:#fef9c3;color:var(--accent);">
+                                        <i class="fas fa-percent"></i>
+                                    </div>
+                                    <div class="traffic-stat-value" id="trafficCtr">0%</div>
+                                    <div class="traffic-stat-label">Avg CTR</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <!-- ── Bottom grid: Posts | Health + Actions ───────────────────── -->
+            <!-- ════════════════════════════════════════════════════════════
+                 6. BOTTOM ROW: Recent Posts + Content Pipeline
+                 ════════════════════════════════════════════════════════════ -->
             <div class="dashboard-grid">
 
-                <!-- Left: recent posts + quick-publish drafts -->
+                <!-- LEFT: Recent Posts (compact) -->
                 <div>
-                    <!-- Recent posts -->
                     <div class="card" style="margin-bottom:16px;">
                         <div class="card-header">
                             <h2 class="card-title">
@@ -226,7 +368,7 @@
                     </div>
 
                     <!-- Quick-publish drafts -->
-                    <div class="card" th:if="${!draftPostsList.isEmpty()}">
+                    <div class="card" id="drafts-section" th:if="${!draftPostsList.isEmpty()}">
                         <div class="card-header">
                             <h2 class="card-title">
                                 <i class="fas fa-inbox"></i> Drafts Ready to Publish
@@ -251,41 +393,22 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Content Calendar -->
-                    <div class="card" style="margin-top:16px;">
-                        <div class="card-header">
-                            <h2 class="card-title">
-                                <i class="fas fa-calendar"></i> Content Calendar
-                            </h2>
-                            <div style="display:flex;align-items:center;gap:10px;">
-                                <button class="btn btn-outline btn-sm" onclick="calNav(-1)">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <span id="calMonthLabel" style="font-size:13px;font-weight:600;min-width:140px;text-align:center;"></span>
-                                <button class="btn btn-outline btn-sm" onclick="calNav(1)">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body" style="padding:16px 22px;">
-                            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
-                                <div class="cal-day-header">Mon</div>
-                                <div class="cal-day-header">Tue</div>
-                                <div class="cal-day-header">Wed</div>
-                                <div class="cal-day-header">Thu</div>
-                                <div class="cal-day-header">Fri</div>
-                                <div class="cal-day-header">Sat</div>
-                                <div class="cal-day-header">Sun</div>
-                            </div>
-                            <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
-                            <div id="calTooltip" style="display:none;position:fixed;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:12px;box-shadow:var(--shadow-md);z-index:200;max-width:200px;pointer-events:none;"></div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Right: system health + quick links -->
+                <!-- RIGHT: Content Pipeline + Quick Links -->
                 <div>
+                    <!-- Content Pipeline -->
+                    <div class="card" style="margin-bottom:16px;">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-column"></i> Content Pipeline</h2>
+                            <span style="font-size:11px;color:var(--muted);">This week</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="pipelineChart"></div>
+                            <div id="pipelineSummary" style="margin-top:10px;font-size:12px;color:var(--muted);text-align:center;"></div>
+                        </div>
+                    </div>
+
                     <!-- System health -->
                     <div class="card" style="margin-bottom:16px;">
                         <div class="card-header">
@@ -404,19 +527,324 @@
                 </div>
 
             </div><!-- /dashboard-grid -->
+
+            <!-- ════════════════════════════════════════════════════════════
+                 7. COLLAPSIBLE: Growth Chart
+                 ════════════════════════════════════════════════════════════ -->
+            <div class="card" style="margin-top:20px;">
+                <div class="card-header collapsible-header" onclick="toggleSection('growthBody','growthIcon')" style="cursor:pointer;">
+                    <h2 class="card-title"><i class="fas fa-users"></i> Newsletter Growth <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:4px;">Last 6 months</span></h2>
+                    <i id="growthIcon" class="fas fa-chevron-down" style="color:var(--muted);font-size:12px;transition:transform .2s;"></i>
+                </div>
+                <div id="growthBody" class="card-body" style="padding-bottom:8px;">
+                    <div id="growthChart"></div>
+                </div>
+            </div>
+
         </div><!-- /admin-body -->
     </div><!-- /admin-main -->
 </div><!-- /admin-shell -->
 
+<!-- ═══════════════════════════════════════════════════════════════════════
+     STYLES (inline for dashboard-specific components)
+     ═══════════════════════════════════════════════════════════════════════ -->
+<style>
+/* ── Quick Actions dropdown ──────────────────────────────────────────── */
+.quick-actions-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    min-width: 200px;
+    z-index: 200;
+    padding: 4px 0;
+}
+.quick-action-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    transition: background .12s;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+}
+.quick-action-item:hover {
+    background: var(--gray-lt);
+}
+
+/* ── Alert cards ─────────────────────────────────────────────────────── */
+.alert-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid;
+    flex: 1;
+    min-width: 280px;
+}
+.alert-card--amber {
+    background: var(--amber-lt);
+    border-color: #fcd34d;
+}
+.alert-card--amber .alert-card-icon { color: var(--amber); }
+.alert-card--blue {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+.alert-card--blue .alert-card-icon { color: #2563eb; }
+.alert-card--red {
+    background: var(--red-lt);
+    border-color: #fca5a5;
+}
+.alert-card--red .alert-card-icon { color: var(--red); }
+.alert-card-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.alert-card-body {
+    flex: 1;
+    min-width: 0;
+}
+.alert-card-msg {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+.alert-card-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+/* ── Premium stat cards ──────────────────────────────────────────────── */
+.stat-grid--premium {
+    grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 1100px) {
+    .stat-grid--premium { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .stat-grid--premium { grid-template-columns: 1fr; }
+}
+.stat-card--gradient-green {
+    background: linear-gradient(135deg, var(--green-bg) 0%, var(--card) 100%);
+}
+.stat-card--gradient-gold {
+    background: linear-gradient(135deg, #fef9c3 0%, var(--card) 100%);
+}
+.stat-card--gradient-blue {
+    background: linear-gradient(135deg, #dbeafe 0%, var(--card) 100%);
+}
+.stat-card--gradient-teal {
+    background: linear-gradient(135deg, #ccfbf1 0%, var(--card) 100%);
+}
+.stat-value--lg {
+    font-size: 34px;
+}
+
+/* ── Rate card layout ────────────────────────────────────────────────── */
+.rate-card-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+}
+.rate-card-main {
+    flex: 0 0 auto;
+    min-width: 260px;
+}
+.rate-value--hero {
+    font-size: 56px;
+    letter-spacing: -2px;
+}
+.rate-card-sparkline {
+    flex: 1;
+    min-width: 0;
+    padding-top: 4px;
+}
+
+/* ── Traffic snapshot ────────────────────────────────────────────────── */
+.traffic-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.traffic-stat-card {
+    text-align: center;
+    padding: 16px 8px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+}
+.traffic-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+.traffic-stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+}
+.traffic-stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* ── Top articles row ────────────────────────────────────────────────── */
+.top-article-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+.top-article-row:last-child { border-bottom: none; }
+.top-article-rank {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gray-lt);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.top-article-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+}
+.top-article-metrics {
+    display: flex;
+    gap: 14px;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--muted);
+}
+.top-article-metrics span {
+    white-space: nowrap;
+}
+.top-article-metrics strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* ── Pipeline bars ───────────────────────────────────────────────────── */
+.pipeline-chart-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 100px;
+    padding: 0 4px;
+}
+.pipeline-day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.pipeline-bar-fill {
+    width: 100%;
+    max-width: 36px;
+    border-radius: 4px 4px 0 0;
+    background: var(--green);
+    min-height: 2px;
+    transition: height .3s;
+}
+.pipeline-bar-fill.today {
+    background: var(--accent);
+}
+.pipeline-bar-fill.empty {
+    background: var(--gray-lt);
+    min-height: 4px;
+}
+.pipeline-day-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: .04em;
+}
+.pipeline-day-label.today {
+    color: var(--accent);
+}
+
+/* ── Collapsible sections ────────────────────────────────────────────── */
+.collapsible-header:hover {
+    background: var(--gray-lt);
+}
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script th:inline="javascript">
+// ── Configuration ──────────────────────────────────────────────────────
+const ADMIN_TOKEN = '512d2584da6010b519f0183fe624d5f7';
+
+// ── Quick Actions dropdown ─────────────────────────────────────────────
+function toggleQuickActions() {
+    const menu = document.getElementById('quickActionsMenu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+    const wrap = document.querySelector('.quick-actions-wrap');
+    const menu = document.getElementById('quickActionsMenu');
+    if (wrap && menu && !wrap.contains(e.target)) {
+        menu.style.display = 'none';
+    }
+});
+
+// ── Collapsible sections ───────────────────────────────────────────────
+function toggleSection(bodyId, iconId) {
+    const body = document.getElementById(bodyId);
+    const icon = document.getElementById(iconId);
+    if (body.style.display === 'none') {
+        body.style.display = '';
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        body.style.display = 'none';
+        icon.style.transform = 'rotate(-90deg)';
+    }
+}
+
+// ── Newsletter Growth Chart ────────────────────────────────────────────
 var labels = /*[[${chartLabels}]]*/ [];
 var values = /*[[${chartValues}]]*/ [];
 
 new ApexCharts(document.getElementById('growthChart'), {
     chart: {
         type: 'area',
-        height: 160,
+        height: 180,
         toolbar: { show: false },
         sparkline: { enabled: false },
         animations: { enabled: true, speed: 400 }
@@ -432,98 +860,169 @@ new ApexCharts(document.getElementById('growthChart'), {
     tooltip: { theme: 'light', y: { formatter: v => v + ' signups' } }
 }).render();
 
-// ── Content Calendar ──────────────────────────────────────────────────
-const ADMIN_TOKEN = '512d2584da6010b519f0183fe624d5f7';
-let calYear, calMonth;
-let allPosts = [];
-
-async function initCalendar() {
-    calYear = new Date().getFullYear();
-    calMonth = new Date().getMonth(); // 0-indexed
-    try {
-        const res = await fetch('/api/blog?page=0&size=100');
-        const data = await res.json();
-        allPosts = data.content || data || [];
-    } catch (e) { allPosts = []; }
-    renderCalendar();
-}
-
-function calNav(dir) {
-    calMonth += dir;
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    if (calMonth < 0) { calMonth = 11; calYear--; }
-    renderCalendar();
-}
-
-function renderCalendar() {
-    const label = document.getElementById('calMonthLabel');
-    const grid = document.getElementById('calGrid');
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    label.textContent = months[calMonth] + ' ' + calYear;
-
-    const firstDay = new Date(calYear, calMonth, 1);
-    // Monday-first: Monday=0 ... Sunday=6
-    let startDow = firstDay.getDay() - 1;
-    if (startDow < 0) startDow = 6;
-
-    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-    const today = new Date();
-
-    // Group posts by published date
-    const byDate = {};
-    allPosts.forEach(p => {
-        if (!p.publishedAt) return;
-        const d = new Date(p.publishedAt);
-        if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
-            const key = d.getDate();
-            if (!byDate[key]) byDate[key] = [];
-            byDate[key].push(p);
+// ── Rate Sparkline ─────────────────────────────────────────────────────
+(function loadRateSparkline() {
+    fetch('/api/admin/rate-trend?pair=USD/ZWG&days=14', {
+        headers: { 'X-Admin-Token': ADMIN_TOKEN }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Not available');
+        return res.json();
+    })
+    .then(data => {
+        if (!data || !data.length) {
+            document.getElementById('rateSparkline').style.display = 'none';
+            document.getElementById('rateSparklineEmpty').style.display = 'block';
+            return;
         }
+        const seriesData = data.map(d => ({
+            x: d.date || d[0],
+            y: d.rate || d[1]
+        }));
+        new ApexCharts(document.getElementById('rateSparkline'), {
+            chart: {
+                type: 'line',
+                height: 100,
+                sparkline: { enabled: true },
+                animations: { enabled: true, speed: 300 }
+            },
+            series: [{ name: 'Rate', data: seriesData.map(d => d.y) }],
+            xaxis: { categories: seriesData.map(d => d.x), labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false } },
+            colors: ['#16a34a'],
+            stroke: { curve: 'smooth', width: 2 },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.25, opacityTo: 0.03, stops: [0, 100] } },
+            dataLabels: { enabled: false },
+            tooltip: { theme: 'light', x: { show: true }, y: { formatter: v => 'ZWG ' + v } },
+            grid: { show: false }
+        }).render();
+    })
+    .catch(() => {
+        document.getElementById('rateSparkline').style.display = 'none';
+        document.getElementById('rateSparklineEmpty').style.display = 'block';
     });
+})();
 
-    let html = '';
-    // Padding cells before first day
-    for (let i = 0; i < startDow; i++) {
-        html += '<div class="cal-cell empty"></div>';
-    }
-    for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === day;
-        const posts = byDate[day] || [];
-        const hasPost = posts.length > 0;
-        const bg = isToday ? 'background:#f0fdf4;border-color:var(--green);' : 'background:var(--card);';
-        html += '<div class="cal-cell" style="' + bg + '"';
-        if (hasPost) {
-            const titles = posts.map(p => p.title).join(', ');
-            html += ' onmouseover="showCalTooltip(event,\'' + titles.replace(/'/g, "\\'") + '\')" onmouseout="hideCalTooltip()"';
+// ── Top Articles & Traffic Snapshot ────────────────────────────────────
+(function loadArticlePerformance() {
+    fetch('/api/admin/article-performance', {
+        headers: { 'X-Admin-Token': ADMIN_TOKEN }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Not available');
+        return res.json();
+    })
+    .then(data => {
+        // Top 5 articles
+        const topArticles = (data || []).slice(0, 5);
+        const listEl = document.getElementById('topArticlesList');
+        document.getElementById('topArticlesLoading').style.display = 'none';
+
+        if (topArticles.length === 0) {
+            listEl.innerHTML = '<div class="empty-state" style="padding:24px 0;"><i class="fas fa-chart-bar"></i><p>No article data available.</p></div>';
+            listEl.style.display = 'block';
+            return;
         }
-        html += '>';
-        html += '<span class="cal-day-num' + (isToday ? ' today' : '') + '">' + day + '</span>';
-        if (hasPost) {
-            html += '<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;">';
-            posts.forEach(p => {
-                const color = p.status === 'PUBLISHED' ? 'var(--green)' : 'var(--muted)';
-                html += '<div style="width:7px;height:7px;border-radius:50%;background:' + color + ';" title="' + p.title + '"></div>';
-            });
-            html += '</div>';
-        }
-        html += '</div>';
+
+        listEl.innerHTML = topArticles.map((a, i) =>
+            '<div class="top-article-row">' +
+            '<div class="top-article-rank">' + (i + 1) + '</div>' +
+            '<div class="top-article-title" title="' + escapeHtml(a.title || '') + '">' + escapeHtml(a.title || 'Untitled') + '</div>' +
+            '<div class="top-article-metrics">' +
+            '<span><strong>' + formatNum(a.clicks || 0) + '</strong> clicks</span>' +
+            '<span>' + formatNum(a.impressions || 0) + ' impr</span>' +
+            (a.position ? '<span>avg #' + a.position.toFixed(1) + '</span>' : '') +
+            '</div></div>'
+        ).join('');
+        listEl.style.display = 'block';
+
+        // Traffic snapshot (aggregate)
+        document.getElementById('trafficLoading').style.display = 'none';
+        const totalClicks = data.reduce((s, a) => s + (a.clicks || 0), 0);
+        const totalImpressions = data.reduce((s, a) => s + (a.impressions || 0), 0);
+        const avgCtr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100) : 0;
+
+        document.getElementById('trafficClicks').textContent = formatNum(totalClicks);
+        document.getElementById('trafficImpressions').textContent = formatNum(totalImpressions);
+        document.getElementById('trafficCtr').textContent = avgCtr.toFixed(1) + '%';
+        document.getElementById('trafficStats').style.display = 'block';
+    })
+    .catch(() => {
+        document.getElementById('topArticlesLoading').style.display = 'none';
+        document.getElementById('topArticlesError').style.display = 'block';
+        document.getElementById('topArticlesErrorMsg').textContent = 'Could not load article performance data.';
+
+        document.getElementById('trafficLoading').style.display = 'none';
+        document.getElementById('trafficError').style.display = 'block';
+        document.getElementById('trafficErrorMsg').textContent = 'Could not load traffic data.';
+    });
+})();
+
+// ── Content Pipeline (posts per day this week) ─────────────────────────
+(function buildPipeline() {
+    const allPosts = /*[[${recentPosts}]]*/ [];
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const today = new Date();
+    const todayIdx = today.getDay(); // 0=Sun
+
+    // Compute start of this week (Monday)
+    const weekStart = new Date(today);
+    const diff = todayIdx === 0 ? -6 : 1 - todayIdx;
+    weekStart.setDate(today.getDate() + diff);
+    weekStart.setHours(0,0,0,0);
+
+    // Count posts per day this week
+    const counts = [0,0,0,0,0,0,0]; // Mon..Sun
+    if (Array.isArray(allPosts)) {
+        allPosts.forEach(p => {
+            if (!p.createdAt) return;
+            const d = new Date(p.createdAt);
+            if (d >= weekStart) {
+                const dayOfWeek = d.getDay(); // 0=Sun
+                const idx = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Mon=0..Sun=6
+                counts[idx]++;
+            }
+        });
     }
-    grid.innerHTML = html;
+
+    const maxCount = Math.max(...counts, 1);
+    const orderedDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const todayLabel = todayIdx === 0 ? 'Sun' : dayNames[todayIdx];
+
+    const container = document.getElementById('pipelineChart');
+    container.innerHTML = '<div class="pipeline-chart-row">' +
+        orderedDays.map((day, i) => {
+            const h = Math.max(4, (counts[i] / maxCount) * 80);
+            const isToday = day === todayLabel;
+            return '<div class="pipeline-day">' +
+                '<div class="pipeline-bar-fill' + (isToday ? ' today' : (counts[i] === 0 ? ' empty' : '')) + '" style="height:' + h + 'px;" title="' + counts[i] + ' posts"></div>' +
+                '<div class="pipeline-day-label' + (isToday ? ' today' : '') + '">' + day + '</div>' +
+                '</div>';
+        }).join('') + '</div>';
+
+    // Summary text
+    const totalThisWeek = counts.reduce((a,b) => a+b, 0);
+    const summaryEl = document.getElementById('pipelineSummary');
+    if (totalThisWeek === 0) {
+        summaryEl.textContent = 'No posts published this week yet.';
+    } else {
+        summaryEl.textContent = totalThisWeek + ' post' + (totalThisWeek > 1 ? 's' : '') + ' published this week.';
+    }
+})();
+
+// ── Helper functions ───────────────────────────────────────────────────
+function formatNum(n) {
+    if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+    return String(n);
 }
 
-function showCalTooltip(e, text) {
-    const tt = document.getElementById('calTooltip');
-    tt.textContent = text;
-    tt.style.display = 'block';
-    tt.style.left = (e.clientX + 10) + 'px';
-    tt.style.top = (e.clientY + 10) + 'px';
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }
 
-function hideCalTooltip() {
-    document.getElementById('calTooltip').style.display = 'none';
-}
-
-// ── Source Health Timeline ────────────────────────────────────────────
+// ── Source Health Timeline ─────────────────────────────────────────────
 async function loadSourceHealth() {
     const err = document.getElementById('sourceHealthError');
     const table = document.getElementById('sourceHealthTable');
@@ -571,7 +1070,6 @@ async function loadSourceHealth() {
     }
 }
 
-initCalendar();
 </script>
 <th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>
