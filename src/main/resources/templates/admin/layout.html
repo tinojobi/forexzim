@@ -34,6 +34,8 @@
            th:classappend="${activePage == 'blog'} ? ' active' : ''"
            class="admin-nav-link">
             <i class="fas fa-newspaper"></i> Blog Posts
+            <span th:if="${sidebarDraftCount != null and sidebarDraftCount > 0}"
+                  class="nav-badge" th:text="${sidebarDraftCount}"></span>
         </a>
 
         <a th:href="@{/admin/blog/new}"

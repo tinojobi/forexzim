@@ -173,6 +173,38 @@ body {
     position: relative;
 }
 
+/* ── Sidebar nav badge ────────────────────────────────────────────────── */
+
+.nav-badge {
+    margin-left: auto;
+    min-width: 20px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    background: var(--accent);
+    color: #fff;
+    flex-shrink: 0;
+    transition: opacity .15s;
+}
+
+/* Collapsed: shrink to a dot in the top-right corner */
+.admin-shell.sidebar-collapsed .nav-badge {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    min-width: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+    line-height: 0;
+}
+
 .admin-nav-link i {
     width: 18px;
     text-align: center;
