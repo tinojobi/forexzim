@@ -4,19 +4,24 @@ import com.forexzim.model.AlertSubscription;
 import com.forexzim.model.BlogPost;
 import com.forexzim.model.NewsletterSubscriber;
 import com.forexzim.model.Rate;
+import com.forexzim.model.Source;
+import com.forexzim.model.SystemEventLog;
 import com.forexzim.model.TelegramAlert;
 import com.forexzim.repository.AlertSubscriptionRepository;
 import com.forexzim.repository.BlogRepository;
 import com.forexzim.repository.NewsletterSubscriberRepository;
 import com.forexzim.repository.RateRepository;
+import com.forexzim.repository.SourceRepository;
 import com.forexzim.repository.TelegramAlertRepository;
 import com.forexzim.service.GscService;
 import com.forexzim.service.NewsletterService;
+import com.forexzim.service.RateService;
 import com.forexzim.service.ScheduledScraperService;
 import com.forexzim.service.SystemEventService;
 import com.forexzim.service.TelegramBotService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -41,11 +46,13 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,6 +81,8 @@ public class AdminController {
     private final TelegramAlertRepository telegramAlertRepository;
     private final ScheduledScraperService scheduledScraperService;
     private final RateRepository rateRepository;
+    private final SourceRepository sourceRepository;
+    private final RateService rateService;
     private final GscService gscService;
     private final NewsletterService newsletterService;
     private final SystemEventService systemEventService;
@@ -85,6 +94,8 @@ public class AdminController {
                            TelegramAlertRepository telegramAlertRepository,
                            ScheduledScraperService scheduledScraperService,
                            RateRepository rateRepository,
+                           SourceRepository sourceRepository,
+                           RateService rateService,
                            GscService gscService,
                            NewsletterService newsletterService,
                            SystemEventService systemEventService,
@@ -95,6 +106,8 @@ public class AdminController {
         this.telegramAlertRepository = telegramAlertRepository;
         this.scheduledScraperService = scheduledScraperService;
         this.rateRepository = rateRepository;
+        this.sourceRepository = sourceRepository;
+        this.rateService = rateService;
         this.gscService = gscService;
         this.newsletterService = newsletterService;
         this.systemEventService = systemEventService;
@@ -248,6 +261,7 @@ public class AdminController {
         }
 
         model.addAttribute("activePage", "dashboard");
+        model.addAttribute("adminToken", adminToken);
         return "admin/dashboard";
     }
 
@@ -272,10 +286,13 @@ public class AdminController {
     // ── Blog management ────────────────────────────────────────────────────────
 
     @GetMapping("/blog")
-    public String blogList(Model model) {
-        model.addAttribute("posts",
-            blogRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")));
+    public String blogList(@RequestParam(defaultValue = "0") int page, Model model) {
+        Page<BlogPost> postsPage = blogRepository.findAll(
+            PageRequest.of(Math.max(0, page), 20, Sort.by(Sort.Direction.DESC, "createdAt")));
+        model.addAttribute("posts", postsPage.getContent());
+        model.addAttribute("postsPage", postsPage);
         model.addAttribute("activePage", "blog");
+        model.addAttribute("adminToken", adminToken);
         return "admin/blog-list";
     }
 
@@ -403,23 +420,165 @@ public class AdminController {
     // ── Rate data table ────────────────────────────────────────────────────────
 
     @GetMapping("/calendar")
-    public String calendar() {
+    public String calendar(@RequestParam(required = false) String month, Model model) {
+        ZoneId harare = ZoneId.of("Africa/Harare");
+        YearMonth ym;
+        try {
+            ym = month != null && !month.isBlank() ? YearMonth.parse(month) : YearMonth.now(harare);
+        } catch (DateTimeParseException e) {
+            ym = YearMonth.now(harare);
+        }
+
+        // Map each post to a calendar date: published posts by publishedAt,
+        // scheduled posts (publishAt set, not yet published) by publishAt.
+        Map<LocalDate, List<Map<String, Object>>> postsByDay = new LinkedHashMap<>();
+        for (BlogPost p : blogRepository.findAll()) {
+            boolean published = p.getStatus() == BlogPost.Status.PUBLISHED && p.getPublishedAt() != null;
+            LocalDateTime when = published ? p.getPublishedAt()
+                : (p.getStatus() != BlogPost.Status.PUBLISHED ? p.getPublishAt() : null);
+            if (when == null) continue;
+            LocalDate day = when.toLocalDate();
+            if (!YearMonth.from(day).equals(ym)) continue;
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("id", p.getId());
+            entry.put("title", p.getTitle());
+            entry.put("published", published);
+            postsByDay.computeIfAbsent(day, k -> new ArrayList<>()).add(entry);
+        }
+
+        LocalDate today = LocalDate.now(harare);
+        List<Map<String, Object>> days = new ArrayList<>();
+        for (int d = 1; d <= ym.lengthOfMonth(); d++) {
+            LocalDate date = ym.atDay(d);
+            Map<String, Object> cell = new LinkedHashMap<>();
+            cell.put("day", d);
+            cell.put("today", date.equals(today));
+            cell.put("posts", postsByDay.getOrDefault(date, List.of()));
+            days.add(cell);
+        }
+
+        model.addAttribute("monthLabel", ym.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        model.addAttribute("prevMonth", ym.minusMonths(1).toString());
+        model.addAttribute("nextMonth", ym.plusMonths(1).toString());
+        model.addAttribute("leadingBlanks", ym.atDay(1).getDayOfWeek().getValue() - 1); // Monday-first grid
+        model.addAttribute("days", days);
+        model.addAttribute("activePage", "calendar");
         return "admin/calendar";
     }
 
     @GetMapping("/rates")
     public String rates(Model model) {
         model.addAttribute("rates", rateRepository.findLatestBySourceAndCurrencyPair());
+        model.addAttribute("sources", sourceRepository.findAll(Sort.by("name")));
         model.addAttribute("activePage", "rates");
         return "admin/rates";
+    }
+
+    @PostMapping("/rates")
+    public String addRateManually(@RequestParam(required = false) Long sourceId,
+                                  @RequestParam(required = false) String currencyPair,
+                                  @RequestParam(required = false) BigDecimal buyRate,
+                                  @RequestParam(required = false) BigDecimal sellRate,
+                                  @RequestParam(required = false) LocalDateTime scrapedAt,
+                                  RedirectAttributes ra) {
+        if (sourceId == null) {
+            ra.addFlashAttribute("error", "Please select a source.");
+            return "redirect:/admin/rates";
+        }
+        if (currencyPair == null || currencyPair.isBlank()) {
+            ra.addFlashAttribute("error", "Currency pair is required.");
+            return "redirect:/admin/rates";
+        }
+        if (buyRate == null || buyRate.compareTo(BigDecimal.ZERO) <= 0
+                || sellRate == null || sellRate.compareTo(BigDecimal.ZERO) <= 0) {
+            ra.addFlashAttribute("error", "Buy and sell rates must be positive numbers.");
+            return "redirect:/admin/rates";
+        }
+        Optional<Source> source = sourceRepository.findById(sourceId);
+        if (source.isEmpty()) {
+            ra.addFlashAttribute("error", "Unknown source.");
+            return "redirect:/admin/rates";
+        }
+        try {
+            Rate rate = new Rate();
+            rate.setSource(source.get());
+            rate.setCurrencyPair(currencyPair.trim());
+            rate.setBuyRate(buyRate);
+            rate.setSellRate(sellRate);
+            rate.setScrapedAt(scrapedAt != null ? scrapedAt : LocalDateTime.now());
+            rateRepository.save(rate);
+            rateService.evictRateCache();
+            systemEventService.log(SystemEventLog.EventType.MANUAL_RATE,
+                "Manual rate added for " + source.get().getName() + " " + rate.getCurrencyPair(),
+                Map.of("source", source.get().getName(),
+                       "currencyPair", rate.getCurrencyPair(),
+                       "buyRate", buyRate.toPlainString(),
+                       "sellRate", sellRate.toPlainString()));
+            ra.addFlashAttribute("success", "Rate added for " + source.get().getName()
+                + " (" + rate.getCurrencyPair() + ").");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Could not save rate: " + friendlyError(e));
+        }
+        return "redirect:/admin/rates";
     }
 
     // ── Newsletter compose & send ──────────────────────────────────────────────
 
     @GetMapping("/newsletter")
     public String newsletterCompose(Model model) {
+        model.addAttribute("digestTemplate", buildWeeklyDigestTemplate());
+        model.addAttribute("announcementTemplate", buildAnnouncementTemplate());
         model.addAttribute("activePage", "newsletter");
         return "admin/newsletter";
+    }
+
+    private String buildWeeklyDigestTemplate() {
+        Rate official = null;
+        Rate blackMarket = null;
+        try {
+            List<Rate> latest = rateRepository.findLatestBySourceAndCurrencyPair();
+            official = latest.stream()
+                .filter(r -> "ZimPriceCheck".equals(r.getSource().getName()) && "USD/ZiG".equals(r.getCurrencyPair()))
+                .findFirst().orElse(null);
+            blackMarket = latest.stream()
+                .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
+                          && r.getCurrencyPair() != null && r.getCurrencyPair().startsWith("USD/ZiG_Informal"))
+                .filter(r -> r.getBuyRate() != null)
+                .max(Comparator.comparing(Rate::getBuyRate)).orElse(null);
+        } catch (Exception ignored) {}
+
+        String date = LocalDate.now(ZoneId.of("Africa/Harare")).format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        return "<h2 style=\"margin:0 0 8px;\">Weekly Rate Digest — " + date + "</h2>\n"
+            + "<p>Here is where the USD/ZiG exchange rate stands this week:</p>\n"
+            + "<table style=\"width:100%;border-collapse:collapse;margin:16px 0;\">\n"
+            + "  <tr style=\"background:#f3f4f6;\">\n"
+            + "    <th style=\"text-align:left;padding:8px 12px;border:1px solid #e5e7eb;\">Market</th>\n"
+            + "    <th style=\"text-align:right;padding:8px 12px;border:1px solid #e5e7eb;\">Buy</th>\n"
+            + "    <th style=\"text-align:right;padding:8px 12px;border:1px solid #e5e7eb;\">Sell</th>\n"
+            + "  </tr>\n"
+            + "  <tr>\n"
+            + "    <td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">Official (USD/ZiG)</td>\n"
+            + "    <td style=\"text-align:right;padding:8px 12px;border:1px solid #e5e7eb;\">" + fmtRate(official != null ? official.getBuyRate() : null) + "</td>\n"
+            + "    <td style=\"text-align:right;padding:8px 12px;border:1px solid #e5e7eb;\">" + fmtRate(official != null ? official.getSellRate() : null) + "</td>\n"
+            + "  </tr>\n"
+            + "  <tr>\n"
+            + "    <td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">Black Market (USD/ZiG)</td>\n"
+            + "    <td style=\"text-align:right;padding:8px 12px;border:1px solid #e5e7eb;\">" + fmtRate(blackMarket != null ? blackMarket.getBuyRate() : null) + "</td>\n"
+            + "    <td style=\"text-align:right;padding:8px 12px;border:1px solid #e5e7eb;\">" + fmtRate(blackMarket != null ? blackMarket.getSellRate() : null) + "</td>\n"
+            + "  </tr>\n"
+            + "</table>\n"
+            + "<p>[Add your commentary here — what moved this week, and what it means for your money.]</p>\n"
+            + "<p style=\"margin-top:20px;\"><a href=\"https://zimrate.com\" style=\"display:inline-block;background:#14532d;color:#ffffff;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;\">See live rates on ZimRate</a></p>";
+    }
+
+    private String buildAnnouncementTemplate() {
+        return "<h2 style=\"margin:0 0 8px;\">[Announcement headline]</h2>\n"
+            + "<p>[Write your announcement here. Keep it short and clear — one or two paragraphs.]</p>\n"
+            + "<p style=\"margin-top:20px;\"><a href=\"https://zimrate.com\" style=\"display:inline-block;background:#14532d;color:#ffffff;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;\">[Button text]</a></p>";
+    }
+
+    private String fmtRate(BigDecimal value) {
+        return value == null ? "—" : value.setScale(2, RoundingMode.HALF_UP).toPlainString() + " ZiG";
     }
 
     @PostMapping("/newsletter/send")
@@ -506,6 +665,34 @@ public class AdminController {
         model.addAttribute("telegramBlastCount", telegramBotService.getBlastRecipientCount());
         model.addAttribute("activePage", "subscribers");
         return "admin/subscribers";
+    }
+
+    @PostMapping("/subscribers/newsletter/{id}/deactivate")
+    public String deactivateNewsletterSubscriber(@PathVariable Long id, RedirectAttributes ra) {
+        Optional<NewsletterSubscriber> sub = newsletterSubscriberRepository.findById(id);
+        if (sub.isEmpty()) {
+            ra.addFlashAttribute("error", "Newsletter subscriber not found.");
+        } else {
+            NewsletterSubscriber s = sub.get();
+            s.setActive(false);
+            newsletterSubscriberRepository.save(s);
+            ra.addFlashAttribute("success", "Unsubscribed " + s.getEmail() + " from the newsletter.");
+        }
+        return "redirect:/admin/subscribers";
+    }
+
+    @PostMapping("/subscribers/alerts/{id}/deactivate")
+    public String deactivateAlertSubscription(@PathVariable Long id, RedirectAttributes ra) {
+        Optional<AlertSubscription> alert = alertSubscriptionRepository.findById(id);
+        if (alert.isEmpty()) {
+            ra.addFlashAttribute("error", "Alert subscription not found.");
+        } else {
+            AlertSubscription a = alert.get();
+            a.setActive(false);
+            alertSubscriptionRepository.save(a);
+            ra.addFlashAttribute("success", "Deactivated alert for " + a.getEmail() + ".");
+        }
+        return "redirect:/admin/subscribers";
     }
 
     // ── Telegram blast ────────────────────────────────────────────────────────

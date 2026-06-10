@@ -31,6 +31,15 @@
                         <div class="card-body">
 
                             <div class="form-group">
+                                <label class="form-label" for="templateSelect">Load template</label>
+                                <select class="form-control" id="templateSelect" onchange="loadTemplate(this)">
+                                    <option value="">— Start from scratch —</option>
+                                    <option value="digest">Weekly Rate Digest (current rates prefilled)</option>
+                                    <option value="announcement">Announcement</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="form-label" for="subject">Subject <span style="color:var(--red)">*</span></label>
                                 <input class="form-control" type="text" id="subject" name="subject"
                                        placeholder="Your newsletter subject..." required>
@@ -140,6 +149,37 @@
     .newsletter-grid { grid-template-columns: 1fr; }
 }
 </style>
+
+<script th:inline="javascript">
+// ── Load template presets ───────────────────────────────────────────────
+const NEWSLETTER_TEMPLATES = {
+    digest: {
+        subject: 'ZimRate Weekly Rate Digest',
+        body: /*[[${digestTemplate}]]*/ ''
+    },
+    announcement: {
+        subject: '',
+        body: /*[[${announcementTemplate}]]*/ ''
+    }
+};
+
+function loadTemplate(select) {
+    const key = select.value;
+    if (!key) return;
+    const tpl = NEWSLETTER_TEMPLATES[key];
+    if (!tpl) return;
+    const bodyEl = document.getElementById('body');
+    if (bodyEl.value.trim() &&
+        !confirm('Replace the current editor content with the "' + select.options[select.selectedIndex].text + '" template?')) {
+        select.value = '';
+        return;
+    }
+    bodyEl.value = tpl.body;
+    const subjectEl = document.getElementById('subject');
+    if (tpl.subject && !subjectEl.value.trim()) subjectEl.value = tpl.subject;
+    select.value = '';
+}
+</script>
 
 <script>
 // Toggle test panel

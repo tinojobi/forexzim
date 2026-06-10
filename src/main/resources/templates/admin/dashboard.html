@@ -809,7 +809,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script th:inline="javascript">
 // ── Configuration ──────────────────────────────────────────────────────
-const ADMIN_TOKEN = '512d2584da6010b519f0183fe624d5f7';
+const ADMIN_TOKEN = /*[[${adminToken}]]*/ '';
 
 // ── Quick Actions dropdown ─────────────────────────────────────────────
 function toggleQuickActions() {

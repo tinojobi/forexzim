@@ -25,7 +25,7 @@
                         <i class="fas fa-newspaper"></i>
                         <span id="postsHeading">All Posts</span>
                         <span class="badge badge-draft" style="font-size:11px;"
-                              th:text="${posts.size()} + ' total'">0 total</span>
+                              th:text="${postsPage.totalElements} + ' total'">0 total</span>
                     </h2>
                     <div style="display:flex;gap:10px;align-items:center;">
                         <input type="text" id="postFilter" class="form-control" placeholder="Filter posts..."
@@ -205,6 +205,31 @@
                     <i class="fas fa-newspaper"></i>
                     <p>No posts yet. <a th:href="@{/admin/blog/new}">Write your first post</a>.</p>
                 </div>
+
+                <!-- Pagination -->
+                <div th:if="${postsPage.totalPages > 1}"
+                     style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--border);">
+                    <a th:if="${postsPage.hasPrevious()}"
+                       th:href="@{/admin/blog(page=${postsPage.number - 1})}"
+                       class="btn btn-outline btn-sm">
+                        <i class="fas fa-chevron-left"></i> Prev
+                    </a>
+                    <span th:unless="${postsPage.hasPrevious()}" class="btn btn-outline btn-sm"
+                          style="opacity:.45;pointer-events:none;">
+                        <i class="fas fa-chevron-left"></i> Prev
+                    </span>
+                    <span style="font-size:13px;color:var(--muted);"
+                          th:text="'Page ' + ${postsPage.number + 1} + ' of ' + ${postsPage.totalPages}">Page 1 of 1</span>
+                    <a th:if="${postsPage.hasNext()}"
+                       th:href="@{/admin/blog(page=${postsPage.number + 1})}"
+                       class="btn btn-outline btn-sm">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <span th:unless="${postsPage.hasNext()}" class="btn btn-outline btn-sm"
+                          style="opacity:.45;pointer-events:none;">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </span>
+                </div>
             </div>
 
         </div>
@@ -266,8 +291,8 @@
     </div>
 </div>
 
-<script>
-const ADMIN_TOKEN = '512d2584da6010b519f0183fe624d5f7';
+<script th:inline="javascript">
+const ADMIN_TOKEN = /*[[${adminToken}]]*/ '';
 let currentTab = 'all';
 
 function confirmDelete(btn) {

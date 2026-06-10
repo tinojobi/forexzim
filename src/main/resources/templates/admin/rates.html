@@ -11,6 +11,15 @@
 
         <div class="admin-body">
 
+            <div th:if="${success}" class="flash flash-success">
+                <i class="fas fa-circle-check"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="flash flash-error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span th:text="${error}"></span>
+            </div>
+
             <!-- Rate History Chart -->
             <div class="card" style="margin-bottom:20px;">
                 <div class="card-header">
@@ -85,6 +94,52 @@
                 </div>
             </div>
 
+            <!-- Manual rate entry -->
+            <div class="card" style="margin-top:20px;">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-plus"></i> Add Rate Manually</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" th:action="@{/admin/rates}" id="manualRateForm">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;align-items:end;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label" for="rateSource">Source <span style="color:var(--red)">*</span></label>
+                                <select class="form-control" id="rateSource" name="sourceId" required>
+                                    <option value="" disabled selected>Select source…</option>
+                                    <option th:each="src : ${sources}" th:value="${src.id}"
+                                            th:text="${src.name}">Source</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label" for="ratePair">Currency Pair <span style="color:var(--red)">*</span></label>
+                                <input class="form-control" type="text" id="ratePair" name="currencyPair"
+                                       value="USD/ZWG" maxlength="30" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label" for="rateBuy">Buy Rate <span style="color:var(--red)">*</span></label>
+                                <input class="form-control" type="number" id="rateBuy" name="buyRate"
+                                       step="0.0001" min="0.0001" placeholder="e.g. 26.5000" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label" for="rateSell">Sell Rate <span style="color:var(--red)">*</span></label>
+                                <input class="form-control" type="number" id="rateSell" name="sellRate"
+                                       step="0.0001" min="0.0001" placeholder="e.g. 27.0000" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label class="form-label" for="rateScrapedAt">Timestamp</label>
+                                <input class="form-control" type="datetime-local" id="rateScrapedAt" name="scrapedAt">
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-floppy-disk"></i> Add Rate
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -135,6 +190,15 @@ function setDays(btn, days) {
 }
 
 loadChart();
+
+// Default the manual-rate timestamp to now (local time)
+(function() {
+    const el = document.getElementById('rateScrapedAt');
+    if (!el) return;
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    el.value = now.toISOString().slice(0, 16);
+})();
 </script>
 <th:block th:replace="~{admin/layout :: darkModeScript}"></th:block>
 </body>

@@ -18,6 +18,7 @@ public class SystemEventLog {
         ALERT_SENT, ALERT_FAILED,
         LOGIN, LOGOUT,
         SUBSCRIBE, UNSUBSCRIBE,
+        MANUAL_RATE,
         ERROR, INFO
     }
 

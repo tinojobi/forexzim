@@ -11,6 +11,15 @@
 
         <div class="admin-body">
 
+            <div th:if="${success}" class="flash flash-success">
+                <i class="fas fa-circle-check"></i>
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="flash flash-error">
+                <i class="fas fa-circle-exclamation"></i>
+                <span th:text="${error}"></span>
+            </div>
+
             <!-- Stat cards -->
             <div class="stat-grid" style="margin-bottom:24px;">
                 <div class="stat-card">
@@ -31,6 +40,13 @@
                     <div class="stat-label">Telegram Alerts</div>
                     <div class="stat-sub">Via @the_zimrate_bot</div>
                 </div>
+            </div>
+
+            <!-- Search -->
+            <div style="margin-bottom:12px;">
+                <input type="text" id="subscriberSearch" class="form-control"
+                       placeholder="Search by email..." style="max-width:320px;"
+                       oninput="filterSubscribers(this.value)">
             </div>
 
             <!-- Tab bar -->
@@ -59,19 +75,25 @@
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span class="badge badge-published" th:text="${newsletterActive} + ' active'">0 active</span>
                         <span class="badge badge-draft" th:text="${newsletterTotal - newsletterActive} + ' unsubscribed'">0 unsubscribed</span>
+                        <button type="button" class="btn btn-outline btn-sm"
+                                th:if="${!newsletterSubs.isEmpty()}"
+                                onclick="exportTableCsv('newsletterTable', 'newsletter-subscribers.csv')">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
                     </div>
                 </div>
                 <div class="table-wrap" th:if="${!newsletterSubs.isEmpty()}">
-                    <table>
+                    <table id="newsletterTable">
                         <thead>
                             <tr>
                                 <th>Email</th>
                                 <th>Status</th>
                                 <th>Subscribed</th>
+                                <th data-no-csv>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="sub : ${newsletterSubs}">
+                            <tr th:each="sub : ${newsletterSubs}" th:data-email="${sub.email}">
                                 <td>
                                     <span th:text="${sub.email}" style="font-weight:500;">email</span>
                                 </td>
@@ -85,6 +107,19 @@
                                 </td>
                                 <td style="font-size:13px;color:var(--muted);"
                                     th:text="${#temporals.format(sub.subscribedAt, 'dd MMM yyyy, HH:mm')}">—</td>
+                                <td data-no-csv>
+                                    <form th:if="${sub.active}"
+                                          th:action="@{/admin/subscribers/newsletter/{id}/deactivate(id=${sub.id})}"
+                                          method="post" style="display:inline;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                th:data-email="${sub.email}"
+                                                onclick="confirmDeactivate(this, 'Unsubscribe')">
+                                            <i class="fas fa-user-slash"></i> Unsubscribe
+                                        </button>
+                                    </form>
+                                    <span th:unless="${sub.active}" style="font-size:12px;color:var(--light);">—</span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -102,10 +137,15 @@
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span class="badge badge-published" th:text="${alertActive} + ' active'">0 active</span>
                         <span class="badge badge-draft" th:text="${alertTotal - alertActive} + ' inactive'">0 inactive</span>
+                        <button type="button" class="btn btn-outline btn-sm"
+                                th:if="${!emailAlerts.isEmpty()}"
+                                onclick="exportTableCsv('emailAlertsTable', 'email-alerts.csv')">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
                     </div>
                 </div>
                 <div class="table-wrap" th:if="${!emailAlerts.isEmpty()}">
-                    <table>
+                    <table id="emailAlertsTable">
                         <thead>
                             <tr>
                                 <th>Email</th>
@@ -114,10 +154,11 @@
                                 <th>Status</th>
                                 <th>Created</th>
                                 <th>Last Fired</th>
+                                <th data-no-csv>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="alert : ${emailAlerts}">
+                            <tr th:each="alert : ${emailAlerts}" th:data-email="${alert.email}">
                                 <td style="font-weight:500;" th:text="${alert.email}">email</td>
                                 <td>
                                     <span class="badge badge-gold" th:text="${alert.currencyPair}">USD/ZiG</span>
@@ -148,6 +189,19 @@
                                     <span th:if="${alert.lastNotifiedAt != null}"
                                           th:text="${#temporals.format(alert.lastNotifiedAt, 'dd MMM yyyy, HH:mm')}">—</span>
                                     <span th:if="${alert.lastNotifiedAt == null}" style="color:var(--light);">Never</span>
+                                </td>
+                                <td data-no-csv>
+                                    <form th:if="${alert.active}"
+                                          th:action="@{/admin/subscribers/alerts/{id}/deactivate(id=${alert.id})}"
+                                          method="post" style="display:inline;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                th:data-email="${alert.email}"
+                                                onclick="confirmDeactivate(this, 'Deactivate alert')">
+                                            <i class="fas fa-bell-slash"></i> Deactivate
+                                        </button>
+                                    </form>
+                                    <span th:unless="${alert.active}" style="font-size:12px;color:var(--light);">—</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -323,6 +377,46 @@
 </style>
 
 <script>
+// ── Search across subscriber tables ────────────────────────────────────
+function filterSubscribers(q) {
+    q = q.toLowerCase().trim();
+    document.querySelectorAll('.sub-tab-panel tbody tr').forEach(row => {
+        const key = row.dataset.email || row.cells[0]?.textContent || '';
+        row.style.display = key.toLowerCase().includes(q) ? '' : 'none';
+    });
+}
+
+// ── CSV export (client-side, skips columns marked data-no-csv) ─────────
+function exportTableCsv(tableId, filename) {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const csvCell = c => {
+        const text = c.textContent.replace(/\s+/g, ' ').trim();
+        return '"' + text.replace(/"/g, '""') + '"';
+    };
+    const rows = [];
+    table.querySelectorAll('tr').forEach(tr => {
+        const cells = Array.from(tr.children).filter(c => !c.hasAttribute('data-no-csv'));
+        if (cells.length) rows.push(cells.map(csvCell).join(','));
+    });
+    const blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+}
+
+// ── Deactivate / unsubscribe confirm ───────────────────────────────────
+function confirmDeactivate(btn, action) {
+    const email = btn.dataset.email;
+    if (confirm(action + ' for "' + email + '"? They will stop receiving emails.')) {
+        btn.closest('form').submit();
+    }
+}
+
 function showTab(name, btn) {
     document.querySelectorAll('.sub-tab-panel').forEach(p => p.style.display = 'none');
     document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
