@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZimRate API — Free Zimbabwe Exchange Rate API (USD/ZiG)</title>
+    <meta name="description" content="Free public REST API for Zimbabwe USD/ZiG exchange rates — official, black market, and bank rates as JSON. No API key required. Includes a one-line embeddable rate widget.">
+    <link rel="canonical" href="https://zimrate.com/api-docs">
+    <link rel="alternate" hreflang="en-ZW" href="https://zimrate.com/api-docs">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://zimrate.com/api-docs">
+    <meta property="og:title"       content="ZimRate API — Free Zimbabwe Exchange Rate API (USD/ZiG)">
+    <meta property="og:description" content="Free public REST API for Zimbabwe USD/ZiG exchange rates — official, black market, and bank rates as JSON. No API key required.">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="ZimRate API — Free Zimbabwe Exchange Rate API (USD/ZiG)">
+    <meta name="twitter:description" content="Free public REST API for Zimbabwe USD/ZiG exchange rates — official, black market, and bank rates as JSON. No API key required.">
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa2')}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container api-docs-wrap">
+
+        <!-- ── Intro ─────────────────────────────────────────────── -->
+        <div class="info-card privacy-card api-docs-card">
+            <div class="privacy-header">
+                <h2><i class="fas fa-code"></i> ZimRate Developer API</h2>
+                <p class="privacy-date">Free · JSON · No API key required</p>
+            </div>
+            <div class="privacy-body">
+                <p>
+                    ZimRate offers a <strong>free public REST API</strong> for Zimbabwe exchange
+                    rates — the same data that powers this site: the official RBZ rate, black
+                    market (parallel) rates, bank rates, and regional cross rates, refreshed
+                    every 30 minutes.
+                </p>
+                <ul>
+                    <li><strong>No API key</strong> is currently required — just call the endpoints below.</li>
+                    <li><strong>Attribution requested:</strong> if you display our data publicly, please link back to <a class="privacy-link" href="https://zimrate.com">zimrate.com</a>.</li>
+                    <li><strong>Fair use:</strong> rates update every 30 minutes, so polling more than once every few minutes gains you nothing. Abusive traffic may be rate-limited or blocked, and we may introduce API keys for high-volume use in future.</li>
+                </ul>
+                <p>
+                    Base URL: <code class="api-inline-code">https://zimrate.com</code>.
+                    All endpoints respond with <code class="api-inline-code">application/json</code>
+                    and require no authentication. Rates are indicative only — see our
+                    <a class="privacy-link" th:href="@{/about}">disclaimer</a>.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── GET /api/rates/latest ─────────────────────────────── -->
+        <div class="info-card privacy-card api-docs-card" id="latest">
+            <div class="api-endpoint-head">
+                <span class="api-method">GET</span>
+                <code class="api-endpoint-path">/api/rates/latest</code>
+            </div>
+            <div class="privacy-body">
+                <p>
+                    Returns the most recent rate captured for every active source and currency
+                    pair, as a flat array. Includes USD/ZiG official, black market, business and
+                    bank rates, plus international cross rates (USD/ZAR, USD/GBP, etc.).
+                </p>
+                <p class="api-no-params">No query parameters.</p>
+
+                <h3>Example request</h3>
+                <pre class="api-code"><code>curl "https://zimrate.com/api/rates/latest"</code></pre>
+
+                <h3>Example response</h3>
+                <pre class="api-code"><code>[
+  {
+    "id": 18432,
+    "source": {
+      "id": 1,
+      "name": "ZimPriceCheck",
+      "type": "official",
+      "url": "https://zimpricecheck.com",
+      "active": true
+    },
+    "currencyPair": "USD/ZiG",
+    "buyRate": 26.4521,
+    "sellRate": 26.7160,
+    "scrapedAt": "2026-06-10T08:30:00"
+  },
+  {
+    "id": 18435,
+    "source": {
+      "id": 1,
+      "name": "ZimPriceCheck",
+      "type": "official",
+      "url": "https://zimpricecheck.com",
+      "active": true
+    },
+    "currencyPair": "USD/ZiG_InformalLow",
+    "buyRate": 38.0000,
+    "sellRate": null,
+    "scrapedAt": "2026-06-10T08:30:00"
+  }
+]</code></pre>
+                <p class="api-note">
+                    <code class="api-inline-code">buyRate</code> / <code class="api-inline-code">sellRate</code>
+                    are decimal numbers (4&nbsp;dp); <code class="api-inline-code">sellRate</code> may be
+                    <code class="api-inline-code">null</code> for sources that publish a single rate.
+                    <code class="api-inline-code">scrapedAt</code> is an ISO-8601 local timestamp
+                    (Africa/Harare). Pair names like
+                    <code class="api-inline-code">USD/ZiG_InformalLow</code>,
+                    <code class="api-inline-code">USD/ZiG_InformalHigh</code> and
+                    <code class="api-inline-code">USD/ZiG_Cash</code> are black market variants;
+                    <code class="api-inline-code">USD/ZiG_MaxBusiness</code> is the maximum business rate.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── GET /api/rates/latest-grouped ─────────────────────── -->
+        <div class="info-card privacy-card api-docs-card" id="latest-grouped">
+            <div class="api-endpoint-head">
+                <span class="api-method">GET</span>
+                <code class="api-endpoint-path">/api/rates/latest-grouped</code>
+            </div>
+            <div class="privacy-body">
+                <p>
+                    Same data as <code class="api-inline-code">/api/rates/latest</code>, but grouped
+                    into an object keyed by currency pair. Useful when several sources publish the
+                    same pair (e.g. multiple banks quoting USD/ZWG).
+                </p>
+                <p class="api-no-params">No query parameters.</p>
+
+                <h3>Example request</h3>
+                <pre class="api-code"><code>curl "https://zimrate.com/api/rates/latest-grouped"</code></pre>
+
+                <h3>Example response</h3>
+                <pre class="api-code"><code>{
+  "USD/ZiG": [
+    {
+      "id": 18432,
+      "source": { "id": 1, "name": "ZimPriceCheck", "type": "official", "url": "https://zimpricecheck.com", "active": true },
+      "currencyPair": "USD/ZiG",
+      "buyRate": 26.4521,
+      "sellRate": 26.7160,
+      "scrapedAt": "2026-06-10T08:30:00"
+    }
+  ],
+  "USD/ZWG": [
+    {
+      "id": 18440,
+      "source": { "id": 3, "name": "CBZ", "type": "bank", "url": "https://www.cbz.co.zw", "active": true },
+      "currencyPair": "USD/ZWG",
+      "buyRate": 26.4000,
+      "sellRate": 26.9500,
+      "scrapedAt": "2026-06-10T08:30:00"
+    }
+  ]
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- ── GET /api/rates/history ────────────────────────────── -->
+        <div class="info-card privacy-card api-docs-card" id="history">
+            <div class="api-endpoint-head">
+                <span class="api-method">GET</span>
+                <code class="api-endpoint-path">/api/rates/history</code>
+            </div>
+            <div class="privacy-body">
+                <p>
+                    Returns daily average <em>buy</em> rates for one source and currency pair over
+                    the last <code class="api-inline-code">days</code> days — ideal for charts.
+                </p>
+
+                <h3>Query parameters</h3>
+                <div class="api-table-scroll">
+                    <table class="api-params-table">
+                        <thead>
+                            <tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code class="api-inline-code">source</code></td>
+                                <td>string</td>
+                                <td><code class="api-inline-code">ZimPriceCheck</code></td>
+                                <td>Source name, e.g. <code class="api-inline-code">ZimPriceCheck</code>, <code class="api-inline-code">CBZ</code>, <code class="api-inline-code">FBC Bank</code>, <code class="api-inline-code">Exchange Rate API</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code class="api-inline-code">pair</code></td>
+                                <td>string</td>
+                                <td><code class="api-inline-code">USD/ZiG</code></td>
+                                <td>Currency pair, e.g. <code class="api-inline-code">USD/ZiG</code>, <code class="api-inline-code">USD/ZiG_InformalLow</code>, <code class="api-inline-code">USD/ZWG</code>, <code class="api-inline-code">USD/ZAR</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code class="api-inline-code">days</code></td>
+                                <td>integer</td>
+                                <td><code class="api-inline-code">7</code></td>
+                                <td>Number of days of history. Clamped to the range 1–365.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Example request</h3>
+                <pre class="api-code"><code>curl "https://zimrate.com/api/rates/history?source=ZimPriceCheck&amp;pair=USD/ZiG&amp;days=30"</code></pre>
+
+                <h3>Example response</h3>
+                <pre class="api-code"><code>[
+  { "day": "2026-06-06", "rate": 26.41 },
+  { "day": "2026-06-07", "rate": 26.43 },
+  { "day": "2026-06-08", "rate": 26.44 },
+  { "day": "2026-06-09", "rate": 26.45 }
+]</code></pre>
+                <p class="api-note">
+                    <code class="api-inline-code">day</code> is an ISO date string and
+                    <code class="api-inline-code">rate</code> is the average buy rate for that day.
+                    Days with no data for the requested source/pair are omitted; an unknown
+                    source or pair returns an empty array <code class="api-inline-code">[]</code>.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── GET /api/widget/rates ─────────────────────────────── -->
+        <div class="info-card privacy-card api-docs-card" id="widget-rates">
+            <div class="api-endpoint-head">
+                <span class="api-method">GET</span>
+                <code class="api-endpoint-path">/api/widget/rates</code>
+            </div>
+            <div class="privacy-body">
+                <p>
+                    A lightweight, CORS-enabled (<code class="api-inline-code">Access-Control-Allow-Origin: *</code>)
+                    endpoint that powers the embeddable widget. Returns only
+                    <code class="api-inline-code">USD/ZiG</code> and
+                    <code class="api-inline-code">USD/ZWG</code> pairs, with rates pre-formatted
+                    as strings rounded to 2&nbsp;decimal places. Perfect for calling directly from
+                    the browser on your own site.
+                </p>
+                <p class="api-no-params">No query parameters.</p>
+
+                <h3>Example request</h3>
+                <pre class="api-code"><code>curl "https://zimrate.com/api/widget/rates"</code></pre>
+
+                <h3>Example response</h3>
+                <pre class="api-code"><code>[
+  { "source": "ZimPriceCheck", "type": "official", "buy": "26.45", "sell": "26.72" },
+  { "source": "CBZ",           "type": "bank",     "buy": "26.40", "sell": "26.95" },
+  { "source": "FBC Bank",      "type": "bank",     "buy": "26.38", "sell": "26.92" }
+]</code></pre>
+                <p class="api-note">
+                    <code class="api-inline-code">buy</code> and <code class="api-inline-code">sell</code>
+                    are strings; a missing rate is returned as <code class="api-inline-code">"-"</code>.
+                    <code class="api-inline-code">type</code> is the source category
+                    (e.g. <code class="api-inline-code">official</code>, <code class="api-inline-code">bank</code>,
+                    <code class="api-inline-code">parallel</code>), or an empty string if unset.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── Embeddable widget ─────────────────────────────────── -->
+        <div class="info-card privacy-card api-docs-card" id="embed-widget">
+            <div class="api-endpoint-head">
+                <span class="api-method api-method-embed">EMBED</span>
+                <code class="api-endpoint-path">/widget.js</code>
+            </div>
+            <div class="privacy-body">
+                <p>
+                    Don't want to write any code? Drop our widget into any HTML page with a single
+                    script tag. It renders a live USD/ZiG rates table (self-styled, ~300px wide)
+                    exactly where you place the tag, and refreshes its data from
+                    <code class="api-inline-code">/api/widget/rates</code> on every page load.
+                </p>
+
+                <h3>Embed code</h3>
+                <pre class="api-code"><code>&lt;script src="https://zimrate.com/widget.js"&gt;&lt;/script&gt;</code></pre>
+
+                <p>
+                    Paste it wherever you want the widget to appear — sidebar, footer, or inside an
+                    article. It works on WordPress, Blogger, plain HTML, and most site builders that
+                    allow custom HTML. See the
+                    <a class="privacy-link" th:href="@{/widget}">widget page</a> for a live preview.
+                </p>
+            </div>
+            <div class="privacy-footer">
+                <a th:href="@{/widget}" class="btn-back"><i class="fas fa-puzzle-piece"></i> Widget preview</a>
+                <a th:href="@{/contact}" class="btn-back" style="margin-left:0.75rem"><i class="fas fa-envelope"></i> Questions? Contact us</a>
+            </div>
+        </div>
+
+    </main>
+
+    <th:block th:replace="~{layout :: alert-modal}"></th:block>
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>

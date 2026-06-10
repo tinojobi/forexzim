@@ -51,6 +51,9 @@ public class SitemapController {
         appendUrl(sb, baseUrl + "/contact", "monthly", "0.4", today);
         appendUrl(sb, baseUrl + "/privacy", "yearly",  "0.3", today);
 
+        // Developer API documentation
+        appendUrl(sb, baseUrl + "/api-docs", "monthly", "0.5", today);
+
         // Remittance comparison
         appendUrl(sb, baseUrl + "/send-money-to-zimbabwe", "weekly", "0.9", today);
 
