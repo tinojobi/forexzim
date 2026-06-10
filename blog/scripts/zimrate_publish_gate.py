@@ -19,7 +19,7 @@ import sys
 from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 
 API_BASE = "http://127.0.0.1:8090"
@@ -93,6 +93,14 @@ def absolute_url(value: str | None, public_base: str) -> str | None:
     return urljoin(public_base.rstrip("/") + "/", value.lstrip("/"))
 
 
+def is_same_domain_url(value: str | None, public_base: str) -> bool:
+    if not value:
+        return False
+    host = urlparse(absolute_url(value, public_base)).netloc.lower()
+    public_host = urlparse(public_base).netloc.lower()
+    return host == public_host
+
+
 def meta_values(html: str, key: str) -> list[str]:
     values: list[str] = []
     for tag in re.findall(r"<meta\b[^>]*>", html, flags=re.I):
@@ -121,7 +129,7 @@ def add(checks: list[GateCheck], name: str, ok: bool, severity: str, detail: str
     checks.append(GateCheck(name=name, ok=ok, severity=severity, detail=detail))
 
 
-def validate_api_post(post: dict[str, Any], *, mode: str, require_social_image: bool) -> list[GateCheck]:
+def validate_api_post(post: dict[str, Any], *, mode: str, require_social_image: bool, public_base: str) -> list[GateCheck]:
     checks: list[GateCheck] = []
 
     missing = [field for field in REQUIRED_FIELDS if post.get(field) in (None, "")]
@@ -155,6 +163,9 @@ def validate_api_post(post: dict[str, Any], *, mode: str, require_social_image: 
     has_specific_image = bool(social_image and not any(marker in social_image for marker in DEFAULT_IMAGE_MARKERS))
     severity = "blocker" if require_social_image or mode in {"publish", "social"} else "warning"
     add(checks, "article_specific_social_image", has_specific_image, severity, social_image or "missing")
+    same_domain_ok = is_same_domain_url(social_image, public_base)
+    same_domain_severity = "blocker" if mode in {"prepublish", "publish", "social"} and require_social_image else "warning"
+    add(checks, "same_domain_social_image", same_domain_ok, same_domain_severity, social_image or "missing")
 
     return checks
 
@@ -227,7 +238,7 @@ def main() -> int:
     post = request_json(f"{api_base}/api/blog/{args.slug}", token)
 
     require_social = args.require_social_image or args.mode in {"publish", "social"}
-    checks = validate_api_post(post, mode=args.mode, require_social_image=require_social)
+    checks = validate_api_post(post, mode=args.mode, require_social_image=require_social, public_base=public_base)
     if args.mode in {"publish", "social"} or post.get("status") == "PUBLISHED":
         checks.extend(validate_public(post, public_base=public_base, require_social_image=require_social))
 

@@ -20,9 +20,18 @@ from urllib.request import Request, urlopen
 
 STATE_PATH = Path("/opt/forexzim/monitor/.official_source_watch_state.json")
 LOG_PATH = Path("/opt/forexzim/monitor/official_source_watch.log")
-USER_AGENT = "AthenaZimRateOfficialSourceWatch/1.0 (+https://zimrate.com)"
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
 TIMEOUT = 25
 REPEAT_AFTER_SECONDS = 12 * 60 * 60
+ISSUE_REMINDER_AFTER_SECONDS = 72 * 60 * 60
+BROWSER_HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+    "Upgrade-Insecure-Requests": "1",
+}
 
 SOURCES = [
     {
@@ -42,7 +51,7 @@ SOURCES = [
     },
     {
         "name": "ZERA Press Releases and Public Notices",
-        "url": "https://www.zera.co.zw/press-releases-public-notices/",
+        "url": "https://www.zera.co.zw/publications/",
         "keywords": ["fuel", "lpg", "price", "notice", "press", "tariff", "energy"],
     },
     {
@@ -88,7 +97,7 @@ def log(line: str) -> None:
 
 
 def fetch(url: str) -> tuple[int, str, str]:
-    req = Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml,application/xml,text/plain,*/*"})
+    req = Request(url, headers=BROWSER_HEADERS)
     try:
         with urlopen(req, timeout=TIMEOUT) as resp:
             data = resp.read(500_000)
@@ -170,12 +179,14 @@ def main() -> int:
     state = load_state()
     state.setdefault("sources", {})
     state.setdefault("last_alerts", {})
+    state.setdefault("issue_alerts", {})
     new_items = []
     fetch_issues = []
 
     for source in SOURCES:
         name = source["name"]
-        s_state = state["sources"].setdefault(name, {"seen": [], "failures": 0})
+        s_state = state["sources"].setdefault(name, {"seen": [], "failures": 0, "initialized": False})
+        s_state.setdefault("initialized", False)
         try:
             status, ctype, body = fetch(source["url"])
             if status != 200:
@@ -186,11 +197,13 @@ def main() -> int:
             s_state["failures"] = 0
             items = extract_items(source, body)
             seen = set(s_state.get("seen", []))
-            if not seen:
+            if not s_state.get("initialized"):
                 # First run baseline for this source. Stay silent.
                 s_state["seen"] = [i["id"] for i in items]
+                s_state["initialized"] = True
                 s_state["last_baselined_at"] = now_iso()
                 s_state["last_item_count"] = len(items)
+                s_state["last_success_at"] = now_iso()
                 continue
             for item in items:
                 if item["id"] not in seen and relevance(item["title"]):
@@ -204,9 +217,23 @@ def main() -> int:
             if s_state["failures"] >= 2:
                 fetch_issues.append(f"{name}: fetch failed at {source['url']} ({exc})")
 
-    signature = hashlib.sha256(json.dumps({"new": new_items, "issues": fetch_issues}, sort_keys=True).encode()).hexdigest()
+    signature = hashlib.sha256(json.dumps({"new": new_items}, sort_keys=True).encode()).hexdigest()
     last_alert = state.get("last_alerts", {}).get(signature, 0)
-    should_alert = (new_items or fetch_issues) and (time.time() - float(last_alert or 0) > REPEAT_AFTER_SECONDS)
+    issue_alerts = state.setdefault("issue_alerts", {})
+    issue_lines = []
+    for issue in fetch_issues:
+        issue_key = hashlib.sha256(issue.encode()).hexdigest()
+        last_issue_alert = float(issue_alerts.get(issue_key, 0) or 0)
+        if time.time() - last_issue_alert > ISSUE_REMINDER_AFTER_SECONDS:
+            issue_lines.append(issue)
+            issue_alerts[issue_key] = time.time()
+
+    active_issue_keys = {hashlib.sha256(issue.encode()).hexdigest() for issue in fetch_issues}
+    for issue_key in list(issue_alerts):
+        if issue_key not in active_issue_keys:
+            issue_alerts.pop(issue_key, None)
+
+    should_alert = (new_items and (time.time() - float(last_alert or 0) > REPEAT_AFTER_SECONDS)) or bool(issue_lines)
 
     state["last_run_at"] = now_iso()
     state["last_new_count"] = len(new_items)
@@ -228,9 +255,9 @@ def main() -> int:
                 print(f"- ...and {len(new_items)-8} more")
             print()
             print("Why it matters: official-source update may affect ZimRate rates, taxation, inflation, fuel pricing, forex policy, or future article coverage. Review before drafting.")
-        if fetch_issues:
+        if issue_lines:
             print("Source access issues:")
-            for issue in fetch_issues[:6]:
+            for issue in issue_lines[:6]:
                 print(f"- {issue}")
         print()
         print("No article was drafted or published automatically.")

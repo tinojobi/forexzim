@@ -1,0 +1,28 @@
+{
+  "article": {
+    "title": "China's Huayou Plans Lithium Carbonate Plant in Zimbabwe",
+    "slug": "huayou-lithium-carbonate-zimbabwe"
+  },
+  "image": {
+    "article_type": "company_finance",
+    "layout": "left_monument",
+    "issue": "JUNE 2026 · MINING",
+    "masthead": "Z I M R A T E   I N S I G H T S",
+    "hero_number": "10",
+    "hero_unit": "%",
+    "eyebrow": "Zimbabwe · lithium processing",
+    "headline_context": "Global lithium production share.",
+    "pull_quote": "A bet Huayou seems willing to make.",
+    "background": "#f7eed3",
+    "primary": "#0d3d2e",
+    "text": "#1a1a1a",
+    "accent": "#8a5a1a",
+    "secondary": "#6e4a1a"
+  },
+  "stats": [
+    {"label": "Huayou total", "value": "$1.1B"},
+    {"label": "Mining 2026", "value": "$7B"},
+    {"label": "Capacity", "value": "50,000 MT"},
+    {"label": "Sulphate plant", "value": "$400M"}
+  ]
+}

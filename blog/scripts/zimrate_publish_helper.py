@@ -4,11 +4,18 @@
 Automates the fragile parts of the manual publish flow:
 - fetch an existing blog post
 - optionally attach imageUrl/socialImageUrl while preserving existing fields
+- mirror external social-card images onto same-domain static paths under /images/social/
 - optionally publish the post
 - verify public article, public image, og:image, and twitter:image
 - optionally generate X/Twitter intent links from validated post variants
 
 Examples:
+  # After creating a DRAFT, stage a same-domain social card before sending the preview link
+  python3 blog/scripts/zimrate_publish_helper.py \
+    --slug zig-forex-shortages-parallel-market-demand \
+    --image-url https://pub-b56fdc7dd7bc4e99ab5d1daad8a27630.r2.dev/zig-forex-shortages-paper-cut-collage.png
+
+  # Later, publish the same article after review
   python3 blog/scripts/zimrate_publish_helper.py \
     --slug zig-forex-shortages-parallel-market-demand \
     --image-url https://zimrate.com/images/zig-forex-shortages-paper-cut-collage.png?v=1 \
@@ -23,11 +30,12 @@ import os
 import re
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 
@@ -103,6 +111,73 @@ def absolute_url(value: str, public_base: str) -> str:
     return urljoin(public_base.rstrip("/") + "/", value.lstrip("/"))
 
 
+def is_same_domain_url(value: str | None, public_base: str) -> bool:
+    if not value:
+        return False
+    host = urlparse(absolute_url(value, public_base)).netloc.lower()
+    public_host = urlparse(public_base).netloc.lower()
+    return host == public_host
+
+
+def fetch_binary(url: str) -> tuple[bytes, str]:
+    headers = {
+        "User-Agent": "Mozilla/5.0 ZimRatePublishHelper/1.0",
+        "Accept": "image/png,image/jpeg,image/webp,image/*,*/*",
+    }
+    if "fal.media" in url:
+        headers["Referer"] = "https://fal.ai/"
+    req = Request(url, headers=headers)
+    with urlopen(req, timeout=60) as resp:
+        return resp.read(), resp.headers.get("content-type", "")
+
+
+def stage_same_domain_social_image(slug: str, source_url: str, public_base: str) -> tuple[str, bool]:
+    source_url = absolute_url(source_url, public_base)
+    if is_same_domain_url(source_url, public_base):
+        return source_url, False
+
+    data, ctype = fetch_binary(source_url)
+    ext = Path(urlparse(source_url).path).suffix.lower()
+    if ext not in {".png", ".jpg", ".jpeg", ".webp"}:
+        if "png" in ctype:
+            ext = ".png"
+        elif "jpeg" in ctype or "jpg" in ctype:
+            ext = ".jpg"
+        elif "webp" in ctype:
+            ext = ".webp"
+        else:
+            ext = ".png"
+
+    out_dir = Path("/opt/forexzim/src/main/resources/static/images/social")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{slug}{ext}"
+    old_bytes = out_path.read_bytes() if out_path.exists() else None
+    if old_bytes == data:
+        changed = False
+    else:
+        out_path.write_bytes(data)
+        changed = True
+    version = int(out_path.stat().st_mtime)
+    staged_url = f"{public_base.rstrip('/')}/images/social/{out_path.name}?v={version}"
+    return staged_url, changed
+
+
+def rebuild_and_restart_for_static_assets() -> None:
+    subprocess.run(["./gradlew", "bootJar", "--no-daemon"], check=True)
+    subprocess.run(["systemctl", "stop", "forexzim"], check=True)
+    time.sleep(2)
+    subprocess.run(["systemctl", "start", "forexzim"], check=True)
+    health_url = f"{DEFAULT_API_BASE}/"
+    last_error = ""
+    for _ in range(24):
+        status, _, _ = get_bytes(health_url, timeout=5)
+        if status == 200:
+            return
+        last_error = f"HTTP {status}"
+        time.sleep(5)
+    raise SystemExit(f"FAIL: forexzim did not return HTTP 200 after static asset rebuild/restart: {last_error}")
+
+
 def update_payload(post: dict[str, Any], image_url: str | None, social_image_url: str | None) -> dict[str, Any]:
     missing = [field for field in REQUIRED_UPDATE_FIELDS if field not in post or post[field] is None]
     if missing:
@@ -151,6 +226,19 @@ def verify(article_url: str, expected_image: str | None) -> list[CheckResult]:
         results.append(CheckResult("og_image", og is not None, og or "MISSING"))
         results.append(CheckResult("twitter_image", tw is not None, tw or "MISSING"))
     return results
+
+
+def preview_or_live_url(post: dict[str, Any], public_base: str) -> str:
+    slug = post.get("slug")
+    if not slug:
+        raise SystemExit("FAIL: post is missing slug")
+    base = f"{public_base.rstrip('/')}/blog/{slug}"
+    if post.get("status") == "PUBLISHED":
+        return base
+    preview_token = post.get("previewToken")
+    if preview_token:
+        return f"{base}?preview={preview_token}"
+    return base
 
 
 def run_x_intents(spec_path: str) -> str:
@@ -203,10 +291,10 @@ def main() -> int:
     token = admin_token()
     api_base = args.api_base.rstrip("/")
     public_base = args.public_base.rstrip("/")
-    article_url = f"{public_base}/blog/{args.slug}"
 
     post = request_json("GET", f"{api_base}/api/blog/{args.slug}", token)
     changed = False
+    static_assets_changed = False
 
     image_url = absolute_url(args.image_url, public_base) if args.image_url else None
     social_image_url = absolute_url(args.social_image_url, public_base) if args.social_image_url else image_url
@@ -214,6 +302,15 @@ def main() -> int:
         social_image_url = post.get("socialImageUrl") or post.get("imageUrl")
     if args.social_only:
         image_url = ""
+
+    candidate_social = social_image_url or image_url or post.get("socialImageUrl") or post.get("imageUrl")
+    if candidate_social:
+        staged_social_url, staged_changed = stage_same_domain_social_image(args.slug, candidate_social, public_base)
+        social_image_url = staged_social_url
+        static_assets_changed = staged_changed
+
+    if static_assets_changed:
+        rebuild_and_restart_for_static_assets()
 
     if image_url is not None or social_image_url is not None:
         payload = update_payload(post, image_url, social_image_url)
@@ -243,6 +340,7 @@ def main() -> int:
     expected_image = post.get("socialImageUrl") or post.get("imageUrl")
     if expected_image:
         expected_image = absolute_url(expected_image, public_base)
+    article_url = preview_or_live_url(post, public_base)
     checks = verify(article_url, expected_image)
     failed = [check for check in checks if not check.ok]
 

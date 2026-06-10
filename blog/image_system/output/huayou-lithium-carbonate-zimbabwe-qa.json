@@ -1,0 +1,179 @@
+{
+  "passed": false,
+  "layout": "left_monument",
+  "article_type": "company_finance",
+  "issues": [
+    "Text overlap: 'stat_3_value' intersects 'stat_4_value'"
+  ],
+  "warnings": [],
+  "text_boxes": [
+    {
+      "key": "masthead",
+      "text": "Z I M R A T E   I N S I G H T S",
+      "bbox": [
+        130.0,
+        1071.0,
+        1103.5,
+        1130.0
+      ]
+    },
+    {
+      "key": "issue",
+      "text": "JUNE 2026 \u00b7 MINING",
+      "bbox": [
+        1483.2,
+        1074.0,
+        1980.0,
+        1122.0
+      ]
+    },
+    {
+      "key": "eyebrow",
+      "text": "ZIMBABWE \u00b7 LITHIUM PROCESSING",
+      "bbox": [
+        135.0,
+        958.0,
+        1214.8,
+        1012.0
+      ]
+    },
+    {
+      "key": "hero_number",
+      "text": "10",
+      "bbox": [
+        130.0,
+        287.0,
+        978.2,
+        933.0
+      ]
+    },
+    {
+      "key": "hero_unit",
+      "text": "%",
+      "bbox": [
+        1135.0,
+        727.5,
+        1335.6,
+        932.5
+      ]
+    },
+    {
+      "key": "headline_context",
+      "text": "Global lithium\nproduction\nshare.",
+      "bbox": [
+        1400.0,
+        640.7,
+        1978.8,
+        889.3
+      ]
+    },
+    {
+      "key": "pull_quote",
+      "text": "\u201cA bet Huayou seems\nwilling to make.\u201d",
+      "bbox": [
+        1400.0,
+        346.4,
+        2267.4,
+        513.6
+      ]
+    },
+    {
+      "key": "stat_1_label",
+      "text": "HUAYOU TOTAL",
+      "bbox": [
+        140.0,
+        225.0,
+        425.1,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_1_value",
+      "text": "$1.1B",
+      "bbox": [
+        140.0,
+        84.0,
+        535.5,
+        213.0
+      ]
+    },
+    {
+      "key": "stat_2_label",
+      "text": "MINING 2026",
+      "bbox": [
+        660.0,
+        222.0,
+        906.2,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_2_value",
+      "text": "$7B",
+      "bbox": [
+        660.0,
+        80.0,
+        927.9,
+        209.0
+      ]
+    },
+    {
+      "key": "stat_3_label",
+      "text": "CAPACITY",
+      "bbox": [
+        1165.0,
+        225.0,
+        1346.5,
+        258.0
+      ]
+    },
+    {
+      "key": "stat_3_value",
+      "text": "50,000 MT",
+      "bbox": [
+        1165.0,
+        91.0,
+        1715.9,
+        186.8
+      ]
+    },
+    {
+      "key": "stat_4_label",
+      "text": "SULPHATE PLAN",
+      "bbox": [
+        1640.0,
+        222.0,
+        1945.4,
+        255.0
+      ]
+    },
+    {
+      "key": "stat_4_value",
+      "text": "$400M",
+      "bbox": [
+        1640.0,
+        80.0,
+        2116.1,
+        209.0
+      ]
+    },
+    {
+      "key": "wordmark",
+      "text": "zimrate.com",
+      "bbox": [
+        1959.6,
+        39.0,
+        2220.0,
+        81.0
+      ]
+    }
+  ],
+  "style_checks": {
+    "no_cards_or_grid": true,
+    "warm_restrained_palette": true,
+    "paper_grain": true,
+    "layout_rotation_enabled": true
+  },
+  "layout_reason": "Selected 'left_monument' from rotation pool for article_type='company_finance'.",
+  "output_png": "/opt/forexzim/blog/image_system/output/huayou-lithium-carbonate-zimbabwe-editorial.png"
+}

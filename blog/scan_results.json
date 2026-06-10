@@ -1,6 +1,6 @@
 {
-  "scan_time": "2026-06-03T10:00:20.340148+02:00",
-  "window_start": "2026-06-02T10:00:20.340148+02:00",
+  "scan_time": "2026-06-10T17:00:20.265646+02:00",
+  "window_start": "2026-06-09T17:00:20.265646+02:00",
   "source_stats": {
     "iHarare": {
       "total": 10,
@@ -18,20 +18,24 @@
       "total": 10,
       "method": "RSS"
     },
+    "Financial Gazette": {
+      "total": 10,
+      "method": "RSS"
+    },
     "NewsDay": {
       "total": 100,
       "method": "Google News"
     },
     "Herald": {
-      "total": 0,
+      "total": 12,
       "method": "Google News"
     },
     "Zimbabwe Independent": {
-      "total": 21,
+      "total": 20,
       "method": "Google News"
     },
     "Southern Eye": {
-      "total": 12,
+      "total": 11,
       "method": "Google News"
     },
     "The Standard": {
@@ -41,27 +45,27 @@
   },
   "filter_stats": {
     "no_date": 0,
-    "old": 229,
-    "non_economic": 40,
-    "economic": 14
+    "old": 262,
+    "non_economic": 30,
+    "economic": 11
   },
-  "total_articles": 283,
-  "economic_articles": 14,
-  "clusters": 14,
+  "total_articles": 303,
+  "economic_articles": 11,
+  "clusters": 11,
   "all_clusters": [
     {
-      "headline": "Defying Cost Volatility: A Strategic Pricing Response in Zimbabwe\u2019s Fragmented Economy. The Reality of Constant Price Instability in Zimbabwe",
-      "link": "https://thezimbabwemail.com/strategy-corporate-finance/defying-cost-volatility-a-strategic-pricing-response-in-zimbabwes-fragmented-economy-the-reality-of-constant-price-instability-in-zimbabwe/",
+      "headline": "Mozambique tightens grip on mining with 15% state stake rule, local processing \u2014 Reuters",
+      "link": "https://thezimbabwemail.com/news/world-world-3/mozambique-tightens-grip-on-mining-with-15-state-stake-rule-local-processing-reuters/",
       "sources": [
         "Zimbabwe Mail"
       ],
       "num_sources": 1,
       "source_detail": [
-        "Zimbabwe Mail (11h ago)"
+        "Zimbabwe Mail (4h ago)"
       ],
       "topic_score": 25,
-      "recency_score": 16.320230535,
-      "search_score": 15,
+      "recency_score": 19.226376590462962,
+      "search_score": 12,
       "novelty_score": 8,
       "source_score": 20,
       "avg_source_quality": 0.73,
@@ -76,14 +80,14 @@
         }
       ],
       "total_score": 84,
-      "time_ago": "11h ago",
-      "pub_date": "2026-06-02 20:38:46+00:00",
-      "description": "<p>Zimbabwe\u2019s economy operates in a perpetual environment of cost volatility. Unlike more stable markets where inflationary shocks are episodic, Zimbabwe\u2019s pricing landscape is shaped by continuous and overlapping disruptions, currency fluctuations, fuel price adjustments, import dependency, shifting monetary policy signals, supply chain instability, and periodic shortages of key commodities. For businesses, this means pricing is [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/str",
+      "time_ago": "4h ago",
+      "pub_date": "2026-06-10 10:21:50+00:00",
+      "description": "<p>Mozambique\u2019s President Daniel Chapo has signed a new law requiring \u200c15% state ownership in all mining ventures and local processing of minerals, tightening control over its resources as demand for battery materials grows. Mozambique is the world\u2019s third-largest graphite producer, a \u200bkey material used in batteries for electric vehicles and energy storage. The mining \u200blaw, [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/news/world-world-3/mozambique-tightens-grip-on-mining-with-1",
       "cluster_size": 1,
-      "topic": "Forex & Exchange Rates",
+      "topic": "Mining & Minerals",
       "novelty_label": "New story",
-      "angle": "Inflation trajectory and purchasing power; Energy costs and industrial competitiveness",
-      "key_facts": "Headline: Defying Cost Volatility: A Strategic Pricing Response in Zimbabwe\u2019s Fragmented Economy. The Reality of Constant Price Instability in Zimbabwe. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Impact on Zimbabwe's mining export revenue; Energy costs and industrial competitiveness",
+      "key_facts": "Headline: Mozambique tightens grip on mining with 15% state stake rule, local processing \u2014 Reuters. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate"
@@ -91,18 +95,59 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Chinese nationals flee Haroni River after expos\u00e9  \u2013 as community welcomes government intervention",
-      "link": "https://www.newzimbabwe.com/chinese-nationals-flee-haroni-river-after-expose-as-community-welcomes-government-intervention/",
+      "headline": "Drilling at Caledonia\u2019s Bubi gold project delivers high-grade results",
+      "link": "https://thezimbabwemail.com/mining/drilling-at-caledonias-bubi-gold-project-delivers-high-grade-results/",
+      "sources": [
+        "Zimbabwe Mail"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "Zimbabwe Mail (3h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 19.363506220092592,
+      "search_score": 12,
+      "novelty_score": 5,
+      "source_score": 20,
+      "avg_source_quality": 0.73,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "Zimbabwe Mail",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.73
+        }
+      ],
+      "total_score": 81,
+      "time_ago": "3h ago",
+      "pub_date": "2026-06-10 11:11:12+00:00",
+      "description": "<p>CALEDONIA Mining Corporation Plc says this year\u2019s drilling programme at its Motapa gold mining project in Bubi, Matabeleland North, has delivered consistent high-grade intercepts and confirmed continuity of mineralisation. This strengthens the case for a combined mining complex with its flagship Bilboes project 110 kilometres north of Bulawayo. The Victoria Falls Stock Exchange-listed miner said [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/mining/drilling-at-caledonias-bubi-",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "Related to recent coverage",
+      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
+      "key_facts": "Headline: Drilling at Caledonia\u2019s Bubi gold project delivers high-grade results. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "ZimRights demands criminal probe, prosecutions over Budiriro sewer deaths",
+      "link": "https://www.newzimbabwe.com/zimrights-demands-criminal-probe-prosecutions-over-budiriro-sewer-deaths/",
       "sources": [
         "New Zimbabwe"
       ],
       "num_sources": 1,
       "source_detail": [
-        "New Zimbabwe (8h ago)"
+        "New Zimbabwe (10h ago)"
       ],
-      "topic_score": 25,
-      "recency_score": 17.568424979444444,
-      "search_score": 12,
+      "topic_score": 21,
+      "recency_score": 16.989407549166668,
+      "search_score": 15,
       "novelty_score": 8,
       "source_score": 20,
       "avg_source_quality": 0.79,
@@ -116,15 +161,15 @@
           "quality_score": 0.79
         }
       ],
-      "total_score": 82,
-      "time_ago": "8h ago",
-      "pub_date": "2026-06-02 23:08:33+00:00",
-      "description": "<p>CHINESE nationals who devastated parts of Haroni River through illegal riverbed mining have fled and left their Rusitu Valley camp empty after being exposed in a collaborative investigation by NewZimbabwe.com and the Information for Development Trust (IDT). According to sources in Rusitu, only their wooden cabins and the perimeter-fence have been left, with previously seen [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/chinese-nationals-flee-haroni-river-after-expose-as-commun",
+      "total_score": 80,
+      "time_ago": "10h ago",
+      "pub_date": "2026-06-10 04:59:04+00:00",
+      "description": "<p>THE Zimbabwe Human Rights Association (ZimRights) has demanded an urgent criminal investigation and prosecution of those responsible for leaving an open sewage excavation site in Budiriro, where three people died after falling into a sewer pool. The victims included a young girl, who reportedly disappeared while walking to nearby shops, an elderly man and a [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimrights-demands-criminal-probe-prosecutions-over-budiriro-sewer-deaths/\"",
       "cluster_size": 1,
-      "topic": "Mining & Minerals",
+      "topic": "Wages & Employment",
       "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Chinese nationals flee Haroni River after expos\u00e9  \u2013 as community welcomes government intervention. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Wage erosion and cost of living",
+      "key_facts": "Headline: ZimRights demands criminal probe, prosecutions over Budiriro sewer deaths. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate"
@@ -132,81 +177,40 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Rights lobby group urges repatriation of citizens displaced in South Africa",
-      "link": "https://www.newzimbabwe.com/rights-lobby-group-urges-repatriation-of-citizens-displaced-in-south-africa/",
+      "headline": "Rural land title can unlock billions in capital \u2013 Nyambirai",
+      "link": "https://thezimbabwemail.com/law-crime/rural-land-title-can-unlock-billions-in-capital-nyambirai/",
       "sources": [
-        "New Zimbabwe"
+        "Zimbabwe Mail"
       ],
       "num_sources": 1,
       "source_detail": [
-        "New Zimbabwe (8h ago)"
+        "Zimbabwe Mail (4h ago)"
       ],
-      "topic_score": 25,
-      "recency_score": 17.547036090555554,
-      "search_score": 12,
-      "novelty_score": 8,
-      "source_score": 20,
-      "avg_source_quality": 0.79,
-      "google_news_only": false,
-      "quality_detail": [
-        {
-          "source": "New Zimbabwe",
-          "tier": "primary-news",
-          "reliability": "medium",
-          "method": "RSS",
-          "quality_score": 0.79
-        }
-      ],
-      "total_score": 82,
-      "time_ago": "8h ago",
-      "pub_date": "2026-06-02 23:05:59+00:00",
-      "description": "<p>Channel Africa The Civic Engagement Forum of Zimbabwe has called on the Zimbabwean government to urgently intervene and assist in repatriating citizens displaced by recent anti-immigrant attacks in South Africa (SA). The organisation estimates that 146 Zimbabwean nationals have been displaced in Daggafontein, east of Johannesburg, following local raids targeting illegal mining operations, which subsequently [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/rights-lobby-group-urge",
-      "cluster_size": 1,
-      "topic": "Mining & Minerals",
-      "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Rights lobby group urges repatriation of citizens displaced in South Africa. Covered by 1 source(s). 1 article(s) in cluster.",
-      "draft_readiness": "Needs verification",
-      "readiness_blockers": [
-        "single-source candidate"
-      ],
-      "next_step": "Find corroborating official or independent sources before drafting."
-    },
-    {
-      "headline": "Why South Korea is betting on Zimbabwe\u2019s critical minerals and Libya\u2019s oil recovery",
-      "link": "https://www.newzimbabwe.com/why-south-korea-is-betting-on-zimbabwes-critical-minerals-and-libyas-oil-recovery/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (8h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 17.532452757222224,
+      "topic_score": 21,
+      "recency_score": 19.24901547935185,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
-      "avg_source_quality": 0.79,
+      "avg_source_quality": 0.73,
       "google_news_only": false,
       "quality_detail": [
         {
-          "source": "New Zimbabwe",
+          "source": "Zimbabwe Mail",
           "tier": "primary-news",
           "reliability": "medium",
           "method": "RSS",
-          "quality_score": 0.79
+          "quality_score": 0.73
         }
       ],
-      "total_score": 78,
-      "time_ago": "8h ago",
-      "pub_date": "2026-06-02 23:04:14+00:00",
-      "description": "<p>Business Insider Africa South Korea has asked Libya to support greater participation by Korean companies in its oil and refining sectors as Libya continues its recovery. Seoul is also seeking to strengthen economic ties with Chad and Zimbabwe through cooperation in education, infrastructure, healthcare and development assistance. Zimbabwe&#8217;s lithium reserves have emerged as a key [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/why-south-korea-is-betting-on-zimbabwes-critic",
+      "total_score": 76,
+      "time_ago": "4h ago",
+      "pub_date": "2026-06-10 10:29:59+00:00",
+      "description": "<p>BUSINESSMAN Mr Tawanda Nyambirai says issuing land title for rural farmland can unlock billions of dollars of untapped capital that could transform the livelihoods of the rural majority and boost national gross domestic product (GDP). Speaking at the Zimbabwe National Chamber of Commerce (ZNCC) Matabeleland Annual Business Awards held in Bulawayo recently, Mr Nyambirai listed [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/law-crime/rural-land-title-can-unlock-billions-in-capit",
       "cluster_size": 1,
-      "topic": "Mining & Minerals",
+      "topic": "General Economy",
       "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Why South Korea is betting on Zimbabwe\u2019s critical minerals and Libya\u2019s oil recovery. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Rural land title can unlock billions in capital \u2013 Nyambirai. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate"
@@ -214,17 +218,17 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Zimbabwe confronts US$4.8bn climate finance gap as new policy book launches in Harare",
-      "link": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNVjFYTTFDdTVISWhvcHhDRDI2YkxiVl9taW5hNjU5TG0zNC14RmVFSE1mYnh5d0huV2Q2RUd4bVZWa2RaaWdFSVhIcHpiblI0TVNpWDJ1ZWxBVjRXNGhVanlCQmo0czNsQlBNRndBUU9reFk1QjdTQzVBdnYtMDNhVUdZZFllZGplaHQ5Ym9NY1ZIUHhKdGpBcUJZQjVTb2tQTDlxNW9UZWU2Uzk4c1dVb0Z4WVBEUGFhS2QtTHRPc2pOQzNlVUlRNUtsWnBsa2k5LVgyZmF5cjdTUdIB2gFBVV95cUxNVjFYTTFDdTVISWhvcHhDRDI2YkxiVl9taW5hNjU5TG0zNC14RmVFSE1mYnh5d0huV2Q2RUd4bVZWa2RaaWdFSVhIcHpiblI0TVNpWDJ1ZWxBVjRXNGhVanlCQmo0czNsQlBNRndBUU9reFk1QjdTQzVBdnYtMDNhVUdZZFllZGplaHQ5Ym9NY1ZIUHhKdGpBcUJZQjVTb2tQTDlxNW9UZWU2Uzk4c1dVb0Z4WVBEUGFhS2QtTHRPc2pOQzNlVUlRNUtsWnBsa2k5LVgyZmF5cjdTUQ?oc=5",
+      "headline": "Ambassador backs rabbit export drive as Zimbabwe eyes African markets",
+      "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPams2OS1ta2NtU01FWXE1cEVpM1BLa3ZoT0lCb215aF8zMjFfSW5JYk1DcGpSWkx5V2ZWWmZiMUhBa1dYbGVEbzd3aFQ0NGR6NnczRkJCdkUwaWVWZkxFdThjNFlyNEFmMGhtSTJRWTA5Q2ZQZmZ4QlF6ZzNxZm12azQyb2FnTGwzUXBtU191SU5nVGFNb3lVVWdMc09WSmc3ZlA4T2MtVzR5Y1BqLTVzWHdVNWs3R3VadnNCX3JLeFhja0nSAcgBQVVfeXFMTUZmZjJCdnVBY01HaDZhVTUyRW5qWEYtdGxzR1RQV0FZU2Fvc0E5UEVEVTk1WjJia0RyYVlkVm1hc3dtX2hmajRGWlU3NkpLS2ZRZ0tmNGdRTmV4dEwtLUw2MFpJWExtY0cxZFZaY0k4RFU3V0tkcGJ1MDJUT1JpbGRJV2pKblRuOWhzWEFyb2FLemNXMTI1aUxfYmxtWGVJT0NyemVia0hzMERHSVo3MXZ3eUtoZzJ0c0ZEdW9rXzhvVWI1WXpZY2s?oc=5",
       "sources": [
         "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "NewsDay (1h ago)"
+        "NewsDay (6h ago)"
       ],
       "topic_score": 21,
-      "recency_score": 19.68748425240741,
+      "recency_score": 18.715935326944443,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
@@ -239,15 +243,15 @@
           "quality_score": 0.74
         }
       ],
-      "total_score": 76,
-      "time_ago": "1h ago",
-      "pub_date": "2026-06-03 06:07:50+00:00",
+      "total_score": 75,
+      "time_ago": "6h ago",
+      "pub_date": "2026-06-10 08:26:15+00:00",
       "description": "",
       "cluster_size": 1,
-      "topic": "General Economy",
+      "topic": "Trade & Regional",
       "novelty_label": "New story",
-      "angle": "Broader economic implications for Zimbabwe",
-      "key_facts": "Headline: Zimbabwe confronts US$4.8bn climate finance gap as new policy book launches in Harare. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Export performance and trade balance",
+      "key_facts": "Headline: Ambassador backs rabbit export drive as Zimbabwe eyes African markets. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate",
@@ -256,148 +260,116 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Shopping in the Age of AI: Why Zimbabwe Risks Being Left Behind in the Data Economy",
-      "link": "https://thezimbabwemail.com/marketing/shopping-in-the-age-of-ai-why-zimbabwe-risks-being-left-behind-in-the-data-economy/",
+      "headline": "Zim crisis fuels SA backlash",
+      "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNM2t0TlBzdHdxaS1vY3VLMHB4V1N0NXU5TWhFQ3Vzb0dwN0tNUm5uTHpYWExQSVlKdUlvS2JISS0zTjczcFZlQWxWY3kzZ3JuR1Q4R2RzSkV4a3NJQXZuRDYwZEhPdUdLS2pLdnd0UTJxYnFVMUZVdndlYm9jc2lUR3dUMTRydUVkS1Zv0gGQAUFVX3lxTFBqV3Yydl92V0hza3ZQSEdEWjZIWXloOXpTWExRaDVJMTc2ekhkQ0d1NS1DTFNpZGs5TW9QeXFXcTJLRnJaWjY1REUtaGk0a0R2cFNRaUotR0VfbXFpZ3FBb2E2al9ybzg1Yzc4UV9lcUVKWXhxR3JqcWFGRFZ0WjVVdk9jaEdJMHlIaENvb2tteg?oc=5",
       "sources": [
-        "Zimbabwe Mail"
+        "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "Zimbabwe Mail (11h ago)"
+        "NewsDay (7h ago)"
       ],
       "topic_score": 21,
-      "recency_score": 16.129119423888888,
+      "recency_score": 18.016213104722222,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
-      "avg_source_quality": 0.73,
-      "google_news_only": false,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
       "quality_detail": [
         {
-          "source": "Zimbabwe Mail",
+          "source": "NewsDay",
           "tier": "primary-news",
-          "reliability": "medium",
-          "method": "RSS",
-          "quality_score": 0.73
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 75,
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-10 07:02:17+00:00",
+      "description": "",
+      "cluster_size": 1
+    },
+    {
+      "headline": "AfDB tax reform project delivers gains for Zim",
+      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOM0Z3RlB6NC1qVmE5bHZja01jR21xdzhMdzdrNm9vdDlKMmY1UDRTNXhqZEV4bzY4SGZzZ0RyajFjNkZjR2Fab3RIM0FzQ09LWHowMUtHSXlWaFVBNTY4YVY0MENkRnF5Ri1kczNUNFRIcTlwVkVnZlBVZmN0dmdwTHJnQV9ZNmdLQ0ROS09ZLUlNYjRUc21DNEJLZFNBMFZZ0gGmAUFVX3lxTE0xUTZiSUFRRHRKVG1xZm9nYWFDZndGZVFINHplSEVxNnliYVQwSU51NjZtYWx0Wl9Odkc2eG9GYjBvaFBmMHhnM3IyWXlPa2xHQ3VrSnZ3WjZIcjZBVHp6SGoza05pWW4xQks0VzVUTDhjNTVZUjhPVXpMVW83YWZHVUdMSEVtY3FQWXhoUVFoakNzQ3c4cDFIeVJXc29xTzFOOVEtd3c?oc=5",
+      "sources": [
+        "NewsDay"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "NewsDay (7h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 18.079546438055555,
+      "search_score": 8,
+      "novelty_score": 2,
+      "source_score": 20,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
         }
       ],
       "total_score": 73,
-      "time_ago": "11h ago",
-      "pub_date": "2026-06-02 20:15:50+00:00",
-      "description": "<p>For most of the twentieth century, shopping was a physical activity. Consumers left home, visited stores, compared products, sought information and completed purchases in person. Retailers competed primarily through location, assortment and pricing. By Brighton Musonza Artificial intelligence is changing this model fundamentally. Across advanced economies, consumers increasingly conduct product searches, compare prices, read reviews, [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.",
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-10 07:09:53+00:00",
+      "description": "",
       "cluster_size": 1
     },
     {
-      "headline": "Gold Overtakes US Treasuries as World\u2019s Leading Reserve Asset, Reinforcing Zimbabwe\u2019s Gold-Backed Currency Strategy",
-      "link": "https://thezimbabwemail.com/banking/gold-overtakes-us-treasuries-as-worlds-leading-reserve-asset-reinforcing-zimbabwes-gold-backed-currency-strategy/",
+      "headline": "\u2018Pay now, argue later\u2019 tax regime costing firms millions",
+      "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOVGh0cFlRZHRHRVU4dWh1aTRBS29nems1Wk8wMi1pRkZSY2drbEhEMFpwb2lXUEwwOTVVZkFrQ3NvZ20zYlN4dm52Vk4tRzhtbWVhUWFPWFJBY29obkJ4Uy1lTGJUTEVDamF2bmh5QXY5b29seU4yVUVzSXczS1V6RzNPTTFOUm5UUDliRlZjck9BVnRvWDJzbUtLNUlrcndJRTJQcHFsWGQtZ9IBrwFBVV95cUxOQzA4ZHZrZGVscWVnMDZjcS12TGdKdEtxa3NJUG1oWE9oMUxhanJxLWR2aHJZRkREX2VoYnVNZTJGeG9uVXAwdk42eDVfc0pjZGc2RzhTTHVlalo3NldkekJhd3FPNXp5MVcwa3hoLTZfU0dDcmltTEl4dEFIcS1rVVVXQ3UyUFUyY2gwaGhuaVhpbHlJRko1amVUcldvOEN3Y2lYbjNuQm5IdGlYQzRR?oc=5",
       "sources": [
-        "Zimbabwe Mail"
+        "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "Zimbabwe Mail (16h ago)"
+        "NewsDay (20h ago)"
       ],
       "topic_score": 25,
-      "recency_score": 13.891480535,
-      "search_score": 12,
+      "recency_score": 11.799268660277777,
+      "search_score": 8,
+      "novelty_score": 8,
+      "source_score": 20,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
+      "quality_detail": [
+        {
+          "source": "NewsDay",
+          "tier": "primary-news",
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
+        }
+      ],
+      "total_score": 72,
+      "time_ago": "20h ago",
+      "pub_date": "2026-06-09 18:36:15+00:00",
+      "description": "",
+      "cluster_size": 1
+    },
+    {
+      "headline": "Parliament launches inquiry into fuel pricing, summons Local Government secretary over proliferation of service stations",
+      "link": "https://www.newzimbabwe.com/parliament-launches-inquiry-into-fuel-pricing-summons-local-government-secretary-over-proliferation-of-service-stations/",
+      "sources": [
+        "New Zimbabwe"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "New Zimbabwe (10h ago)"
+      ],
+      "topic_score": 21,
+      "recency_score": 16.83426866027778,
+      "search_score": 8,
       "novelty_score": 2,
       "source_score": 20,
-      "avg_source_quality": 0.73,
-      "google_news_only": false,
-      "quality_detail": [
-        {
-          "source": "Zimbabwe Mail",
-          "tier": "primary-news",
-          "reliability": "medium",
-          "method": "RSS",
-          "quality_score": 0.73
-        }
-      ],
-      "total_score": 72,
-      "time_ago": "16h ago",
-      "pub_date": "2026-06-02 15:47:19+00:00",
-      "description": "<p>Gold has overtaken United States government bonds as the world&#8217;s most important reserve asset for central banks, underscoring a dramatic shift in the global financial system and lending fresh relevance to Zimbabwe&#8217;s controversial gold-backed currency reforms. According to a new report by the European Central Bank, bullion accounted for 27% of global central bank reserve [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/banking/gold-overtakes-us-treasuries-as-worlds-le",
-      "cluster_size": 1
-    },
-    {
-      "headline": "Zimbabwe trade deficit widens 16% as exports slump",
-      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQbEZWT0NGTk1pcWZUWDhIWXBRUW5EY3ZOSXY2RVNoNzZ3QVJoTHdEbk1YWncwcFQyZTZnVHJyYmxtVU1yZ0NrZDVINDNWTzVSZW4yM3o1dWFtR3FYZnYwMk5sRlJpQmFhNS01di1fWlB0ZUFjRmlKY3FRMl9NVHNjaGdkRkliRVRvM2luQ0lwUWdSTHVJbTNHTVFzT2N6X1NVc09LU3RmUdIBrAFBVV95cUxPbmljTnRwaUdzZndwWHdxdVNNeFhhV3RrN2UwbmdfeEFMcGhVVlZTRGlCOHhUOGd1bFFOaURzUEhaQWpRVVNNOFkxcWlKS2Q4TXIwMWxLU2lreW1uc3NUR1ZHeXFPQ201T1ZpWGRvbVM5ck12OWNpNmgxQXFCQlJhekthSjdoQTFISzdtSmV1cjlsakN4R2ZMYlVLN0g0U0xfa0NyOWpHLVA2UWlP?oc=5",
-      "sources": [
-        "NewsDay"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "NewsDay (20h ago)"
-      ],
-      "topic_score": 21,
-      "recency_score": 11.652174979444444,
-      "search_score": 12,
-      "novelty_score": 8,
-      "source_score": 20,
-      "avg_source_quality": 0.74,
-      "google_news_only": true,
-      "quality_detail": [
-        {
-          "source": "NewsDay",
-          "tier": "primary-news",
-          "reliability": "high",
-          "method": "Google News",
-          "quality_score": 0.74
-        }
-      ],
-      "total_score": 72,
-      "time_ago": "20h ago",
-      "pub_date": "2026-06-02 11:18:36+00:00",
-      "description": "",
-      "cluster_size": 1
-    },
-    {
-      "headline": "Push to ring-fence sugar tax revenue for healthcare",
-      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNdThrLWZBdEc3UTJiYlpXblJlbU4tY2sweEo0ek1zM0tNTF8teEJ2bm5EMEM0amt0RnNxaHhuMFlZb3JTR3NpMURPUERPUU9mUVlTOVBlb1RIWlpGY0NiNDZyd255aXRmU21SXzhXb3UtbXJBM3VCX0d3bHFQRHJnSWYyeWoxb29LTkFGN1ZReXJkbG9Rem51ODFFWGd2WGc0bG1XQdIBqgFBVV95cUxPVS1oZXdyUVlhQnFYbDQzelZVUTNidHJ1MVdtbjc1U3EwNDZPR1BBNjlkWFIxajRGWVVsT0hvTjZXeFBKLVFXOFNUczRPWTF6UEFPckVnZGUtQVp1SVdDUVVZOVdoT0t4M21mcWllcWdRcmlxNFZNdV8telhkbndLVHRMV091bE9Qa1lKQUN3TUMxTWljTXdDT0ZNMjBDeVlFd3dZZElWaUFmdw?oc=5",
-      "sources": [
-        "NewsDay"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "NewsDay (20h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 11.518424979444443,
-      "search_score": 8,
-      "novelty_score": 8,
-      "source_score": 20,
-      "avg_source_quality": 0.74,
-      "google_news_only": true,
-      "quality_detail": [
-        {
-          "source": "NewsDay",
-          "tier": "primary-news",
-          "reliability": "high",
-          "method": "Google News",
-          "quality_score": 0.74
-        }
-      ],
-      "total_score": 72,
-      "time_ago": "20h ago",
-      "pub_date": "2026-06-02 11:02:33+00:00",
-      "description": "",
-      "cluster_size": 1
-    },
-    {
-      "headline": "Treasury nullifies Agriculture Ministry\u2019s grain import levy \u2013 calls it legally invalid",
-      "link": "https://www.newzimbabwe.com/treasury-nullifies-agriculture-ministrys-grain-import-levy-calls-it-legally-invalid/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (21h ago)"
-      ],
-      "topic_score": 21,
-      "recency_score": 11.276063868333333,
-      "search_score": 12,
-      "novelty_score": 8,
-      "source_score": 20,
       "avg_source_quality": 0.79,
       "google_news_only": false,
       "quality_detail": [
@@ -409,120 +381,56 @@
           "quality_score": 0.79
         }
       ],
-      "total_score": 72,
-      "time_ago": "21h ago",
-      "pub_date": "2026-06-02 10:33:28+00:00",
-      "description": "<p>THE Ministry of Finance has declared as invalid a grain import levy imposed on millers by the Agriculture Ministry through Statutory Instrument (SI) 87 of 2025 and urged authorities to immediately repeal it. A letter dated March 3, from the Ministry of Finance\u2019s permanent secretary George Guvamatanga to Chief Secretary to the President and Cabinet [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/treasury-nullifies-agriculture-ministrys-grain-import-levy-calls-it-legally-invalid/",
+      "total_score": 67,
+      "time_ago": "10h ago",
+      "pub_date": "2026-06-10 04:40:27+00:00",
+      "description": "<p>AN inquiry into fuel pricing is underway as Zimbabweans continue to pay high prices for the petroleum products, Energy and Power Development Parliamentary Committee Chairperson Charlton Hwende has said. \u201cAs the Energy Committee, we are conducting an inquiry into fuel pricing. There have been complaints from the public that our fuel is very expensive and [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/parliament-launches-inquiry-into-fuel-pricing-summons-local-government-secreta",
       "cluster_size": 1
     },
     {
-      "headline": "China\u2019s factory activity slows in May, raising questions over its economy",
-      "link": "https://thezimbabwemail.com/economy/chinas-factory-activity-slows-in-may-raising-questions-over-its-economy/",
+      "headline": "Govt debt time bomb exposed",
+      "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNeXlHekp3cDBRWFVIYWtkZ1dCcGdHejdINmdGdm5yWkpCcUdVWEpaaTdObTNBUE9lZU5pN2h5elhLVkhiVkhRLTR6YTlmUTRpN0xxbkQzQUVoaGtGR25hZDJaMGR2alpKdjc5SWM2QTFUeWVxV0lGSzBwUXFGUGhycVAwQ0tkSTlhX3fSAY8BQVVfeXFMTjEwZExIcE40MkJHV0RYeUNQRGF4WEstdUJveG9JT0otci1pUkJCRDA1QUFkM25GeDc1SnYwWldwZ19pWk9wMHJXN2RBdWJEZTJLYl9PSk13eWQtcTd4RktNbEFDa1lUVld5d2pkSjluR1ZnWTh2dFRtRTItY0J0cDNOY0tNdHVmTlJXTllhSE0?oc=5",
       "sources": [
-        "Zimbabwe Mail"
+        "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "Zimbabwe Mail (20h ago)"
-      ],
-      "topic_score": 21,
-      "recency_score": 11.678424979444443,
-      "search_score": 8,
-      "novelty_score": 8,
-      "source_score": 20,
-      "avg_source_quality": 0.73,
-      "google_news_only": false,
-      "quality_detail": [
-        {
-          "source": "Zimbabwe Mail",
-          "tier": "primary-news",
-          "reliability": "medium",
-          "method": "RSS",
-          "quality_score": 0.73
-        }
-      ],
-      "total_score": 68,
-      "time_ago": "20h ago",
-      "pub_date": "2026-06-02 11:21:45+00:00",
-      "description": "<p>BEIJING \u2014 China\u2019s factory activity was flat in May, according to an official survey released Sunday, raising questions about how much further the country\u2019s economy can shield itself from the fallout of the ongoing Iran war and pressure on demand. The official manufacturing purchasing managers index moderated to 50 from 50.3 in April, according to [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/economy/chinas-factory-activity-slows-in-may-raising-questions-over-its-economy/\">Chi",
-      "cluster_size": 1
-    },
-    {
-      "headline": "Parliament received over half a million public submissions on contentious Constitutional Amendment Bill",
-      "link": "https://www.newzimbabwe.com/parliament-received-over-half-a-million-public-submissions-on-contentious-constitutional-amendment-bill/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (6h ago)"
+        "NewsDay (7h ago)"
       ],
       "topic_score": 10,
-      "recency_score": 18.50134164611111,
+      "recency_score": 18.09551866027778,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
-      "avg_source_quality": 0.79,
-      "google_news_only": false,
+      "avg_source_quality": 0.74,
+      "google_news_only": true,
       "quality_detail": [
         {
-          "source": "New Zimbabwe",
+          "source": "NewsDay",
           "tier": "primary-news",
-          "reliability": "medium",
-          "method": "RSS",
-          "quality_score": 0.79
+          "reliability": "high",
+          "method": "Google News",
+          "quality_score": 0.74
         }
       ],
       "total_score": 64,
-      "time_ago": "6h ago",
-      "pub_date": "2026-06-03 01:00:30+00:00",
-      "description": "<p>Parliament received over half a million submissions on the contentious Constitutional Amendment Bill Number 3 during the window of public hearings, Chairperson of the Parliamentary Portfolio Committee on Justice, Eddison Zvobgo has revealed. The Minister of Justice, Legal and Parliamentary Affairs, Ziyambi Ziyambi, made the first reading of the contentious Constitutional Amendment Bill in Parliament [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/parliament-received-over-half-a",
-      "cluster_size": 1
-    },
-    {
-      "headline": "Zimbabwe faces $4.8 Billion climate funding gap as new governance book calls for reforms",
-      "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxPSWNMenZjd3VZNmlDU3VTVTBkdUs4cFc5WkZ5bXRzN21DVWstRXplNjNibmJnUVc3Rkd4aHNleXFETWJSY3M2M19KSzJNR2xvQm1ramFLRXRRMDJhMG5EWnR5MUdOTnhwdFo1VFZvdzJCNzZDdFl5ODN6aTFlNFZqelJja1lUSWw3ZUd3WERJUm9kaWZQVkkyTFpudEdVUWR0c3U5ZVNyZmYtOV9mMjRrU0xsQ1RKSTFGU3FGSXp3T1ZNWjhQanNZdG1OS09iNk52R2Q5WERabHHSAd4BQVVfeXFMUG5BT0d3ZzAyakhaU1JqM1ZFNTY3MGZvOTUzOHJrZEFHbWJVZWNOOXRBNWJfQkoxM3psY1dkeV83TkdSVllNZ2RfRE1yaVlaemFoTFZiM1NsX2o2YkFVS05Rb1BUMjRyUUhISGhRUFVEQzlyZU1zQjV4Ul8wNWRKZ2RfczVGZThac2Qwck5GU0RuUHQtYS1TZk5PWnN2cEo4NEQ5dThqQmNEZFI1NV9ycUpMV3Btd1hiZnN4NmRKOVVZdS12SUZiMWx4dzJTLWhNdkowQXZqOUQ3WDc4ejNn?oc=5",
-      "sources": [
-        "NewsDay"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "NewsDay (16h ago)"
-      ],
-      "topic_score": 10,
-      "recency_score": 13.582174979444444,
-      "search_score": 8,
-      "novelty_score": 8,
-      "source_score": 20,
-      "avg_source_quality": 0.74,
-      "google_news_only": true,
-      "quality_detail": [
-        {
-          "source": "NewsDay",
-          "tier": "primary-news",
-          "reliability": "high",
-          "method": "Google News",
-          "quality_score": 0.74
-        }
-      ],
-      "total_score": 59,
-      "time_ago": "16h ago",
-      "pub_date": "2026-06-02 15:10:12+00:00",
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-10 07:11:48+00:00",
       "description": "",
       "cluster_size": 1
     },
     {
-      "headline": "Zimbabwe Winter Wheat Planting Reaches 78,458 Hectares",
-      "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOeHJ4R0pSUXlFNGJZTTVBNFRZS2hzbVl5V2RMY0JfUUdHZ1NxS3VEenZKT1NSZTRIRTNSYjdsUGVZbzcyQVdXTDJZNGRnNlZOeV80bXk5Skd0bTNfdWhKd0lCLVRHZ3BLWXNCcjRqaG5Xb1VrNDA1YkxrTUY3X2I2UmloRjFRT0d3WmZtbkotel9OZloyTUtfdHdPak5nT0MtY3Qycm92SlBMU1cx0gGyAUFVX3lxTE5mVW00MkswbDUzeDVZQl9STTlRMzlJVkdlVFRPZG56cjZMLVp4RS1vQmJWLTUxT0lWTUhRaHlFSXg4TkdLSEdHX29ObVRpR0lBMlF3OTg4MmxOclFCX3NLS1YzbkhHRE1sRG9Vc1ZuWW93WmRic3JiQXF3Rm5Wd3VZZV9YWFRkbTJmWEp1TDdxdjZRc3NMOHAyOUc2eXhxMDRFTkRpcDJzT2VYMkY5VHQyZHc?oc=5",
+      "headline": "New cement plant creates 450 jobs",
+      "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNYkotT2JBVjFVbGZDQ29EcFE4alpOZ1k0NzJ0OWxxbzVQemJjZmpnR0FWUV9zVDAzakY3NG1VbDd0VUlmTmNDR3UybHlyMDl1WU1uZXRQWnBkckM4RGM0NThmNkdTdHBzdWtZNWt3ZDJsTk01UDdFcUZyT0g1WVo4b3RjdjczbFJzZnpJSFg4VzlzUQ?oc=5",
       "sources": [
         "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "NewsDay (20h ago)"
+        "NewsDay (7h ago)"
       ],
       "topic_score": 10,
-      "recency_score": 11.652174979444444,
+      "recency_score": 18.016213104722222,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
@@ -537,27 +445,27 @@
           "quality_score": 0.74
         }
       ],
-      "total_score": 57,
-      "time_ago": "20h ago",
-      "pub_date": "2026-06-02 11:18:36+00:00",
+      "total_score": 64,
+      "time_ago": "7h ago",
+      "pub_date": "2026-06-10 07:02:17+00:00",
       "description": "",
       "cluster_size": 1
     }
   ],
   "top_stories": [
     {
-      "headline": "Defying Cost Volatility: A Strategic Pricing Response in Zimbabwe\u2019s Fragmented Economy. The Reality of Constant Price Instability in Zimbabwe",
-      "link": "https://thezimbabwemail.com/strategy-corporate-finance/defying-cost-volatility-a-strategic-pricing-response-in-zimbabwes-fragmented-economy-the-reality-of-constant-price-instability-in-zimbabwe/",
+      "headline": "Mozambique tightens grip on mining with 15% state stake rule, local processing \u2014 Reuters",
+      "link": "https://thezimbabwemail.com/news/world-world-3/mozambique-tightens-grip-on-mining-with-15-state-stake-rule-local-processing-reuters/",
       "sources": [
         "Zimbabwe Mail"
       ],
       "num_sources": 1,
       "source_detail": [
-        "Zimbabwe Mail (11h ago)"
+        "Zimbabwe Mail (4h ago)"
       ],
       "topic_score": 25,
-      "recency_score": 16.320230535,
-      "search_score": 15,
+      "recency_score": 19.226376590462962,
+      "search_score": 12,
       "novelty_score": 8,
       "source_score": 20,
       "avg_source_quality": 0.73,
@@ -572,14 +480,14 @@
         }
       ],
       "total_score": 84,
-      "time_ago": "11h ago",
-      "pub_date": "2026-06-02 20:38:46+00:00",
-      "description": "<p>Zimbabwe\u2019s economy operates in a perpetual environment of cost volatility. Unlike more stable markets where inflationary shocks are episodic, Zimbabwe\u2019s pricing landscape is shaped by continuous and overlapping disruptions, currency fluctuations, fuel price adjustments, import dependency, shifting monetary policy signals, supply chain instability, and periodic shortages of key commodities. For businesses, this means pricing is [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/str",
+      "time_ago": "4h ago",
+      "pub_date": "2026-06-10 10:21:50+00:00",
+      "description": "<p>Mozambique\u2019s President Daniel Chapo has signed a new law requiring \u200c15% state ownership in all mining ventures and local processing of minerals, tightening control over its resources as demand for battery materials grows. Mozambique is the world\u2019s third-largest graphite producer, a \u200bkey material used in batteries for electric vehicles and energy storage. The mining \u200blaw, [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/news/world-world-3/mozambique-tightens-grip-on-mining-with-1",
       "cluster_size": 1,
-      "topic": "Forex & Exchange Rates",
+      "topic": "Mining & Minerals",
       "novelty_label": "New story",
-      "angle": "Inflation trajectory and purchasing power; Energy costs and industrial competitiveness",
-      "key_facts": "Headline: Defying Cost Volatility: A Strategic Pricing Response in Zimbabwe\u2019s Fragmented Economy. The Reality of Constant Price Instability in Zimbabwe. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Impact on Zimbabwe's mining export revenue; Energy costs and industrial competitiveness",
+      "key_facts": "Headline: Mozambique tightens grip on mining with 15% state stake rule, local processing \u2014 Reuters. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate"
@@ -587,18 +495,59 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Chinese nationals flee Haroni River after expos\u00e9  \u2013 as community welcomes government intervention",
-      "link": "https://www.newzimbabwe.com/chinese-nationals-flee-haroni-river-after-expose-as-community-welcomes-government-intervention/",
+      "headline": "Drilling at Caledonia\u2019s Bubi gold project delivers high-grade results",
+      "link": "https://thezimbabwemail.com/mining/drilling-at-caledonias-bubi-gold-project-delivers-high-grade-results/",
+      "sources": [
+        "Zimbabwe Mail"
+      ],
+      "num_sources": 1,
+      "source_detail": [
+        "Zimbabwe Mail (3h ago)"
+      ],
+      "topic_score": 25,
+      "recency_score": 19.363506220092592,
+      "search_score": 12,
+      "novelty_score": 5,
+      "source_score": 20,
+      "avg_source_quality": 0.73,
+      "google_news_only": false,
+      "quality_detail": [
+        {
+          "source": "Zimbabwe Mail",
+          "tier": "primary-news",
+          "reliability": "medium",
+          "method": "RSS",
+          "quality_score": 0.73
+        }
+      ],
+      "total_score": 81,
+      "time_ago": "3h ago",
+      "pub_date": "2026-06-10 11:11:12+00:00",
+      "description": "<p>CALEDONIA Mining Corporation Plc says this year\u2019s drilling programme at its Motapa gold mining project in Bubi, Matabeleland North, has delivered consistent high-grade intercepts and confirmed continuity of mineralisation. This strengthens the case for a combined mining complex with its flagship Bilboes project 110 kilometres north of Bulawayo. The Victoria Falls Stock Exchange-listed miner said [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/mining/drilling-at-caledonias-bubi-",
+      "cluster_size": 1,
+      "topic": "Mining & Minerals",
+      "novelty_label": "Related to recent coverage",
+      "angle": "ZiG stability and gold backing analysis; Impact on Zimbabwe's mining export revenue",
+      "key_facts": "Headline: Drilling at Caledonia\u2019s Bubi gold project delivers high-grade results. Covered by 1 source(s). 1 article(s) in cluster.",
+      "draft_readiness": "Needs verification",
+      "readiness_blockers": [
+        "single-source candidate"
+      ],
+      "next_step": "Find corroborating official or independent sources before drafting."
+    },
+    {
+      "headline": "ZimRights demands criminal probe, prosecutions over Budiriro sewer deaths",
+      "link": "https://www.newzimbabwe.com/zimrights-demands-criminal-probe-prosecutions-over-budiriro-sewer-deaths/",
       "sources": [
         "New Zimbabwe"
       ],
       "num_sources": 1,
       "source_detail": [
-        "New Zimbabwe (8h ago)"
+        "New Zimbabwe (10h ago)"
       ],
-      "topic_score": 25,
-      "recency_score": 17.568424979444444,
-      "search_score": 12,
+      "topic_score": 21,
+      "recency_score": 16.989407549166668,
+      "search_score": 15,
       "novelty_score": 8,
       "source_score": 20,
       "avg_source_quality": 0.79,
@@ -612,15 +561,15 @@
           "quality_score": 0.79
         }
       ],
-      "total_score": 82,
-      "time_ago": "8h ago",
-      "pub_date": "2026-06-02 23:08:33+00:00",
-      "description": "<p>CHINESE nationals who devastated parts of Haroni River through illegal riverbed mining have fled and left their Rusitu Valley camp empty after being exposed in a collaborative investigation by NewZimbabwe.com and the Information for Development Trust (IDT). According to sources in Rusitu, only their wooden cabins and the perimeter-fence have been left, with previously seen [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/chinese-nationals-flee-haroni-river-after-expose-as-commun",
+      "total_score": 80,
+      "time_ago": "10h ago",
+      "pub_date": "2026-06-10 04:59:04+00:00",
+      "description": "<p>THE Zimbabwe Human Rights Association (ZimRights) has demanded an urgent criminal investigation and prosecution of those responsible for leaving an open sewage excavation site in Budiriro, where three people died after falling into a sewer pool. The victims included a young girl, who reportedly disappeared while walking to nearby shops, an elderly man and a [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/zimrights-demands-criminal-probe-prosecutions-over-budiriro-sewer-deaths/\"",
       "cluster_size": 1,
-      "topic": "Mining & Minerals",
+      "topic": "Wages & Employment",
       "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Chinese nationals flee Haroni River after expos\u00e9  \u2013 as community welcomes government intervention. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Wage erosion and cost of living",
+      "key_facts": "Headline: ZimRights demands criminal probe, prosecutions over Budiriro sewer deaths. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate"
@@ -628,81 +577,40 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Rights lobby group urges repatriation of citizens displaced in South Africa",
-      "link": "https://www.newzimbabwe.com/rights-lobby-group-urges-repatriation-of-citizens-displaced-in-south-africa/",
+      "headline": "Rural land title can unlock billions in capital \u2013 Nyambirai",
+      "link": "https://thezimbabwemail.com/law-crime/rural-land-title-can-unlock-billions-in-capital-nyambirai/",
       "sources": [
-        "New Zimbabwe"
+        "Zimbabwe Mail"
       ],
       "num_sources": 1,
       "source_detail": [
-        "New Zimbabwe (8h ago)"
+        "Zimbabwe Mail (4h ago)"
       ],
-      "topic_score": 25,
-      "recency_score": 17.547036090555554,
-      "search_score": 12,
-      "novelty_score": 8,
-      "source_score": 20,
-      "avg_source_quality": 0.79,
-      "google_news_only": false,
-      "quality_detail": [
-        {
-          "source": "New Zimbabwe",
-          "tier": "primary-news",
-          "reliability": "medium",
-          "method": "RSS",
-          "quality_score": 0.79
-        }
-      ],
-      "total_score": 82,
-      "time_ago": "8h ago",
-      "pub_date": "2026-06-02 23:05:59+00:00",
-      "description": "<p>Channel Africa The Civic Engagement Forum of Zimbabwe has called on the Zimbabwean government to urgently intervene and assist in repatriating citizens displaced by recent anti-immigrant attacks in South Africa (SA). The organisation estimates that 146 Zimbabwean nationals have been displaced in Daggafontein, east of Johannesburg, following local raids targeting illegal mining operations, which subsequently [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/rights-lobby-group-urge",
-      "cluster_size": 1,
-      "topic": "Mining & Minerals",
-      "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Rights lobby group urges repatriation of citizens displaced in South Africa. Covered by 1 source(s). 1 article(s) in cluster.",
-      "draft_readiness": "Needs verification",
-      "readiness_blockers": [
-        "single-source candidate"
-      ],
-      "next_step": "Find corroborating official or independent sources before drafting."
-    },
-    {
-      "headline": "Why South Korea is betting on Zimbabwe\u2019s critical minerals and Libya\u2019s oil recovery",
-      "link": "https://www.newzimbabwe.com/why-south-korea-is-betting-on-zimbabwes-critical-minerals-and-libyas-oil-recovery/",
-      "sources": [
-        "New Zimbabwe"
-      ],
-      "num_sources": 1,
-      "source_detail": [
-        "New Zimbabwe (8h ago)"
-      ],
-      "topic_score": 25,
-      "recency_score": 17.532452757222224,
+      "topic_score": 21,
+      "recency_score": 19.24901547935185,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
-      "avg_source_quality": 0.79,
+      "avg_source_quality": 0.73,
       "google_news_only": false,
       "quality_detail": [
         {
-          "source": "New Zimbabwe",
+          "source": "Zimbabwe Mail",
           "tier": "primary-news",
           "reliability": "medium",
           "method": "RSS",
-          "quality_score": 0.79
+          "quality_score": 0.73
         }
       ],
-      "total_score": 78,
-      "time_ago": "8h ago",
-      "pub_date": "2026-06-02 23:04:14+00:00",
-      "description": "<p>Business Insider Africa South Korea has asked Libya to support greater participation by Korean companies in its oil and refining sectors as Libya continues its recovery. Seoul is also seeking to strengthen economic ties with Chad and Zimbabwe through cooperation in education, infrastructure, healthcare and development assistance. Zimbabwe&#8217;s lithium reserves have emerged as a key [&#8230;]</p>\n<p>The post <a href=\"https://www.newzimbabwe.com/why-south-korea-is-betting-on-zimbabwes-critic",
+      "total_score": 76,
+      "time_ago": "4h ago",
+      "pub_date": "2026-06-10 10:29:59+00:00",
+      "description": "<p>BUSINESSMAN Mr Tawanda Nyambirai says issuing land title for rural farmland can unlock billions of dollars of untapped capital that could transform the livelihoods of the rural majority and boost national gross domestic product (GDP). Speaking at the Zimbabwe National Chamber of Commerce (ZNCC) Matabeleland Annual Business Awards held in Bulawayo recently, Mr Nyambirai listed [&#8230;]</p>\n<p>The post <a href=\"https://thezimbabwemail.com/law-crime/rural-land-title-can-unlock-billions-in-capit",
       "cluster_size": 1,
-      "topic": "Mining & Minerals",
+      "topic": "General Economy",
       "novelty_label": "New story",
-      "angle": "Impact on Zimbabwe's mining export revenue",
-      "key_facts": "Headline: Why South Korea is betting on Zimbabwe\u2019s critical minerals and Libya\u2019s oil recovery. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Broader economic implications for Zimbabwe",
+      "key_facts": "Headline: Rural land title can unlock billions in capital \u2013 Nyambirai. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate"
@@ -710,17 +618,17 @@
       "next_step": "Find corroborating official or independent sources before drafting."
     },
     {
-      "headline": "Zimbabwe confronts US$4.8bn climate finance gap as new policy book launches in Harare",
-      "link": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNVjFYTTFDdTVISWhvcHhDRDI2YkxiVl9taW5hNjU5TG0zNC14RmVFSE1mYnh5d0huV2Q2RUd4bVZWa2RaaWdFSVhIcHpiblI0TVNpWDJ1ZWxBVjRXNGhVanlCQmo0czNsQlBNRndBUU9reFk1QjdTQzVBdnYtMDNhVUdZZFllZGplaHQ5Ym9NY1ZIUHhKdGpBcUJZQjVTb2tQTDlxNW9UZWU2Uzk4c1dVb0Z4WVBEUGFhS2QtTHRPc2pOQzNlVUlRNUtsWnBsa2k5LVgyZmF5cjdTUdIB2gFBVV95cUxNVjFYTTFDdTVISWhvcHhDRDI2YkxiVl9taW5hNjU5TG0zNC14RmVFSE1mYnh5d0huV2Q2RUd4bVZWa2RaaWdFSVhIcHpiblI0TVNpWDJ1ZWxBVjRXNGhVanlCQmo0czNsQlBNRndBUU9reFk1QjdTQzVBdnYtMDNhVUdZZFllZGplaHQ5Ym9NY1ZIUHhKdGpBcUJZQjVTb2tQTDlxNW9UZWU2Uzk4c1dVb0Z4WVBEUGFhS2QtTHRPc2pOQzNlVUlRNUtsWnBsa2k5LVgyZmF5cjdTUQ?oc=5",
+      "headline": "Ambassador backs rabbit export drive as Zimbabwe eyes African markets",
+      "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPams2OS1ta2NtU01FWXE1cEVpM1BLa3ZoT0lCb215aF8zMjFfSW5JYk1DcGpSWkx5V2ZWWmZiMUhBa1dYbGVEbzd3aFQ0NGR6NnczRkJCdkUwaWVWZkxFdThjNFlyNEFmMGhtSTJRWTA5Q2ZQZmZ4QlF6ZzNxZm12azQyb2FnTGwzUXBtU191SU5nVGFNb3lVVWdMc09WSmc3ZlA4T2MtVzR5Y1BqLTVzWHdVNWs3R3VadnNCX3JLeFhja0nSAcgBQVVfeXFMTUZmZjJCdnVBY01HaDZhVTUyRW5qWEYtdGxzR1RQV0FZU2Fvc0E5UEVEVTk1WjJia0RyYVlkVm1hc3dtX2hmajRGWlU3NkpLS2ZRZ0tmNGdRTmV4dEwtLUw2MFpJWExtY0cxZFZaY0k4RFU3V0tkcGJ1MDJUT1JpbGRJV2pKblRuOWhzWEFyb2FLemNXMTI1aUxfYmxtWGVJT0NyemVia0hzMERHSVo3MXZ3eUtoZzJ0c0ZEdW9rXzhvVWI1WXpZY2s?oc=5",
       "sources": [
         "NewsDay"
       ],
       "num_sources": 1,
       "source_detail": [
-        "NewsDay (1h ago)"
+        "NewsDay (6h ago)"
       ],
       "topic_score": 21,
-      "recency_score": 19.68748425240741,
+      "recency_score": 18.715935326944443,
       "search_score": 8,
       "novelty_score": 8,
       "source_score": 20,
@@ -735,15 +643,15 @@
           "quality_score": 0.74
         }
       ],
-      "total_score": 76,
-      "time_ago": "1h ago",
-      "pub_date": "2026-06-03 06:07:50+00:00",
+      "total_score": 75,
+      "time_ago": "6h ago",
+      "pub_date": "2026-06-10 08:26:15+00:00",
       "description": "",
       "cluster_size": 1,
-      "topic": "General Economy",
+      "topic": "Trade & Regional",
       "novelty_label": "New story",
-      "angle": "Broader economic implications for Zimbabwe",
-      "key_facts": "Headline: Zimbabwe confronts US$4.8bn climate finance gap as new policy book launches in Harare. Covered by 1 source(s). 1 article(s) in cluster.",
+      "angle": "Export performance and trade balance",
+      "key_facts": "Headline: Ambassador backs rabbit export drive as Zimbabwe eyes African markets. Covered by 1 source(s). 1 article(s) in cluster.",
       "draft_readiness": "Needs verification",
       "readiness_blockers": [
         "single-source candidate",

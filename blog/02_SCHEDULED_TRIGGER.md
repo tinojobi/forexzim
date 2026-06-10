@@ -11,7 +11,7 @@ Start a new scan cycle. Current time: {{ current_timestamp_CAT }}.
 
 Execute Phases 1 through 4 of your workflow:
 
-1. Pull RSS feeds from all 9 primary sources. Fall back to scraping where needed. Fall back to Google News if primary sources return nothing useful.
+1. Pull RSS feeds from all 10 primary sources. Fall back to scraping where needed. Fall back to Google News if primary sources return nothing useful.
 
 2. Filter to articles published in the last 24 hours only. Discard anything with an unverifiable date.
 

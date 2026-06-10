@@ -2,8 +2,11 @@ package com.forexzim.controller;
 
 import com.forexzim.model.BlogPost;
 import com.forexzim.repository.BlogRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -12,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(BlogController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class BlogControllerTest {
 
     private static final String PUBLISHED_SLUG = "published-market-update";
@@ -73,6 +78,39 @@ class BlogControllerTest {
                 .andExpect(content().string(containsString("mailto:?subject=")))
                 .andExpect(content().string(containsString("data-share-url=\"https://zimrate.com/blog/published-market-update\"")))
                 .andExpect(content().string(containsString("Copy link")));
+    }
+
+    @Test
+    void publishedPostSmokeRendersCoreArticleChrome() throws Exception {
+        BlogPost post = blogPost(PUBLISHED_SLUG, BlogPost.Status.PUBLISHED, "Published market update", "Published content", PREVIEW_TOKEN);
+        post.setImageUrl("https://zimrate.com/images/published-market-update.jpg");
+        BlogPost related = blogPost("related-update", BlogPost.Status.PUBLISHED, "Related update", "Related content", null);
+        related.setImageUrl("https://zimrate.com/images/related-update.jpg");
+        when(blogRepository.findBySlugAndStatus(PUBLISHED_SLUG, BlogPost.Status.PUBLISHED)).thenReturn(Optional.of(post));
+        when(blogRepository.findTop3ByStatusAndIdNotOrderByPublishedAtDesc(BlogPost.Status.PUBLISHED, post.getId()))
+                .thenReturn(List.of(related));
+
+        String html = mockMvc.perform(get("/blog/{slug}", PUBLISHED_SLUG))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Document document = Jsoup.parse(html);
+
+        assertThat(document.title()).isEqualTo("Published market update | ZimRate");
+        assertThat(document.selectFirst("article.blog-post")).isNotNull();
+        assertThat(document.selectFirst(".blog-post-title").text()).isEqualTo("Published market update");
+        assertThat(document.selectFirst(".blog-post-content p").text()).isEqualTo("Published content");
+        assertThat(document.selectFirst(".blog-share[aria-label='Share this article']")).isNotNull();
+        assertThat(document.selectFirst(".blog-share-copy[data-share-url='https://zimrate.com/blog/published-market-update']")).isNotNull();
+        assertThat(document.select(".blog-share-actions .blog-share-btn")).hasSize(5);
+        assertThat(document.selectFirst(".related-posts .blog-card a[href='/blog/related-update']")).isNotNull();
+        assertThat(document.selectFirst(".btn-back[href='/']")).isNotNull();
+        assertThat(html)
+                .doesNotContain("Draft preview")
+                .doesNotContain("Whitelabel Error Page")
+                .doesNotContain("Internal Server Error");
     }
 
     @Test

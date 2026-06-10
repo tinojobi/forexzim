@@ -1,0 +1,183 @@
+{
+  "ran_at": "2026-06-10T06:06:35+00:00",
+  "verdict": "pass",
+  "console_error_count": 0,
+  "latest_article": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+  "evidence_dir": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z",
+  "checks": [
+    {
+      "name": "homepage",
+      "status": "pass",
+      "url": "https://zimrate.com/",
+      "viewport": "desktop",
+      "notes": [
+        "title=1 USD to ZiG Today: 26.92 ZiG | ZimRate"
+      ],
+      "console_errors": [],
+      "screenshot": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/homepage_desktop.png",
+      "extra": {
+        "console_messages": []
+      }
+    },
+    {
+      "name": "homepage_rate_alert_modal",
+      "status": "pass",
+      "url": "https://zimrate.com/",
+      "viewport": "desktop",
+      "notes": [
+        "title=1 USD to ZiG Today: 26.92 ZiG | ZimRate",
+        "rate-alert modal opened"
+      ],
+      "console_errors": [],
+      "screenshot": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/homepage_rate_alert_modal_desktop.png",
+      "extra": {
+        "console_messages": [
+          "info: Loading the script 'https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Loading the script 'https://www.googletagmanager.com/gtag/js?id=G-XNK9RP5FBW' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Loading the script 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2279252465173643' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://zimrate.com/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=7' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://zimrate.com/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=7' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://zimrate.com/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG_InformalLow&days=7' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://zimrate.com/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG_InformalLow&days=7' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Loading the script 'https://zimrate.com/cdn-cgi/challenge-platform/scripts/jsd/main.js' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Loading the script 'https://zimrate.com/cdn-cgi/challenge-platform/h/g/scripts/jsd/8fc8ed1d8752/main.js?' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Loading the script 'https://pagead2.googlesyndication.com/pagead/managed/js/adsense/m202606090101/show_ads_impl.js?bust=31099067' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://zimrate.com/cdn-cgi/challenge-platform/h/g/jsd/oneshot/8fc8ed1d8752/0.7382558203107641:1781071222:k_Ef1xrPvHqZWdaNLfXF9ngreUCyenNBFLnbVri5lmU/a0962f05996ed6fa' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://region1.google-analytics.com/g/collect?v=2&tid=G-XNK9RP5FBW&gtm=45je6641v9249391037za200zd9249391037&_p=1781071520104&gcd=13l3l3l2l1l1&npa=1&dma_cps=a&dma=1&are=1&cid=1522262797.1781071523&frm=0&pscdl=noapi&rcb=8&sr=1440x2200&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=0~115938466~115938469~117776793&sid=1781071523&sct=1&seg=0&dl=https%3A%2F%2Fzimrate.com%2F&dt=1%20USD%20to%20ZiG%20Today%3A%2026.92%20ZiG%20%7C%20ZimRate&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=4283' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://region1.google-analytics.com/g/collect?v=2&tid=G-XNK9RP5FBW&gtm=45je6641v9249391037za200zd9249391037&_p=1781071520104&gcd=13l3l3l2l1l1&npa=1&dma_cps=a&dma=1&are=1&cid=1522262797.1781071523&frm=0&pscdl=noapi&rcb=8&sr=1440x2200&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=0~115938466~115938469~117776793&sid=1781071523&sct=1&seg=0&dl=https%3A%2F%2Fzimrate.com%2F&dt=1%20USD%20to%20ZiG%20Today%3A%2026.92%20ZiG%20%7C%20ZimRate&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=4283' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gda&tv=r20260604&st=env&sjk=3119606759810389' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Loading the script 'https://ep2.adtrafficquality.google/sodar/sodar2.js' violates the following Content Security Policy directive: \"script-src 'unsafe-inline' 'unsafe-eval'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://pagead2.googlesyndication.com/pagead/ping?e=1' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken.",
+          "info: Connecting to 'https://pagead2.googlesyndication.com/pagead/ping?e=1' violates the following Content Security Policy directive: \"connect-src 'none'\". The policy is report-only, so the violation has been logged but no further action has been taken."
+        ]
+      }
+    },
+    {
+      "name": "blog_index_cards",
+      "status": "pass",
+      "url": "https://zimrate.com/blog",
+      "viewport": "desktop",
+      "notes": [
+        "card_count=48"
+      ],
+      "console_errors": [],
+      "screenshot": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/blog_index_desktop.png",
+      "extra": {
+        "sampled_cards": [
+          {
+            "index": 1,
+            "title": "RBZ's First ZiG Bill Auction Sets a Real Benchmark",
+            "alt": "RBZ's First ZiG Bill Auction Sets a Real Benchmark"
+          },
+          {
+            "index": 2,
+            "title": "RBZ rolls out new ZiG bills to mop up liquidity",
+            "alt": "RBZ rolls out new ZiG bills to mop up liquidity"
+          },
+          {
+            "index": 3,
+            "title": "Why Fiscal Discipline Matters for ZiG Stability in 2026",
+            "alt": "Why Fiscal Discipline Matters for ZiG Stability in 2026"
+          },
+          {
+            "index": 4,
+            "title": "Why Zimbabwe firms still flock to the dollar",
+            "alt": "Why Zimbabwe firms still flock to the dollar"
+          },
+          {
+            "index": 5,
+            "title": "Zimbabwe Eyes Higher Lithium Earnings With Huayou Plan",
+            "alt": "Zimbabwe Eyes Higher Lithium Earnings With Huayou Plan"
+          }
+        ],
+        "console_messages": []
+      }
+    },
+    {
+      "name": "latest_article",
+      "status": "pass",
+      "url": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+      "viewport": "desktop",
+      "notes": [
+        "title=RBZ's First ZiG Bill Auction Sets a Real Benchmark | ZimRate",
+        "hero_image=https://pub-b56fdc7dd7bc4e99ab5d1daad8a27630.r2.dev/rbz-first-zig-bill-auction-user-social.jpg"
+      ],
+      "console_errors": [],
+      "screenshot": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/latest_article_desktop.png",
+      "extra": {
+        "metadata": {
+          "title": "RBZ&#39;s First ZiG Bill Auction Sets a Real Benchmark | ZimRate",
+          "canonical": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+          "og": [
+            "https://zimrate.com/images/social/rbz-first-zig-bill-auction-benchmark-rate.jpg?v=1781000983"
+          ],
+          "tw": [
+            "https://zimrate.com/images/social/rbz-first-zig-bill-auction-benchmark-rate.jpg?v=1781000983"
+          ]
+        },
+        "console_messages": []
+      }
+    },
+    {
+      "name": "latest_article",
+      "status": "pass",
+      "url": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+      "viewport": "tablet",
+      "notes": [
+        "title=RBZ's First ZiG Bill Auction Sets a Real Benchmark | ZimRate",
+        "hero_image=https://pub-b56fdc7dd7bc4e99ab5d1daad8a27630.r2.dev/rbz-first-zig-bill-auction-user-social.jpg"
+      ],
+      "console_errors": [],
+      "screenshot": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/latest_article_tablet.png",
+      "extra": {
+        "metadata": {
+          "title": "RBZ&#39;s First ZiG Bill Auction Sets a Real Benchmark | ZimRate",
+          "canonical": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+          "og": [
+            "https://zimrate.com/images/social/rbz-first-zig-bill-auction-benchmark-rate.jpg?v=1781000983"
+          ],
+          "tw": [
+            "https://zimrate.com/images/social/rbz-first-zig-bill-auction-benchmark-rate.jpg?v=1781000983"
+          ]
+        },
+        "console_messages": []
+      }
+    },
+    {
+      "name": "latest_article",
+      "status": "pass",
+      "url": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+      "viewport": "mobile",
+      "notes": [
+        "title=RBZ's First ZiG Bill Auction Sets a Real Benchmark | ZimRate",
+        "hero_image=https://pub-b56fdc7dd7bc4e99ab5d1daad8a27630.r2.dev/rbz-first-zig-bill-auction-user-social.jpg"
+      ],
+      "console_errors": [],
+      "screenshot": "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/latest_article_mobile.png",
+      "extra": {
+        "metadata": {
+          "title": "RBZ&#39;s First ZiG Bill Auction Sets a Real Benchmark | ZimRate",
+          "canonical": "https://zimrate.com/blog/rbz-first-zig-bill-auction-benchmark-rate",
+          "og": [
+            "https://zimrate.com/images/social/rbz-first-zig-bill-auction-benchmark-rate.jpg?v=1781000983"
+          ],
+          "tw": [
+            "https://zimrate.com/images/social/rbz-first-zig-bill-auction-benchmark-rate.jpg?v=1781000983"
+          ]
+        },
+        "console_messages": []
+      }
+    }
+  ],
+  "artifacts": [
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/report.md",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/result.json",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/blog_index_desktop.png",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/homepage_desktop.png",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/homepage_rate_alert_modal_desktop.png",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/latest_article_desktop.png",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/latest_article_mobile.png",
+    "/opt/forexzim/monitor/browser-deep-checks/20260610T060459Z/screenshots/latest_article_tablet.png"
+  ],
+  "failures": []
+}

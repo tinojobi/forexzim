@@ -3,6 +3,8 @@ package com.forexzim.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.forexzim.model.BlogPost;
+import com.forexzim.repository.BlogRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,11 @@ public class GscService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final BlogRepository blogRepository;
+
+    public GscService(BlogRepository blogRepository) {
+        this.blogRepository = blogRepository;
+    }
 
     /**
      * Returns article performance data for the last 30 days.
@@ -93,7 +100,7 @@ public class GscService {
 
                     Map<String, Object> article = new LinkedHashMap<>();
                     article.put("slug", slug);
-                    article.put("title", ""); // GSC doesn't provide title, will be enriched from DB if needed
+                    article.put("title", resolveTitle(slug));
                     article.put("clicks", clicks);
                     article.put("impressions", impressions);
                     article.put("ctr", Math.round(ctr * 10000) / 100.0); // percentage with 2 decimals
@@ -273,5 +280,17 @@ public class GscService {
             afterBlog = afterBlog.substring(0, questionIndex);
         }
         return afterBlog.isBlank() ? null : afterBlog;
+    }
+
+    private String resolveTitle(String slug) {
+        try {
+            return blogRepository.findBySlug(slug)
+                    .map(BlogPost::getTitle)
+                    .filter(title -> title != null && !title.isBlank())
+                    .orElse(slug.replace('-', ' '));
+        } catch (Exception e) {
+            log.warn("Failed to resolve blog title for slug {}: {}", slug, e.getMessage());
+            return slug.replace('-', ' ');
+        }
     }
 }

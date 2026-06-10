@@ -37,6 +37,7 @@ SOURCE_QUALITY = {
     "ZimLive": {"tier": "primary-news", "reliability": "medium", "base": 0.78},
     "New Zimbabwe": {"tier": "primary-news", "reliability": "medium", "base": 0.76},
     "Zimbabwe Mail": {"tier": "primary-news", "reliability": "medium", "base": 0.70},
+    "Financial Gazette": {"tier": "primary-news", "reliability": "high", "base": 0.85},
     "NewsDay": {"tier": "primary-news", "reliability": "high", "base": 0.84},
     "Herald": {"tier": "primary-news", "reliability": "high", "base": 0.84},
     "Zimbabwe Independent": {"tier": "primary-news", "reliability": "high", "base": 0.84},
@@ -241,7 +242,7 @@ print(f"Window: {WINDOW_START.strftime('%Y-%m-%d %H:%M')} to {NOW.strftime('%Y-%
 print("=" * 60)
 
 # --- iHarare ---
-print("\n[1/9] iHarare...")
+print("\n[1/10] iHarare...")
 rss_url = "https://iharare.com/feed/"
 data = fetch_url(rss_url)
 if data:
@@ -254,7 +255,7 @@ else:
     source_stats["iHarare"] = {"total": 0, "method": "FAILED"}
 
 # --- ZimLive ---
-print("\n[2/9] ZimLive...")
+print("\n[2/10] ZimLive...")
 rss_url = "https://www.zimlive.com/feed/"
 data = fetch_url(rss_url)
 if data:
@@ -267,7 +268,7 @@ else:
     source_stats["ZimLive"] = {"total": 0, "method": "FAILED"}
 
 # --- New Zimbabwe (unreliable, try Google News fallback) ---
-print("\n[3/9] New Zimbabwe...")
+print("\n[3/10] New Zimbabwe...")
 nz_rss_urls = [
     "https://www.newzimbabwe.com/feed/",
     "https://www.newzimbabwe.com/arc/outboundfeeds/rss/",
@@ -296,7 +297,7 @@ if not got_nz:
         source_stats["New Zimbabwe"] = {"total": 0, "method": "FAILED"}
 
 # --- Zimbabwe Mail (unreliable, try Google News fallback) ---
-print("\n[4/9] Zimbabwe Mail...")
+print("\n[4/10] Zimbabwe Mail...")
 zm_rss_urls = [
     "https://www.thezimbabwemail.com/feed/",
     "https://thezimbabwemail.com/feed/",
@@ -326,10 +327,19 @@ if not got_zm:
 
 
 # ============================================================
-# TIER 2: AMH Sites (Broken RSS → Google News fallback)
+# TIER 2: Additional business/news sites (RSS → Google News fallback)
 # ============================================================
 
 amh_sites = [
+    {
+        "name": "Financial Gazette",
+        "rss_urls": [
+            "https://fingaz.co.zw/category/companies-and-markets/feed/",
+            "https://fingaz.co.zw/category/news/feed/",
+            "https://fingaz.co.zw/feed/",
+        ],
+        "gn_query": "site:fingaz.co.zw Zimbabwe",
+    },
     {
         "name": "NewsDay",
         "rss_urls": [
@@ -384,7 +394,7 @@ amh_sites = [
 
 for i, site in enumerate(amh_sites):
     idx = 5 + i
-    print(f"\n[{idx}/9] {site['name']}...")
+    print(f"\n[{idx}/10] {site['name']}...")
     
     got_rss = False
     for url in site["rss_urls"]:

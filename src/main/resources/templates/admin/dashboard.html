@@ -912,33 +912,43 @@ new ApexCharts(document.getElementById('growthChart'), {
         return res.json();
     })
     .then(data => {
-        // Top 5 articles
-        const topArticles = (data || []).slice(0, 5);
+        const articles = Array.isArray(data?.articles) ? data.articles : [];
+        const apiError = data?.error || '';
+        const topArticles = articles.slice(0, 5);
         const listEl = document.getElementById('topArticlesList');
         document.getElementById('topArticlesLoading').style.display = 'none';
+        document.getElementById('trafficLoading').style.display = 'none';
+
+        if (apiError) {
+            document.getElementById('topArticlesError').style.display = 'block';
+            document.getElementById('topArticlesErrorMsg').textContent = 'Search Console access needs re-authorization.';
+            document.getElementById('trafficError').style.display = 'block';
+            document.getElementById('trafficErrorMsg').textContent = 'Search Console access needs re-authorization.';
+            return;
+        }
 
         if (topArticles.length === 0) {
             listEl.innerHTML = '<div class="empty-state" style="padding:24px 0;"><i class="fas fa-chart-bar"></i><p>No article data available.</p></div>';
             listEl.style.display = 'block';
+            document.getElementById('trafficStats').style.display = 'block';
             return;
         }
 
         listEl.innerHTML = topArticles.map((a, i) =>
             '<div class="top-article-row">' +
             '<div class="top-article-rank">' + (i + 1) + '</div>' +
+            '<div class="top-article-content">' +
             '<div class="top-article-title" title="' + escapeHtml(a.title || '') + '">' + escapeHtml(a.title || 'Untitled') + '</div>' +
             '<div class="top-article-metrics">' +
             '<span><strong>' + formatNum(a.clicks || 0) + '</strong> clicks</span>' +
             '<span>' + formatNum(a.impressions || 0) + ' impr</span>' +
-            (a.position ? '<span>avg #' + a.position.toFixed(1) + '</span>' : '') +
-            '</div></div>'
+            (a.avgPosition ? '<span>avg #' + Number(a.avgPosition).toFixed(1) + '</span>' : '') +
+            '</div></div></div>'
         ).join('');
         listEl.style.display = 'block';
 
-        // Traffic snapshot (aggregate)
-        document.getElementById('trafficLoading').style.display = 'none';
-        const totalClicks = data.reduce((s, a) => s + (a.clicks || 0), 0);
-        const totalImpressions = data.reduce((s, a) => s + (a.impressions || 0), 0);
+        const totalClicks = articles.reduce((s, a) => s + (a.clicks || 0), 0);
+        const totalImpressions = articles.reduce((s, a) => s + (a.impressions || 0), 0);
         const avgCtr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100) : 0;
 
         document.getElementById('trafficClicks').textContent = formatNum(totalClicks);

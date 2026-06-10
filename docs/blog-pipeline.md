@@ -22,6 +22,7 @@ The ZimRate blog publishes Zimbabwe economic news articles on zimrate.com. The p
 | Zimbabwe Independent | zimbabweindependent.com | Business/finance focus |
 | The Source | thesource.co.zw | Business wire service |
 | iHarare | iharare.com | General news, trending stories |
+| Financial Gazette | fingaz.co.zw | Business and finance focus, category feeds available |
 | New Zimbabwe | newzimbabwe.com | Diaspora-focused |
 | Southern Eye | southerneye.co.zw | Regional (Bulawayo) |
 | Zimbabwe Mail | zimbabwemail.co.zw | General news |
