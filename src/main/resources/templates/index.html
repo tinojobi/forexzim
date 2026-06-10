@@ -20,7 +20,7 @@
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
 <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260525-seo1')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260610-ui1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -192,15 +192,15 @@
         </section>
 
         <!-- Category filter bar -->
-        <div class="filter-bar">
-            <button class="filter-pill active" data-filter="all"><i class="fas fa-border-all"></i> All</button>
-            <button class="filter-pill" data-filter="official"><i class="fas fa-landmark"></i> Official</button>
-            <button class="filter-pill" data-filter="blackMarket"><i class="fas fa-chart-line"></i> Black Market</button>
+        <div class="filter-bar" role="group" aria-label="Filter rate sections">
+            <button class="filter-pill active" data-filter="all" aria-pressed="true" aria-label="Show all rate sections"><i class="fas fa-border-all" aria-hidden="true"></i> All</button>
+            <button class="filter-pill" data-filter="official" aria-pressed="false" aria-label="Show official rates only"><i class="fas fa-landmark" aria-hidden="true"></i> Official</button>
+            <button class="filter-pill" data-filter="blackMarket" aria-pressed="false" aria-label="Show black market rates only"><i class="fas fa-chart-line" aria-hidden="true"></i> Black Market</button>
 <!--            <button class="filter-pill" data-filter="bank"><i class="fas fa-building-columns"></i> Banks</button>-->
-            <button class="filter-pill" data-filter="business"><i class="fas fa-store"></i> Business</button>
-            <button class="filter-pill" data-filter="gold" th:if="${goldCoin != null}"  ><i class="fas fa-coins"></i> Gold Coin</button>
-            <button class="filter-pill" data-filter="inflation" th:if="${inflation != null}"><i class="fas fa-arrow-trend-up"></i> Inflation</button>
-            <button class="filter-pill" data-filter="international"><i class="fas fa-globe"></i> International</button>
+            <button class="filter-pill" data-filter="business" aria-pressed="false" aria-label="Show business rates only"><i class="fas fa-store" aria-hidden="true"></i> Business</button>
+            <button class="filter-pill" data-filter="gold" th:if="${goldCoin != null}" aria-pressed="false" aria-label="Show gold coin price only"><i class="fas fa-coins" aria-hidden="true"></i> Gold Coin</button>
+            <button class="filter-pill" data-filter="inflation" th:if="${inflation != null}" aria-pressed="false" aria-label="Show inflation rate only"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i> Inflation</button>
+            <button class="filter-pill" data-filter="international" aria-pressed="false" aria-label="Show international rates only"><i class="fas fa-globe" aria-hidden="true"></i> International</button>
 
         </div>
 
@@ -257,7 +257,7 @@
                                 <div class="provider-cell">
                                     <span class="provider-name" th:text="${displayLabels.get(rate)}">RBZ</span>
                                     <span class="best-tag" th:if="${rate.buyRate.doubleValue() == bestBuyRates.get('official')}">
-                                        <i class="fas fa-star"></i> Best
+                                        <i class="fas fa-star" aria-hidden="true"></i> Best<span class="sr-only"> rate in this section</span>
                                     </span>
                                 </div>
                             </td>
@@ -326,7 +326,7 @@
                                 <div class="provider-cell">
                                     <span class="provider-name" th:text="${displayLabels.get(rate)}">Black Market Max</span>
                                     <span class="best-tag" th:if="${rate.buyRate.doubleValue() == bestBuyRates.get('blackMarket')}">
-                                        <i class="fas fa-star"></i> Best
+                                        <i class="fas fa-star" aria-hidden="true"></i> Best<span class="sr-only"> rate in this section</span>
                                     </span>
                                 </div>
                             </td>
@@ -482,7 +482,7 @@
                                 <div class="provider-cell">
                                     <span class="provider-name" th:text="${displayLabels.get(rate)}">OK Supermarket</span>
                                     <span class="best-tag" th:if="${rate.buyRate.doubleValue() == bestBuyRates.get('business')}">
-                                        <i class="fas fa-star"></i> Best
+                                        <i class="fas fa-star" aria-hidden="true"></i> Best<span class="sr-only"> rate in this section</span>
                                     </span>
                                 </div>
                             </td>
@@ -684,7 +684,7 @@
                         <label for="usdInput">USD</label>
                         <input type="number" id="usdInput" placeholder="1" min="0" step="any" aria-label="USD amount">
                     </div>
-                    <span class="converter-swap"><i class="fas fa-right-left"></i></span>
+                    <span class="converter-swap" id="converterSwap" role="img" aria-label="Converts both ways between USD and ZiG"><i class="fas fa-right-left" aria-hidden="true"></i></span>
                     <div class="converter-field">
                         <label for="zigInput">ZiG</label>
                         <input type="number" id="zigInput" placeholder="0.00" min="0" step="any" aria-label="ZiG amount">
@@ -843,68 +843,8 @@
 
     </main>
 
-    <!-- ── Alert Modal ─────────────────────────────────────────────────── -->
-    <div class="modal-overlay" id="alertModal" role="dialog" aria-modal="true" aria-label="Rate Alert">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3><i class="fas fa-bell"></i> Rate Alerts</h3>
-                <button class="modal-close" id="alertModalClose" aria-label="Close"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-tabs">
-                <button class="modal-tab active" data-tab="tab-subscribe">Set Alert</button>
-                <button class="modal-tab"        data-tab="tab-manage">My Alerts</button>
-            </div>
-
-            <!-- Subscribe tab -->
-            <div class="modal-tab-panel active" id="tab-subscribe">
-                <p class="modal-desc">Enter your email and we'll notify you once when the rate crosses your target.</p>
-                <form id="alertForm" novalidate>
-                    <div class="form-group">
-                        <label for="alertEmail">Email address</label>
-                        <input type="email" id="alertEmail" placeholder="you@example.com" required autocomplete="email" aria-describedby="alertFeedback">
-                    </div>
-                    <div class="form-group">
-                        <label for="alertPair">Currency pair</label>
-                        <select id="alertPair">
-                            <option value="USD/ZiG">USD/ZiG — Official rate</option>
-                            <option value="USD/ZiG_InformalLow">USD/ZiG — Black Market Max</option>
-                            <option value="USD/ZiG_InformalHigh">USD/ZiG — Black Market Min</option>
-                            <option value="USD/ZiG_Cash">USD/ZiG — Cash rate</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="alertDirection">Condition</label>
-                            <select id="alertDirection">
-                                <option value="above">Goes above</option>
-                                <option value="below">Goes below</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="alertThreshold">Threshold (ZiG)</label>
-                            <input type="number" id="alertThreshold" placeholder="e.g. 30.00"
-                                   min="0.01" step="0.01" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-bell"></i> Set alert
-                    </button>
-                </form>
-                <div class="alert-feedback" id="alertFeedback" role="status" aria-live="polite"></div>
-            </div>
-
-            <!-- Manage tab -->
-            <div class="modal-tab-panel" id="tab-manage">
-                <p class="modal-desc">Enter the email you subscribed with to view or manage your alerts.</p>
-                <form class="manage-search" id="manageSearchForm">
-                    <label class="sr-only" for="manageEmail">Email address used for alerts</label>
-                    <input type="email" id="manageEmail" placeholder="your@email.com" autocomplete="email" required aria-label="Email address used for alerts">
-                    <button type="submit" class="btn-search">Look up</button>
-                </form>
-                <div class="alert-list" id="alertList"></div>
-            </div>
-        </div>
-    </div>
+    <!-- ── Alert Modal (shared fragment) ───────────────────────────────── -->
+    <th:block th:replace="~{layout :: alert-modal}"></th:block>
 
     <!-- Email alert capture -->
     <div class="alert-capture-card">
@@ -1323,178 +1263,14 @@
         pills.forEach(function (pill) {
             pill.addEventListener('click', function () {
                 var filter = this.dataset.filter;
-                pills.forEach(function (p) { p.classList.remove('active'); });
+                pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
                 this.classList.add('active');
+                this.setAttribute('aria-pressed', 'true');
                 document.querySelectorAll('.rate-section[data-category]').forEach(function (sec) {
                     sec.classList.toggle('hidden', filter !== 'all' && sec.dataset.category !== filter);
                 });
             });
         });
-    }());
-
-    // ── Alert modal ──────────────────────────────────────────────────────────
-    (function () {
-        var modal      = document.getElementById('alertModal');
-        var bellBtn    = document.getElementById('alertBellBtn');
-        var closeBtn   = document.getElementById('alertModalClose');
-        var form       = document.getElementById('alertForm');
-        var feedback   = document.getElementById('alertFeedback');
-        var tabs       = document.querySelectorAll('.modal-tab');
-        var panels     = document.querySelectorAll('.modal-tab-panel');
-        var manageForm = document.getElementById('manageSearchForm');
-        var alertList  = document.getElementById('alertList');
-
-        if (!modal || !bellBtn) return;
-
-        function openModal()  { modal.classList.add('open');    document.body.style.overflow = 'hidden'; }
-        function closeModal() { modal.classList.remove('open'); document.body.style.overflow = ''; }
-
-        window._openAlertModal = openModal;
-
-        bellBtn.addEventListener('click', openModal);
-        closeBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
-
-        // Tabs
-        tabs.forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                var target = this.dataset.tab;
-                tabs.forEach(function (t) { t.classList.remove('active'); });
-                panels.forEach(function (p) { p.classList.remove('active'); });
-                this.classList.add('active');
-                var panel = document.getElementById(target);
-                if (panel) panel.classList.add('active');
-            });
-        });
-
-        // Subscribe
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var btn = form.querySelector('button[type="submit"]');
-                feedback.className = 'alert-feedback';
-
-                var emailVal  = document.getElementById('alertEmail').value.trim();
-                var threshVal = parseFloat(document.getElementById('alertThreshold').value);
-
-                // Client-side validation
-                var errors = [];
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-                    errors.push('Please enter a valid email address.');
-                }
-                if (isNaN(threshVal) || threshVal <= 0) {
-                    errors.push('Threshold must be a positive number greater than 0.');
-                }
-                if (errors.length) {
-                    feedback.className = 'alert-feedback error';
-                    feedback.textContent = errors.join(' ');
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-                        document.getElementById('alertEmail').focus();
-                    } else {
-                        document.getElementById('alertThreshold').focus();
-                    }
-                    return;
-                }
-
-                btn.disabled = true;
-
-                var payload = {
-                    email:        emailVal,
-                    currencyPair: document.getElementById('alertPair').value,
-                    threshold:    threshVal,
-                    direction:    document.getElementById('alertDirection').value
-                };
-
-                fetchWithTimeout('/api/alerts/subscribe', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }, 8000).then(function (r) {
-                    return r.json().then(function (d) { return { ok: r.ok, data: d }; });
-                }).then(function (res) {
-                    if (res.ok) {
-                        feedback.className = 'alert-feedback success';
-                        feedback.textContent = '\u2713 Alert set!';
-                        form.reset();
-                        setTimeout(function () {
-                            // Switch to My Alerts tab and load the user's alerts
-                            tabs.forEach(function (t) { t.classList.remove('active'); });
-                            panels.forEach(function (p) { p.classList.remove('active'); });
-                            document.querySelector('.modal-tab[data-tab="tab-manage"]').classList.add('active');
-                            document.getElementById('tab-manage').classList.add('active');
-                            loadAlerts(payload.email);
-                            // Auto-close after 3s
-                            setTimeout(function () {
-                                closeModal();
-                                feedback.className = 'alert-feedback';
-                                feedback.textContent = '';
-                            }, 3000);
-                        }, 1500);
-                    } else {
-                        var msg = res.data.error || Object.values(res.data).join('. ') || 'Something went wrong.';
-                        feedback.className = 'alert-feedback error';
-                        feedback.textContent = msg;
-                    }
-                }).catch(function () {
-                    feedback.className = 'alert-feedback error';
-                    feedback.textContent = 'Network error \u2014 please try again.';
-                }).finally(function () { btn.disabled = false; });
-            });
-        }
-
-        // Manage
-        if (manageForm) {
-            manageForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var email = document.getElementById('manageEmail').value.trim();
-                if (email) loadAlerts(email);
-            });
-        }
-
-        function loadAlerts(email) {
-            alertList.innerHTML = '<p class="manage-empty">Loading\u2026</p>';
-            fetch('/api/alerts?email=' + encodeURIComponent(email))
-                .then(function (r) { return r.json(); })
-                .then(function (subs) {
-                    if (!subs.length) {
-                        alertList.innerHTML = '<p class="manage-empty">No alerts found for this email.</p>';
-                        return;
-                    }
-                    alertList.innerHTML = '';
-                    subs.forEach(function (sub) {
-                        var item = document.createElement('div');
-                        item.className = 'alert-list-item' + (sub.active ? '' : ' inactive');
-                        item.innerHTML =
-                            '<div class="alert-item-info">' +
-                                '<div class="alert-item-pair">' + esc(sub.currencyPair) + '</div>' +
-                                '<div class="alert-item-meta">' + esc(sub.direction) + ' ' + sub.threshold + ' ZiG</div>' +
-                            '</div>' +
-                            '<span class="alert-item-status ' + (sub.active ? 'active-status' : 'inactive-status') + '">' +
-                                (sub.active ? 'Active' : 'Triggered') + '</span>' +
-                            (sub.active
-                                ? '<button class="btn-alert-action cancel"     data-id="' + sub.id + '" data-email="' + esc(email) + '">Cancel</button>'
-                                : '<button class="btn-alert-action reactivate" data-id="' + sub.id + '" data-email="' + esc(email) + '">Re-arm</button>');
-                        alertList.appendChild(item);
-                    });
-                    alertList.querySelectorAll('.btn-alert-action').forEach(function (btn) {
-                        btn.addEventListener('click', function () {
-                            var id     = this.dataset.id;
-                            var em     = this.dataset.email;
-                            var cancel = this.classList.contains('cancel');
-                            fetch('/api/alerts/' + id + (cancel ? '' : '/reactivate'), { method: cancel ? 'DELETE' : 'PATCH' })
-                                .then(function () { loadAlerts(em); });
-                        });
-                    });
-                })
-                .catch(function () {
-                    alertList.innerHTML = '<p class="manage-empty">Failed to load alerts.</p>';
-                });
-        }
-
-        function esc(s) {
-            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
     }());
 
     // ── Alert capture card ───────────────────────────────────────────────────

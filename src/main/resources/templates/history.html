@@ -20,7 +20,7 @@
     <meta name="theme-color" content="#14532d">
     <th:block th:replace="~{layout :: head-meta}"></th:block>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa2')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260610-ui1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -101,7 +101,14 @@
 
             <!-- Daily rates table -->
             <div th:unless="${dailyRows.empty}" class="convert-card">
-                <h2 class="convert-card-title"><i class="fas fa-table"></i> Daily Rates</h2>
+                <div class="history-table-head">
+                    <h2 class="convert-card-title"><i class="fas fa-table"></i> Daily Rates</h2>
+                    <button type="button" id="historyCsvBtn" class="history-csv-btn"
+                            th:attr="data-month=${monthSlug}"
+                            aria-label="Download this month's daily rates as a CSV file">
+                        <i class="fas fa-download" aria-hidden="true"></i> Download CSV
+                    </button>
+                </div>
                 <div class="table-responsive">
                     <table class="history-table">
                         <thead>
@@ -128,6 +135,9 @@
             </p>
         </div>
     </main>
+
+    <!-- ── Alert Modal (shared fragment) ───────────────────────────────── -->
+    <th:block th:replace="~{layout :: alert-modal}"></th:block>
 
     <th:block th:replace="~{layout :: footer}"></th:block>
 
@@ -199,6 +209,32 @@
     </script>
 
     <script>
+    // ── CSV export of the daily rates table ─────────────────────────────────
+    (function () {
+        var btn   = document.getElementById('historyCsvBtn');
+        var table = document.querySelector('.history-table');
+        if (!btn || !table) return;
+        btn.addEventListener('click', function () {
+            var rows = [];
+            table.querySelectorAll('tr').forEach(function (tr) {
+                var cells = [];
+                tr.querySelectorAll('th, td').forEach(function (cell) {
+                    var text = cell.textContent.trim().replace(/—/g, '');
+                    cells.push('"' + text.replace(/"/g, '""') + '"');
+                });
+                rows.push(cells.join(','));
+            });
+            var blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'zimrate-history-' + (btn.dataset.month || 'rates') + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+        });
+    }());
+
     (function () {
         var toggle = document.getElementById('themeToggle');
         var icon   = document.getElementById('themeIcon');

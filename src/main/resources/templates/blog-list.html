@@ -18,7 +18,7 @@
     <meta name="theme-color" content="#14532d">
     <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260524-qa2')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260610-ui1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <th:block th:replace="~{layout :: head-meta}"></th:block>
@@ -89,6 +89,7 @@
         </div>
     </main>
 
+    <th:block th:replace="~{layout :: alert-modal}"></th:block>
     <div th:replace="~{layout :: footer}"></div>
 
     <script>
@@ -133,14 +134,24 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
                 }).then(function (r) {
-                    return r.json().then(function (d) { return { ok: r.ok, data: d }; });
+                    return r.json()
+                        .catch(function () { return {}; })
+                        .then(function (d) { return { ok: r.ok, data: d }; });
                 }).then(function (res) {
                     feedback.className = 'newsletter-feedback ' + (res.ok ? 'success' : 'error');
-                    feedback.textContent = res.data.message || res.data.error || 'Something went wrong.';
-                    if (res.ok) form.reset();
+                    feedback.textContent = res.data.message || res.data.error ||
+                        (res.ok ? 'Subscribed!' : 'Something went wrong — please try again.');
+                    if (res.ok) {
+                        form.reset();
+                        // Auto-dismiss the success message after ~4s
+                        setTimeout(function () {
+                            feedback.className = 'newsletter-feedback';
+                            feedback.textContent = '';
+                        }, 4000);
+                    }
                 }).catch(function () {
                     feedback.className = 'newsletter-feedback error';
-                    feedback.textContent = 'Network error — please try again.';
+                    feedback.textContent = 'Something went wrong — please try again.';
                 }).finally(function () { btn.disabled = false; });
             });
         });
