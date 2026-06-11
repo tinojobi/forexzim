@@ -125,3 +125,35 @@ function isStaticAsset(pathname) {
         || pathname.endsWith('.webp')
         || pathname === '/manifest.json';
 }
+
+// ── Web push notifications ───────────────────────────────────────────────────
+
+self.addEventListener('push', function (event) {
+    var data = { title: 'ZimRate', body: 'Exchange rate update', url: '/' };
+    try {
+        if (event.data) data = Object.assign(data, event.data.json());
+    } catch (e) { /* keep defaults on malformed payload */ }
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: '/logo.svg',
+            badge: '/favicon.svg',
+            data: { url: data.url },
+            tag: 'zimrate-rate-update'
+        })
+    );
+});
+
+self.addEventListener('notificationclick', function (event) {
+    event.notification.close();
+    var url = (event.notification.data && event.notification.data.url) || '/';
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+            for (var i = 0; i < list.length; i++) {
+                if ('focus' in list[i]) { list[i].navigate(url); return list[i].focus(); }
+            }
+            return clients.openWindow(url);
+        })
+    );
+});

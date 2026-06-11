@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZimRate - Zimbabwe Forex Rates</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260610-ui1')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia4')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -181,6 +181,15 @@
                     </button>
                 </form>
                 <div class="alert-feedback" id="alertFeedback" role="status" aria-live="polite"></div>
+
+                <!-- Browser push (shown only when supported and enabled server-side) -->
+                <div class="push-section" id="pushSection" hidden>
+                    <p class="modal-desc push-divider">Or get an instant browser notification whenever the official rate moves by 1% or more — no email needed.</p>
+                    <button type="button" class="btn-primary btn-push" id="pushToggleBtn">
+                        <i class="fas fa-bell"></i> <span id="pushToggleLabel">Enable browser notifications</span>
+                    </button>
+                    <div class="alert-feedback" id="pushFeedback" role="status" aria-live="polite"></div>
+                </div>
             </div>
 
             <!-- Manage tab -->
@@ -385,6 +394,83 @@
         function esc(s) {
             return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
+    }());
+
+    // ── Browser push notifications ────────────────────────────────────────────
+    (function () {
+        var section  = document.getElementById('pushSection');
+        var btn      = document.getElementById('pushToggleBtn');
+        var label    = document.getElementById('pushToggleLabel');
+        var feedback = document.getElementById('pushFeedback');
+        if (!section || !btn) return;
+        if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return;
+
+        var publicKey = null;
+
+        function setState(subscribed) {
+            label.textContent = subscribed ? 'Disable browser notifications' : 'Enable browser notifications';
+            btn.dataset.subscribed = subscribed ? '1' : '';
+        }
+        function say(msg, ok) {
+            feedback.textContent = msg;
+            feedback.className = 'alert-feedback ' + (ok ? 'success' : 'error');
+            setTimeout(function () { feedback.textContent = ''; feedback.className = 'alert-feedback'; }, 5000);
+        }
+        function urlBase64ToUint8Array(base64) {
+            var padding = '='.repeat((4 - base64.length % 4) % 4);
+            var raw = atob((base64 + padding).replace(/-/g, '+').replace(/_/g, '/'));
+            var arr = new Uint8Array(raw.length);
+            for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+            return arr;
+        }
+
+        // Only reveal the section when the server has push enabled
+        fetch('/api/push/public-key').then(function (r) {
+            if (!r.ok) return null;
+            return r.json();
+        }).then(function (data) {
+            if (!data || !data.publicKey) return;
+            publicKey = data.publicKey;
+            section.hidden = false;
+            return navigator.serviceWorker.ready.then(function (reg) {
+                return reg.pushManager.getSubscription();
+            }).then(function (sub) { setState(!!sub); });
+        }).catch(function () {});
+
+        btn.addEventListener('click', function () {
+            navigator.serviceWorker.ready.then(function (reg) {
+                return reg.pushManager.getSubscription().then(function (existing) {
+                    if (existing) {
+                        // Unsubscribe flow
+                        return fetch('/api/push/unsubscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ endpoint: existing.endpoint })
+                        }).then(function () { return existing.unsubscribe(); })
+                          .then(function () { setState(false); say('Browser notifications disabled.', true); });
+                    }
+                    // Subscribe flow
+                    return Notification.requestPermission().then(function (perm) {
+                        if (perm !== 'granted') { say('Notifications were blocked by the browser.', false); return; }
+                        return reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlBase64ToUint8Array(publicKey)
+                        }).then(function (sub) {
+                            var json = sub.toJSON();
+                            return fetch('/api/push/subscribe', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ endpoint: sub.endpoint,
+                                                       keys: { p256dh: json.keys.p256dh, auth: json.keys.auth } })
+                            });
+                        }).then(function (r) {
+                            if (r && r.ok) { setState(true); say('You\'ll be notified when the rate moves ≥1%.', true); }
+                            else { say('Could not save your subscription. Try again later.', false); }
+                        });
+                    });
+                });
+            }).catch(function () { say('Something went wrong enabling notifications.', false); });
+        });
     }());
     </script>
     </th:block>

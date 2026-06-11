@@ -35,6 +35,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	// jsoup for HTML parsing
 	implementation 'org.jsoup:jsoup:1.18.3'
+	// Web Push (VAPID) notifications
+	implementation 'nl.martijndwars:web-push:5.1.1'
+	implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
 	// Flyway for database migrations
 	implementation 'org.flywaydb:flyway-core'
 	runtimeOnly 'org.flywaydb:flyway-database-postgresql'

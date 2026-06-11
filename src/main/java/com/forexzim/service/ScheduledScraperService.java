@@ -33,6 +33,7 @@ public class ScheduledScraperService {
     private final AlertService alertService;
     private final TelegramService telegramService;
     private final TelegramBotService telegramBotService;
+    private final WebPushService webPushService;
 
     private final Map<String, RateScraper> scraperMap;
 
@@ -43,7 +44,8 @@ public class ScheduledScraperService {
                                    RateService rateService,
                                    AlertService alertService,
                                    TelegramService telegramService,
-                                   TelegramBotService telegramBotService) {
+                                   TelegramBotService telegramBotService,
+                                   WebPushService webPushService) {
         this.scrapers = scrapers;
         this.sourceRepository = sourceRepository;
         this.rateRepository = rateRepository;
@@ -52,6 +54,7 @@ public class ScheduledScraperService {
         this.alertService = alertService;
         this.telegramService = telegramService;
         this.telegramBotService = telegramBotService;
+        this.webPushService = webPushService;
         this.scraperMap = scrapers.stream()
                 .collect(Collectors.toMap(sc -> sc.getClass().getSimpleName(), Function.identity()));
         log.info("Loaded {} scrapers: {}", scrapers.size(), scraperMap.keySet());
@@ -133,6 +136,13 @@ public class ScheduledScraperService {
             telegramBotService.checkAndNotify(rateService.getLatestRates());
         } catch (Exception e) {
             log.error("Telegram personal alert check failed: {}", e.getMessage(), e);
+        }
+
+        // Browser push notification (only if rate moved ≥1%)
+        try {
+            webPushService.notifyRateMove(rateService.getLatestRates());
+        } catch (Exception e) {
+            log.error("Web push notification failed: {}", e.getMessage(), e);
         }
     }
 

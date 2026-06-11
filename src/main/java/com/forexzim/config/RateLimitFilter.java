@@ -58,7 +58,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
         if (!"POST".equalsIgnoreCase(request.getMethod())) return 0;
         String uri = request.getRequestURI();
         if (uri.equals("/admin/login")) return LOGIN_MAX;
-        if (uri.equals("/api/alerts/subscribe") || uri.equals("/api/newsletter/subscribe")) return SUBSCRIBE_MAX;
+        if (uri.equals("/api/alerts/subscribe") || uri.equals("/api/newsletter/subscribe")
+                || uri.equals("/api/push/subscribe") || uri.equals("/api/push/unsubscribe")) return SUBSCRIBE_MAX;
         return 0;
     }
 
