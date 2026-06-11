@@ -559,6 +559,92 @@ public class RateController {
             return "convert";
         }
 
+        /**
+         * Historical converter: what an amount of USD was worth in ZiG on a past
+         * date, using daily-average rates. Dates with no data fall back to the
+         * most recent prior day within a week.
+         */
+        @GetMapping("/convert/{amount:[0-9]+}-usd-to-zig/on/{date:\\d{4}-\\d{2}-\\d{2}}")
+        public String convertOnDate(@PathVariable("amount") String amountStr,
+                                    @PathVariable("date") String dateStr, Model model) {
+            long amount;
+            LocalDate date;
+            try {
+                amount = Long.parseLong(amountStr);
+                date   = LocalDate.parse(dateStr);
+            } catch (NumberFormatException | DateTimeParseException e) {
+                return "redirect:/convert";
+            }
+            if (amount <= 0 || amount > 10_000_000) return "redirect:/convert";
+
+            LocalDate today = LocalDate.now();
+            LocalDate earliest = LAUNCH_MONTH.atDay(1);
+            if (date.isBefore(earliest) || !date.isBefore(today)) {
+                return "redirect:/convert/" + amount + "-usd-to-zig";
+            }
+
+            // Window [date-6, date] so a quiet day falls back to the closest prior day
+            var officialRows = rateService.getDailyAveragesForMonth("ZimPriceCheck", "USD/ZiG",
+                    date.minusDays(6).atStartOfDay(), date.plusDays(1).atStartOfDay());
+            if (officialRows.isEmpty()) return "redirect:/convert/" + amount + "-usd-to-zig";
+
+            var officialRow = officialRows.get(officialRows.size() - 1);
+            LocalDate actualDate = LocalDate.parse((String) officialRow.get("day"));
+            double rate   = ((Number) officialRow.get("rate")).doubleValue();
+            double result = amount * rate;
+
+            DateTimeFormatter fullDate = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
+            model.addAttribute("amount",       amount);
+            model.addAttribute("dateIso",      date.toString());
+            model.addAttribute("dateLabel",    date.format(fullDate));
+            model.addAttribute("actualDate",   actualDate.equals(date) ? null : actualDate.format(fullDate));
+            model.addAttribute("officialRate", rate);
+            model.addAttribute("result",       result);
+
+            var bmRows = rateService.getDailyAveragesForMonth("ZimPriceCheck", "USD/ZiG_InformalLow",
+                    actualDate.atStartOfDay(), actualDate.plusDays(1).atStartOfDay());
+            if (!bmRows.isEmpty()) {
+                double bmRate = ((Number) bmRows.get(0).get("rate")).doubleValue();
+                model.addAttribute("blackMarketRate",   bmRate);
+                model.addAttribute("blackMarketResult", amount * bmRate);
+            }
+
+            // Compare with today's live official rate
+            rateService.getLatestRates().stream()
+                    .filter(r -> "ZimPriceCheck".equals(r.getSource().getName())
+                              && "USD/ZiG".equals(r.getCurrencyPair()))
+                    .findFirst()
+                    .ifPresent(now -> {
+                        double todayRate = now.getBuyRate().doubleValue();
+                        model.addAttribute("todayRate",   todayRate);
+                        model.addAttribute("todayResult", amount * todayRate);
+                        model.addAttribute("changePct",   (todayRate - rate) / rate * 100);
+                    });
+
+            if (date.isAfter(earliest)) {
+                model.addAttribute("prevDateIso", date.minusDays(1).toString());
+            }
+            if (date.isBefore(today.minusDays(1))) {
+                model.addAttribute("nextDateIso", date.plusDays(1).toString());
+            }
+            model.addAttribute("monthSlug", toSlug(YearMonth.from(date)));
+            model.addAttribute("monthLabel", YearMonth.from(date).format(DISPLAY_FMT));
+            model.addAttribute("todayIso", today.toString());
+            model.addAttribute("earliestIso", earliest.toString());
+
+            model.addAttribute("breadcrumbData",
+                    "{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\","
+                    + "\"itemListElement\":["
+                    + "{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"" + baseUrl + "\"},"
+                    + "{\"@type\":\"ListItem\",\"position\":2,\"name\":\"" + amount + " USD to ZiG\","
+                    + "\"item\":\"" + baseUrl + "/convert/" + amount + "-usd-to-zig\"},"
+                    + "{\"@type\":\"ListItem\",\"position\":3,\"name\":\"On " + date + "\","
+                    + "\"item\":\"" + baseUrl + "/convert/" + amount + "-usd-to-zig/on/" + date + "\"}"
+                    + "]}");
+
+            return "historical-convert";
+        }
+
         private int getOfficialOrder(String source, String pair) {
             if (pair.equals("USD/ZiG"))             return 1;
             if (source.equals("Exchange Rate API"))  return 2;

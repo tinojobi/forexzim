@@ -173,6 +173,20 @@
                 </div>
             </div>
 
+            <!-- Historical lookup (USD only — historical cross rates not stored) -->
+            <div class="convert-card" th:if="${fromSlug == 'usd'}">
+                <h2 class="convert-card-title"><i class="fas fa-calendar-day"></i> What Was It Worth On…</h2>
+                <form id="dateForm" class="convert-form" th:attr="data-amount=${amount}">
+                    <div class="convert-form-row">
+                        <div class="convert-input-wrap">
+                            <span class="convert-input-prefix">Date</span>
+                            <input type="date" id="historicalDate" class="convert-input">
+                        </div>
+                        <button type="submit" class="convert-go-btn">Look up</button>
+                    </div>
+                </form>
+            </div>
+
             <!-- Other currencies -->
             <div class="convert-card">
                 <h2 class="convert-card-title"><i class="fas fa-globe"></i> Convert From Another Currency</h2>
@@ -235,6 +249,20 @@
                 input.placeholder = saved + ' (last used)';
             }
         }
+    }());
+
+    (function () {
+        var form = document.getElementById('dateForm');
+        if (!form) return;
+        var input = document.getElementById('historicalDate');
+        var today = new Date();
+        today.setDate(today.getDate() - 1);                 // most recent complete day
+        input.max = today.toISOString().slice(0, 10);
+        input.min = '2026-04-01';                           // data starts at launch month
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) window.location.href = '/convert/' + form.dataset.amount + '-usd-to-zig/on/' + input.value;
+        });
     }());
 
     document.getElementById('convertForm').addEventListener('submit', function (e) {

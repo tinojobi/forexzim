@@ -92,6 +92,20 @@ public class SitemapController {
             m = m.plusMonths(1);
         }
 
+        // Historical date-converter pages — 1st and 15th of each month, 100 USD
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        m = LAUNCH_MONTH;
+        while (!m.isAfter(current)) {
+            for (int dayOfMonth : new int[]{1, 15}) {
+                LocalDate d = m.atDay(dayOfMonth);
+                if (!d.isBefore(LAUNCH_MONTH.atDay(1)) && d.isBefore(yesterday)) {
+                    appendUrl(sb, baseUrl + "/convert/100-usd-to-zig/on/" + d,
+                              "monthly", "0.6", today);
+                }
+            }
+            m = m.plusMonths(1);
+        }
+
         // Blog index
         appendUrl(sb, baseUrl + "/blog", "weekly", "0.6", today);
 

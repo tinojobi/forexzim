@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${amount} + ' USD to ZiG on ' + ${dateLabel} + ' | ZimRate — Zimbabwe Forex'">100 USD to ZiG on 15 April 2026 | ZimRate</title>
+    <meta name="description"
+          th:content="'On ' + ${dateLabel} + ', ' + ${amount} + ' USD was worth ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD. See how the rate compares with today.'">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         th:content="${'https://zimrate.com/convert/' + amount + '-usd-to-zig/on/' + dateIso}">
+    <meta property="og:title"       th:content="${amount + ' USD to ZiG on ' + dateLabel + ' | ZimRate'}">
+    <meta property="og:description" th:content="'On ' + ${dateLabel} + ', ' + ${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG (official rate ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD).'">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       th:content="${amount + ' USD to ZiG on ' + dateLabel + ' | ZimRate'}">
+    <meta name="twitter:description" th:content="'On ' + ${dateLabel} + ', ' + ${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG.'">
+    <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig/on/' + dateIso}">
+    <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig/on/' + dateIso}">
+    <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <meta name="theme-color" content="#14532d">
+
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+    <script th:if="${breadcrumbData}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
+
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia4')}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <th:block th:replace="~{layout :: header}"></th:block>
+
+    <main class="container">
+        <!-- Breadcrumb -->
+        <nav class="convert-breadcrumb" aria-label="Breadcrumb">
+            <a th:href="@{/}">Home</a>
+            <span class="convert-breadcrumb-sep">›</span>
+            <a th:href="@{'/convert/' + ${amount} + '-usd-to-zig'}" th:text="${amount} + ' USD to ZiG'">100 USD to ZiG</a>
+            <span class="convert-breadcrumb-sep">›</span>
+            <span th:text="${dateLabel}">15 April 2026</span>
+        </nav>
+
+        <div class="convert-page">
+            <!-- Result hero -->
+            <div class="convert-hero">
+                <h1 th:text="${amount} + ' USD to ZiG on ' + ${dateLabel}">100 USD to ZiG on 15 April 2026</h1>
+                <div class="convert-result">
+                    <div class="convert-result-left">
+                        <span class="convert-from-label" th:text="'On ' + ${dateLabel}">On 15 April 2026</span>
+                        <span class="convert-from-value" th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD'">100 USD</span>
+                    </div>
+                    <div class="convert-arrow-wrap">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="convert-result-right">
+                        <span class="convert-to-label">was worth</span>
+                        <span class="convert-to-value"
+                              th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">2,750.00 ZiG</span>
+                    </div>
+                </div>
+                <p class="convert-rate-note">
+                    Official daily average: <strong th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')} + ' ZiG per USD'">27.5000 ZiG per USD</strong>
+                </p>
+                <p class="convert-rate-note" th:if="${actualDate != null}">
+                    <i class="fas fa-circle-info"></i>
+                    No data was recorded on this exact day — showing the closest earlier reading
+                    (<span th:text="${actualDate}">13 April 2026</span>).
+                </p>
+            </div>
+
+            <!-- SEO summary paragraph -->
+            <p class="convert-summary">
+                On <strong th:text="${dateLabel}">15 April 2026</strong>,
+                <strong th:text="${#numbers.formatInteger(amount, 0, 'COMMA') + ' US dollars'}">100 US dollars</strong>
+                bought
+                <strong th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">2,750 ZiG</strong>
+                at Zimbabwe's official exchange rate
+                (<span th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')}">27.5000</span> ZiG per USD, daily average).
+                <span th:if="${blackMarketRate != null}">
+                    The parallel market averaged
+                    <span th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">34.00</span> ZiG/USD that day,
+                    worth <strong th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">3,400 ZiG</strong>.
+                </span>
+                <span th:if="${todayRate != null}">
+                    Today the same amount converts to
+                    <strong th:text="${#numbers.formatDecimal(todayResult, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">2,800 ZiG</strong>
+                    — the official rate has moved
+                    <strong th:text="${(changePct >= 0 ? '+' : '') + #numbers.formatDecimal(changePct, 0, 'POINT', 1, 'POINT')} + '%'">+1.8%</strong>
+                    since then.
+                </span>
+            </p>
+
+            <!-- Then vs now table -->
+            <div class="convert-card" th:if="${todayRate != null}">
+                <h2 class="convert-card-title"><i class="fas fa-scale-balanced"></i> Then vs Now</h2>
+                <table class="convert-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th th:text="${dateLabel}">15 April 2026</th>
+                            <th>Today</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="convert-badge convert-badge-official">Official</span></td>
+                            <td th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')}">27.5000</td>
+                            <td th:text="${#numbers.formatDecimal(todayRate, 0, 'COMMA', 4, 'POINT')}">28.0000</td>
+                            <td th:class="${changePct >= 0 ? 'delta up' : 'delta down'}"
+                                th:text="${(changePct >= 0 ? '+' : '') + #numbers.formatDecimal(changePct, 0, 'POINT', 1, 'POINT')} + '%'">+1.8%</td>
+                        </tr>
+                        <tr>
+                            <td th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD ='">100 USD =</td>
+                            <td class="convert-table-result" th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">2,750.00 ZiG</td>
+                            <td class="convert-table-result" th:text="${#numbers.formatDecimal(todayResult, 0, 'COMMA', 2, 'POINT')} + ' ZiG'">2,800.00 ZiG</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Date navigation + lookup -->
+            <div class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-calendar-day"></i> Look Up Another Date</h2>
+                <form id="dateForm" class="convert-form" th:attr="data-amount=${amount}">
+                    <div class="convert-form-row">
+                        <div class="convert-input-wrap">
+                            <span class="convert-input-prefix">Date</span>
+                            <input type="date" id="historicalDate" class="convert-input"
+                                   th:value="${dateIso}" th:min="${earliestIso}" th:max="${todayIso}">
+                        </div>
+                        <button type="submit" class="convert-go-btn">Look up</button>
+                    </div>
+                </form>
+                <div class="convert-grid" style="margin-top:0.9rem">
+                    <a th:if="${prevDateIso != null}"
+                       th:href="@{'/convert/' + ${amount} + '-usd-to-zig/on/' + ${prevDateIso}}"
+                       class="convert-grid-item">← Previous day</a>
+                    <a th:if="${nextDateIso != null}"
+                       th:href="@{'/convert/' + ${amount} + '-usd-to-zig/on/' + ${nextDateIso}}"
+                       class="convert-grid-item">Next day →</a>
+                    <a th:href="@{'/history/' + ${monthSlug}}"
+                       th:text="'Full ' + ${monthLabel} + ' history'"
+                       class="convert-grid-item">Full April 2026 history</a>
+                    <a th:href="@{'/convert/' + ${amount} + '-usd-to-zig'}"
+                       class="convert-grid-item">Today's live rate</a>
+                </div>
+            </div>
+
+            <!-- Disclaimer + back link -->
+            <p class="convert-disclaimer">
+                Historical figures are daily averages of scraped public data and are indicative only.
+                <a th:href="@{/}">View all Zimbabwe forex rates →</a>
+            </p>
+        </div>
+    </main>
+
+    <!-- ── Alert Modal (shared fragment) ───────────────────────────────── -->
+    <th:block th:replace="~{layout :: alert-modal}"></th:block>
+
+    <th:block th:replace="~{layout :: footer}"></th:block>
+
+    <script>
+    document.getElementById('dateForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var amount = this.dataset.amount;
+        var val = document.getElementById('historicalDate').value;
+        if (val) window.location.href = '/convert/' + amount + '-usd-to-zig/on/' + val;
+    });
+
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (icon) icon.className = document.documentElement.dataset.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>
