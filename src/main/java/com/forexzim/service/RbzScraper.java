@@ -11,11 +11,12 @@ import java.util.List;
 /**
  * Scraper for the Reserve Bank of Zimbabwe website.
  *
- * The RBZ website structure changes periodically. This stub intentionally
- * returns an empty list so no stale data pollutes the database.
- *
- * TODO: Implement full parsing once the stable HTML structure is confirmed.
- *       The source row in the DB should remain inactive until this is done.
+ * Status (checked 2026-06-11): rbz.co.zw sits behind Radware Bot Manager —
+ * every request, on every path, returns a JavaScript challenge page
+ * (validate.perfdrive.com), so plain HTTP scraping cannot succeed. The
+ * source row is deactivated (V34); the official rate is covered via
+ * ZimPriceCheck. Revisit only with an official RBZ data feed or a headless
+ * browser, neither of which is currently worth the cost.
  */
 @Component
 public class RbzScraper extends AbstractJsoupScraper {

@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scraper for zimrates.com (currently disabled in the sources table).
+ * Scraper for zimrates.com (disabled in the sources table).
  *
- * TODO: Implement parsing once the source is re-enabled.
+ * Status (checked 2026-06-11): the zimrates.com domain no longer hosts a
+ * Zimbabwe rates aggregator — it now serves an unrelated sports-betting
+ * site. This source is dead; the stub is kept only so the bean registry
+ * matches the historical sources row.
  */
 @Component
 public class ZimRatesScraper extends AbstractJsoupScraper {

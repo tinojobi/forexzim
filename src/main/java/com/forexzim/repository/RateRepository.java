@@ -22,22 +22,24 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
 
     Optional<Rate> findTopBySourceAndCurrencyPairOrderByScrapedAtDesc(Source source, String currencyPair);
 
-    /** Most recent rate per (source, currency_pair). */
+    /** Most recent rate per (source, currency_pair), active sources only. */
     @Query(value = """
-            SELECT DISTINCT ON (source_id, currency_pair) *
-            FROM rates
-            ORDER BY source_id, currency_pair, scraped_at DESC
+            SELECT DISTINCT ON (r.source_id, r.currency_pair) r.*
+            FROM rates r
+            JOIN sources s ON r.source_id = s.id AND s.active
+            ORDER BY r.source_id, r.currency_pair, r.scraped_at DESC
             """, nativeQuery = true)
     List<Rate> findLatestBySourceAndCurrencyPair();
 
     /** Second-most-recent rate per (source, currency_pair) — used for delta calculation. */
     @Query(value = """
             SELECT * FROM (
-                SELECT *, ROW_NUMBER() OVER (
-                    PARTITION BY source_id, currency_pair
-                    ORDER BY scraped_at DESC
+                SELECT r.*, ROW_NUMBER() OVER (
+                    PARTITION BY r.source_id, r.currency_pair
+                    ORDER BY r.scraped_at DESC
                 ) AS rn
-                FROM rates
+                FROM rates r
+                JOIN sources s ON r.source_id = s.id AND s.active
             ) t WHERE t.rn = 2
             """, nativeQuery = true)
     List<Rate> findPreviousBySourceAndCurrencyPair();
