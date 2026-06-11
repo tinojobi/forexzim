@@ -108,14 +108,16 @@ public class SystemEventService {
 
         Map<String, Object[]> sourceMap = new java.util.LinkedHashMap<>();
         for (SystemEventLog e : recent) {
-            String src = extractSource(e.getMessage());
+            String src = extractSourceFromMetadata(e.getMetadata());
+            if (src == null) src = extractSource(e.getMessage());
             if (src == null) continue;
             Object[] stats = sourceMap.computeIfAbsent(src, k -> new Object[]{null, null, 0, 0});
+            // events arrive newest-first, so keep only the first timestamp per source
             if (e.getEventType() == SystemEventLog.EventType.SCRAPE_SUCCESS) {
-                stats[0] = e.getCreatedAt(); // lastSuccess
+                if (stats[0] == null) stats[0] = e.getCreatedAt(); // lastSuccess
                 stats[2] = (Integer) stats[2] + 1; // successCount
             } else if (e.getEventType() == SystemEventLog.EventType.SCRAPE_FAILURE) {
-                stats[1] = e.getCreatedAt(); // lastFailure
+                if (stats[1] == null) stats[1] = e.getCreatedAt(); // lastFailure
                 stats[3] = (Integer) stats[3] + 1; // failureCount
             }
         }
@@ -131,6 +133,17 @@ public class SystemEventService {
             result.add(row);
         }
         return result;
+    }
+
+    /** Scrape events carry the exact source name in their JSON metadata — prefer it over message parsing. */
+    private String extractSourceFromMetadata(String metadata) {
+        if (metadata == null || metadata.isBlank()) return null;
+        try {
+            var node = objectMapper.readTree(metadata).get("source");
+            return node != null && node.isTextual() ? node.asText() : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private String extractSource(String message) {

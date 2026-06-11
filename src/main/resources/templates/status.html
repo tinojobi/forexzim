@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Status &amp; Sources | ZimRate — Zimbabwe Forex Rates</title>
+    <meta name="description" content="Live status of ZimRate's exchange-rate data sources: where each USD/ZiG rate comes from, when it was last updated, and how reliable each source has been over the past week.">
+    <link rel="canonical" href="https://zimrate.com/status">
+    <link rel="alternate" hreflang="en-ZW" href="https://zimrate.com/status">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://zimrate.com/status">
+    <meta property="og:title"       content="Data Status &amp; Sources | ZimRate">
+    <meta property="og:description" content="Live status of ZimRate's exchange-rate data sources and our methodology.">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="Data Status &amp; Sources | ZimRate">
+    <meta name="twitter:description" content="Live status of ZimRate's exchange-rate data sources and our methodology.">
+    <meta name="theme-color" content="#14532d">
+    <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia3')}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <th:block th:replace="~{layout :: head-meta}"></th:block>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <main class="container">
+        <div class="privacy-card">
+
+            <div class="privacy-header">
+                <h2><i class="fas fa-heart-pulse"></i> Data Status &amp; Sources</h2>
+                <p class="privacy-date">
+                    Latest update: <span th:text="${overallAgo}">12 min ago</span>
+                    <span th:if="${overallUpdated != null}"
+                          th:text="'(' + ${#temporals.format(overallUpdated, 'dd MMM yyyy, HH:mm')} + ' Harare time)'">(11 Jun 2026, 16:30 Harare time)</span>
+                </p>
+            </div>
+
+            <div class="privacy-body">
+
+                <h3>Source Status</h3>
+                <p>
+                    ZimRate aggregates rates from independent public sources, scraping each one
+                    every 30 minutes. This page shows exactly where our data comes from and how
+                    fresh it is right now.
+                </p>
+
+                <div class="table-responsive">
+                    <table class="convert-table">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Rates</th>
+                                <th>Last updated</th>
+                                <th>7-day reliability</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="src : ${sources}">
+                                <td>
+                                    <strong th:text="${src.name}">ZimPriceCheck</strong><br>
+                                    <span class="status-source-desc" th:text="${src.description}">Official RBZ rate…</span>
+                                </td>
+                                <td th:text="${src.pairCount}">6</td>
+                                <td>
+                                    <span th:text="${src.agoLabel}">12 min ago</span>
+                                </td>
+                                <td th:text="${src['successRate'] != null} ? ${src['successRate']} + '%' : '—'">100%</td>
+                                <td>
+                                    <span th:class="'status-badge status-' + ${src.freshness}"
+                                          th:text="${src.freshness == 'fresh'} ? 'Fresh' : (${src.freshness == 'delayed'} ? 'Delayed' : 'Stale')">Fresh</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${sources.isEmpty()}">
+                                <td colspan="5">No rate data available yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Methodology</h3>
+                <p>
+                    <strong>Official rate</strong> — the Reserve Bank of Zimbabwe interbank mid-rate,
+                    sourced via ZimPriceCheck. <strong>Parallel market rates</strong> are indicative
+                    street rates collected from public market trackers; we show the reported maximum,
+                    minimum and cash premiums separately rather than blending them.
+                    <strong>Bank rates</strong> come from the banks' own published boards.
+                    <strong>Cross rates</strong> (ZAR, GBP, EUR and others) use international
+                    mid-market data, and diaspora conversions are derived by combining them with
+                    the official USD/ZiG rate.
+                </p>
+                <p>
+                    Every source is scraped on a 30-minute cycle. Failed scrapes are retried and
+                    logged; a source whose data is older than 24 hours is flagged on the homepage
+                    with a <em>Stale</em> badge, and the most recent good value remains visible
+                    rather than being silently dropped. Historic charts use daily averages.
+                </p>
+
+                <h3>Why trust this data?</h3>
+                <p>
+                    We never hand-edit live numbers: corrections happen only through the audited
+                    manual-entry log, every figure links back to its source, and our timestamps
+                    are shown in Harare time on every page. The full dataset is also available
+                    through our <a th:href="@{/api-docs}">free public API</a> so you can verify
+                    anything you see on the site.
+                </p>
+
+                <h3>Disclaimer</h3>
+                <p>
+                    All rates are <strong>indicative only</strong> and may differ at the point of
+                    transaction. ZimRate does not provide financial advice or currency trading
+                    services. Always confirm rates with your provider before transacting.
+                </p>
+
+            </div>
+
+            <div class="privacy-footer">
+                <a th:href="@{/}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to rates</a>
+                <a th:href="@{/api-docs}" class="btn-back" style="margin-left:0.75rem"><i class="fas fa-code"></i> Public API</a>
+            </div>
+
+        </div>
+    </main>
+
+    <th:block th:replace="~{layout :: alert-modal}"></th:block>
+    <div th:replace="~{layout :: footer}"></div>
+
+    <script>
+    (function () {
+        var toggle = document.getElementById('themeToggle');
+        var icon   = document.getElementById('themeIcon');
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        if (document.documentElement.dataset.theme === 'dark' && icon) icon.className = 'fas fa-sun';
+        if (toggle) toggle.addEventListener('click', function () {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+    }());
+    </script>
+</body>
+</html>
