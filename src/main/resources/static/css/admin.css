@@ -323,6 +323,8 @@ body {
     padding: 20px 24px;
     flex: 1;
     max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 /* ── Flash messages ───────────────────────────────────────────────────────── */
