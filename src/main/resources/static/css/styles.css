@@ -817,6 +817,20 @@ footer {
 .delta.up   { background: var(--emerald-50); color: var(--emerald-600); }
 .delta.down { background: rgba(220,38,38,0.07); color: #dc2626; }
 
+/* Weekly trend indicator in section headers */
+.section-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    margin-right: 0.25rem;
+}
+.section-trend .trend-spark  { display: block; opacity: 0.85; }
+.section-trend .trend-change { font-size: 0.78rem; font-weight: 700; }
+.section-trend .trend-label  { font-size: 0.67rem; color: var(--gray-500); font-weight: 500; }
+.section-trend.up   { color: var(--emerald-600); }
+.section-trend.down { color: #dc2626; }
+
 /* ═══════════════════════════════════════
    STALE DATA BADGE
 ═══════════════════════════════════════ */
@@ -1141,6 +1155,7 @@ footer {
 
     .section-sub  { font-size: 0.68rem; line-height: 1.25; }
     .section-badge { display: none; }
+    .section-trend .trend-label { display: none; }
 
     th { padding: 0.5rem 0.75rem; font-size: 0.6rem; }
     td { padding: 0.7rem 0.75rem; font-size: 0.82rem; }
@@ -1447,6 +1462,9 @@ footer {
 
 [data-theme="dark"] .delta.up   { background: rgba(5,150,105,0.2);  color: #34d399; }
 [data-theme="dark"] .delta.down { background: rgba(220,38,38,0.15); color: #f87171; }
+[data-theme="dark"] .section-trend.up   { color: #34d399; }
+[data-theme="dark"] .section-trend.down { color: #f87171; }
+[data-theme="dark"] .section-trend .trend-label { color: #94a3b8; }
 
 [data-theme="dark"] .rate-toggle { background: #0f172a; }
 [data-theme="dark"] .toggle-btn.active {

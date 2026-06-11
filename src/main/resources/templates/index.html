@@ -20,7 +20,7 @@
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
 <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia1')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia2')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -240,6 +240,7 @@
                     <div class="section-title">Official Rate</div>
                     <div class="section-sub">Reserve Bank of Zimbabwe</div>
                 </div>
+                <span class="section-trend" data-trend-source="ZimPriceCheck" data-trend-pair="USD/ZiG" hidden></span>
                 <span class="section-badge badge-official">Official</span>
                 <span class="stale-badge" th:if="${staleSections.containsKey('official')}">
                     <i class="fas fa-triangle-exclamation"></i> Stale
@@ -309,6 +310,7 @@
                     <div class="section-title">Parallel/Black Market</div>
                     <div class="section-sub">Street &amp; parallel market rates</div>
                 </div>
+                <span class="section-trend" data-trend-source="ZimPriceCheck" data-trend-pair="USD/ZiG_InformalLow" hidden></span>
                 <span class="section-badge badge-informal">Informal</span>
                 <span class="stale-badge" th:if="${staleSections.containsKey('blackMarket')}">
                     <i class="fas fa-triangle-exclamation"></i> Stale
@@ -465,6 +467,7 @@
                     <div class="section-title">Business Rates</div>
                     <div class="section-sub">Supermarkets, retailers &amp; services</div>
                 </div>
+                <span class="section-trend" data-trend-source="ZimPriceCheck" data-trend-pair="USD/ZiG_MaxBusiness" hidden></span>
                 <span class="section-badge badge-business">Business</span>
                 <span class="stale-badge" th:if="${staleSections.containsKey('business')}">
                     <i class="fas fa-triangle-exclamation"></i> Stale
@@ -1300,6 +1303,43 @@
         if (el && el.textContent && el.textContent.trim() !== '—') {
             document.title = '1 USD to ZiG Today: ' + el.textContent.trim() + ' | ZimRate';
         }
+    }());
+
+    // ── Section trend indicators (weekly change + sparkline) ─────────────────
+    (function () {
+        document.querySelectorAll('.section-trend[data-trend-pair]').forEach(function (el) {
+            var url = '/api/rates/history?source=' + encodeURIComponent(el.dataset.trendSource)
+                    + '&pair=' + encodeURIComponent(el.dataset.trendPair) + '&days=7';
+            fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+                if (!Array.isArray(data) || data.length < 2) return;
+                var vals = data.map(function (d) { return +d.rate; });
+                var first = vals[0], last = vals[vals.length - 1];
+                if (!first) return;
+                var pct  = (last - first) / first * 100;
+                var sign = pct >= 0 ? '+' : '';
+
+                var w = 64, h = 20, pad = 2;
+                var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+                var span = (max - min) || 1;
+                var pts = vals.map(function (v, i) {
+                    var x = pad + i * (w - 2 * pad) / (vals.length - 1);
+                    var y = h - pad - (v - min) / span * (h - 2 * pad);
+                    return x.toFixed(1) + ',' + y.toFixed(1);
+                }).join(' ');
+
+                el.innerHTML =
+                    '<svg class="trend-spark" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">'
+                    + '<polyline fill="none" stroke="currentColor" stroke-width="1.5" '
+                    + 'stroke-linecap="round" stroke-linejoin="round" points="' + pts + '"/></svg>'
+                    + '<span class="trend-change">' + sign + pct.toFixed(1) + '%</span>'
+                    + '<span class="trend-label">this week</span>';
+                el.classList.add(pct >= 0 ? 'up' : 'down');
+                el.setAttribute('role', 'img');
+                el.setAttribute('aria-label',
+                    'Rate ' + (pct >= 0 ? 'up' : 'down') + ' ' + Math.abs(pct).toFixed(1) + ' percent over the last 7 days');
+                el.hidden = false;
+            }).catch(function () {});
+        });
     }());
     </script>
 </body>
