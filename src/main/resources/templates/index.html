@@ -20,7 +20,7 @@
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
 <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260610-ui1')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -156,7 +156,9 @@
 
         <!-- Regional currency quick-view strip -->
         <div class="currency-strip" th:if="${crossRates != null and !crossRates.isEmpty()}">
-            <div th:each="rate : ${crossRates}" class="currency-strip-card">
+            <a th:each="rate : ${crossRates}" class="currency-strip-card"
+               th:href="@{'/convert/100-' + ${#strings.toLowerCase(currencyUnits.get(rate))} + '-to-zig'}"
+               th:attr="aria-label='Convert ' + ${currencyUnits.get(rate)} + ' to ZiG'">
                 <div class="currency-strip-top">
                     <span class="currency-strip-code" th:text="${currencyUnits.get(rate)}">ZAR</span>
                     <span th:if="${rateDeltas.get(rate) != null}"
@@ -165,7 +167,7 @@
                 </div>
                 <span class="currency-strip-rate" th:text="${#numbers.formatDecimal(rate.buyRate, 1, 4, 'POINT')}">18.5000</span>
                 <span class="currency-strip-label">per 1 USD</span>
-            </div>
+            </a>
         </div>
 
         <!-- Popular conversion links -->
@@ -175,8 +177,8 @@
                     <i class="fas fa-calculator"></i>
                 </div>
                 <div class="section-info">
-                    <h2 id="popular-conversions-title" class="section-title">Popular USD/ZiG Conversions</h2>
-                    <div class="section-sub">Quick links for common Zimbabwe exchange-rate searches</div>
+                    <h2 id="popular-conversions-title" class="section-title">Popular ZiG Conversions</h2>
+                    <div class="section-sub">Quick links for common Zimbabwe exchange-rate searches — including diaspora currencies</div>
                 </div>
             </div>
             <div class="conversion-link-grid">
@@ -188,6 +190,10 @@
                 <a th:href="@{/convert/100-usd-to-zig}">100 USD to ZiG</a>
                 <a th:href="@{/convert/500-usd-to-zig}">500 USD to ZiG</a>
                 <a th:href="@{/convert/1500-usd-to-zig}">1500 USD to ZiG</a>
+                <a th:href="@{/convert/100-gbp-to-zig}">100 GBP to ZiG</a>
+                <a th:href="@{/convert/100-eur-to-zig}">100 EUR to ZiG</a>
+                <a th:href="@{/convert/1000-zar-to-zig}">1000 ZAR to ZiG</a>
+                <a th:href="@{/convert/1000-bwp-to-zig}">1000 BWP to ZiG</a>
             </div>
         </section>
 

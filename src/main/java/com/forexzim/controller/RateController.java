@@ -437,8 +437,31 @@ public class RateController {
             return "redirect:/convert";
         }
 
-        @GetMapping("/convert/{amount:[0-9]+}-usd-to-zig")
-        public String convert(@PathVariable("amount") String amountStr, Model model) {
+        /** Currencies the converter supports: slug → code, singular name, prose name. */
+        public record ConvertCurrency(String slug, String code, String name, String proseName) {}
+
+        public static final Map<String, ConvertCurrency> CONVERT_CURRENCIES;
+        static {
+            Map<String, ConvertCurrency> m = new LinkedHashMap<>();
+            for (ConvertCurrency c : List.of(
+                    new ConvertCurrency("usd", "USD", "US Dollar",          "US dollars"),
+                    new ConvertCurrency("gbp", "GBP", "British Pound",      "British pounds"),
+                    new ConvertCurrency("zar", "ZAR", "South African Rand", "South African rand"),
+                    new ConvertCurrency("eur", "EUR", "Euro",               "euros"),
+                    new ConvertCurrency("bwp", "BWP", "Botswana Pula",      "Botswana pula"),
+                    new ConvertCurrency("zmw", "ZMW", "Zambian Kwacha",     "Zambian kwacha"),
+                    new ConvertCurrency("mzn", "MZN", "Mozambican Metical", "Mozambican meticais"),
+                    new ConvertCurrency("nad", "NAD", "Namibian Dollar",    "Namibian dollars"),
+                    new ConvertCurrency("cny", "CNY", "Chinese Yuan",       "Chinese yuan"),
+                    new ConvertCurrency("aed", "AED", "UAE Dirham",         "UAE dirhams"))) {
+                m.put(c.slug(), c);
+            }
+            CONVERT_CURRENCIES = Collections.unmodifiableMap(m);
+        }
+
+        @GetMapping("/convert/{amount:[0-9]+}-{cur:[a-z]{3}}-to-zig")
+        public String convert(@PathVariable("amount") String amountStr,
+                              @PathVariable("cur") String cur, Model model) {
             long amount;
             try {
                 amount = Long.parseLong(amountStr);
@@ -446,6 +469,9 @@ public class RateController {
                 return "redirect:/";
             }
             if (amount <= 0 || amount > 10_000_000) return "redirect:/";
+
+            ConvertCurrency currency = CONVERT_CURRENCIES.get(cur);
+            if (currency == null) return "redirect:/convert";
 
             List<Rate> rates = rateService.getLatestRates();
 
@@ -456,17 +482,36 @@ public class RateController {
 
             if (officialOpt.isEmpty()) return "redirect:/";
 
-            double rate   = officialOpt.get().getBuyRate().doubleValue();
+            // Non-USD rates are derived: ZiG per XXX = (ZiG per USD) / (XXX per USD)
+            double crossPerUsd = 1.0;
+            if (!"usd".equals(cur)) {
+                Optional<Rate> crossOpt = rates.stream()
+                        .filter(r -> "Exchange Rate API".equals(r.getSource().getName())
+                                  && ("USD/" + currency.code()).equals(r.getCurrencyPair()))
+                        .findFirst();
+                if (crossOpt.isEmpty()) return "redirect:/convert";
+                crossPerUsd = crossOpt.get().getBuyRate().doubleValue();
+                if (crossPerUsd <= 0) return "redirect:/convert";
+                model.addAttribute("crossPerUsd", crossPerUsd);
+            }
+            final double cross = crossPerUsd;
+
+            double rate   = officialOpt.get().getBuyRate().doubleValue() / cross;
             double result = amount * rate;
 
             model.addAttribute("amount",       amount);
+            model.addAttribute("fromSlug",     currency.slug());
+            model.addAttribute("fromCode",     currency.code());
+            model.addAttribute("fromName",     currency.name());
+            model.addAttribute("fromProse",    currency.proseName());
+            model.addAttribute("convertCurrencies", CONVERT_CURRENCIES.values());
             model.addAttribute("officialRate", rate);
             model.addAttribute("result",       result);
             model.addAttribute("scrapedAt",    officialOpt.get().getScrapedAt());
 
             if (officialOpt.get().getSellRate() != null) {
                 model.addAttribute("officialSellRate",
-                        officialOpt.get().getSellRate().doubleValue());
+                        officialOpt.get().getSellRate().doubleValue() / cross);
             }
 
             rates.stream()
@@ -474,7 +519,7 @@ public class RateController {
                               && "USD/ZiG_InformalLow".equals(r.getCurrencyPair()))
                     .findFirst()
                     .ifPresent(bm -> {
-                        double bmRate = bm.getBuyRate().doubleValue();
+                        double bmRate = bm.getBuyRate().doubleValue() / cross;
                         model.addAttribute("blackMarketRate",   bmRate);
                         model.addAttribute("blackMarketResult", amount * bmRate);
                     });
@@ -484,7 +529,7 @@ public class RateController {
                               && "USD/ZiG_InformalHigh".equals(r.getCurrencyPair()))
                     .findFirst()
                     .ifPresent(r -> {
-                        double bmMin = r.getBuyRate().doubleValue();
+                        double bmMin = r.getBuyRate().doubleValue() / cross;
                         model.addAttribute("blackMarketMinRate",   bmMin);
                         model.addAttribute("blackMarketMinResult", amount * bmMin);
                     });
@@ -494,7 +539,7 @@ public class RateController {
                               && "USD/ZiG_Cash".equals(r.getCurrencyPair()))
                     .findFirst()
                     .ifPresent(r -> {
-                        double cashR = r.getBuyRate().doubleValue();
+                        double cashR = r.getBuyRate().doubleValue() / cross;
                         model.addAttribute("cashRateConvert", cashR);
                         model.addAttribute("cashResult",      amount * cashR);
                     });
@@ -507,8 +552,8 @@ public class RateController {
                     "{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\","
                     + "\"itemListElement\":["
                     + "{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"" + baseUrl + "\"},"
-                    + "{\"@type\":\"ListItem\",\"position\":2,\"name\":\"" + amount + " USD to ZiG\","
-                    + "\"item\":\"" + baseUrl + "/convert/" + amount + "-usd-to-zig\"}"
+                    + "{\"@type\":\"ListItem\",\"position\":2,\"name\":\"" + amount + " " + currency.code() + " to ZiG\","
+                    + "\"item\":\"" + baseUrl + "/convert/" + amount + "-" + currency.slug() + "-to-zig\"}"
                     + "]}");
 
             return "convert";

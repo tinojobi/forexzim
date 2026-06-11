@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${amount} + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'">100 USD to ZiG Today | ZimRate</title>
+    <title th:text="${amount} + ' ' + ${fromCode} + ' to ZiG Today | ZimRate — Zimbabwe Forex'">100 USD to ZiG Today | ZimRate</title>
     <meta name="description"
-          th:content="${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD. Compare official, parallel market and cash rates. Updated every 30 min.'">
+          th:content="${amount} + ' ' + ${fromCode} + ' = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/' + ${fromCode} + '. Compare official, parallel market and cash rates. Updated every 30 min.'">
     <meta property="og:type"        content="website">
-    <meta property="og:url"         th:content="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
-    <meta property="og:title"       th:content="${amount + ' USD to ZiG Today | ZimRate — Zimbabwe Forex'}">
-    <meta property="og:description" th:content="${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD. Live rates updated every 30 minutes.'">
+    <meta property="og:url"         th:content="${'https://zimrate.com/convert/' + amount + '-' + fromSlug + '-to-zig'}">
+    <meta property="og:title"       th:content="${amount + ' ' + fromCode + ' to ZiG Today | ZimRate — Zimbabwe Forex'}">
+    <meta property="og:description" th:content="${amount} + ' ' + ${fromCode} + ' = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG at Zimbabwe\'s official rate of ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/' + ${fromCode} + '. Live rates updated every 30 minutes.'">
     <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:title"       th:content="${amount + ' USD to ZiG Today | ZimRate'}">
-    <meta name="twitter:description" th:content="${amount} + ' USD = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG today (official rate: ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/USD).'">
-    <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
-    <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/convert/' + amount + '-usd-to-zig'}">
+    <meta name="twitter:title"       th:content="${amount + ' ' + fromCode + ' to ZiG Today | ZimRate'}">
+    <meta name="twitter:description" th:content="${amount} + ' ' + ${fromCode} + ' = ' + ${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT')} + ' ZiG today (official rate: ' + ${#numbers.formatDecimal(officialRate, 0, 'COMMA', 2, 'POINT')} + ' ZiG/' + ${fromCode} + ').'">
+    <link rel="canonical" th:href="${'https://zimrate.com/convert/' + amount + '-' + fromSlug + '-to-zig'}">
+    <link rel="alternate" hreflang="en-ZW" th:href="${'https://zimrate.com/convert/' + amount + '-' + fromSlug + '-to-zig'}">
     <!-- Dark mode init — must run before CSS to prevent flash of unstyled content -->
     <script>(function(){var s=localStorage.getItem("theme");var d=window.matchMedia("(prefers-color-scheme: dark)").matches;if(s==="dark"||s==="light")document.documentElement.dataset.theme=s;else document.documentElement.dataset.theme=d?"dark":"light";}());</script>
     <meta name="theme-color" content="#14532d">
@@ -22,7 +22,7 @@
     <th:block th:replace="~{layout :: head-meta}"></th:block>
     <script th:if="${breadcrumbData}" type="application/ld+json" th:utext="${breadcrumbData}"></script>
 
-    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260610-ui1')}">
+    <link rel="stylesheet" th:href="@{/css/styles.css(v='20260611-dia1')}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3/dist/apexcharts.min.js"></script>
@@ -35,17 +35,17 @@
         <nav class="convert-breadcrumb" aria-label="Breadcrumb">
             <a th:href="@{/}">Home</a>
             <span class="convert-breadcrumb-sep">›</span>
-            <span th:text="${amount} + ' USD to ZiG'">100 USD to ZiG</span>
+            <span th:text="${amount} + ' ' + ${fromCode} + ' to ZiG'">100 USD to ZiG</span>
         </nav>
 
         <div class="convert-page">
             <!-- Result hero -->
             <div class="convert-hero">
-                <h1 th:text="${amount} + ' USD to ZiG'">100 USD to ZiG</h1>
+                <h1 th:text="${amount} + ' ' + ${fromCode} + ' to ZiG'">100 USD to ZiG</h1>
                 <div class="convert-result">
                     <div class="convert-result-left">
                         <span class="convert-from-label">You have</span>
-                        <span class="convert-from-value" th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD'">100 USD</span>
+                        <span class="convert-from-value" th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' ' + ${fromCode}">100 USD</span>
                     </div>
                     <div class="convert-arrow-wrap">
                         <i class="fas fa-arrow-right"></i>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <p class="convert-rate-note">
-                    Rate: <strong th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')} + ' ZiG per USD'">27.5000 ZiG per USD</strong>
+                    Rate: <strong th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')} + ' ZiG per ' + ${fromCode}">27.5000 ZiG per USD</strong>
                     <span class="convert-updated" th:if="${scrapedAt != null}">
                         · Updated <span th:text="${#temporals.format(scrapedAt, 'dd MMM yyyy, HH:mm')}">14 Apr 2026, 12:00</span>
                     </span>
@@ -67,14 +67,26 @@
             <!-- SEO summary paragraph -->
             <p class="convert-summary">
                 At today's official Zimbabwe exchange rate,
-                <strong th:text="${#numbers.formatInteger(amount, 0, 'COMMA') + ' US dollars'}">100 US dollars</strong>
+                <strong th:text="${#numbers.formatInteger(amount, 0, 'COMMA') + ' ' + fromProse}">100 US dollars</strong>
                 equals
                 <strong th:text="${#numbers.formatDecimal(result, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">2,750 ZiG</strong>.
-                The Reserve Bank of Zimbabwe (RBZ) sets the official USD/ZiG rate at
-                <span th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')}">27.5000</span> ZiG per US dollar.
+                <span th:if="${fromSlug == 'usd'}">
+                    The Reserve Bank of Zimbabwe (RBZ) sets the official USD/ZiG rate at
+                    <span th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')}">27.5000</span> ZiG per US dollar.
+                </span>
+                <span th:if="${fromSlug != 'usd'}">
+                    This <span th:text="${fromCode}">GBP</span>/ZiG rate of
+                    <span th:text="${#numbers.formatDecimal(officialRate, 0, 'COMMA', 4, 'POINT')}">34.8000</span>
+                    is derived from the Reserve Bank of Zimbabwe (RBZ) official USD/ZiG rate of
+                    <span th:text="${#numbers.formatDecimal(officialRate * crossPerUsd, 0, 'COMMA', 4, 'POINT')}">27.5000</span>
+                    and the current market rate of
+                    <span th:text="${#numbers.formatDecimal(crossPerUsd, 0, 'COMMA', 4, 'POINT')}">0.7900</span>
+                    <span th:text="${fromCode}">GBP</span> per US dollar.
+                </span>
                 <span th:if="${blackMarketRate != null}">
                     The parallel market rate is
-                    <span th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">34.00</span> ZiG/USD,
+                    <span th:text="${#numbers.formatDecimal(blackMarketRate, 0, 'COMMA', 2, 'POINT')}">34.00</span>
+                    ZiG/<span th:text="${fromCode}">USD</span>,
                     giving <strong th:text="${#numbers.formatDecimal(blackMarketResult, 0, 'COMMA', 0, 'POINT') + ' ZiG'}">3,400 ZiG</strong>
                     for the same amount.
                 </span>
@@ -90,7 +102,7 @@
                             <th>Market</th>
                             <th>Buy (ZiG)</th>
                             <th>Sell (ZiG)</th>
-                            <th th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' USD ='">100 USD =</th>
+                            <th th:text="${#numbers.formatInteger(amount, 0, 'COMMA')} + ' ' + ${fromCode} + ' ='">100 USD =</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,10 +150,10 @@
             <!-- Custom converter -->
             <div class="convert-card">
                 <h2 class="convert-card-title"><i class="fas fa-calculator"></i> Convert Another Amount</h2>
-                <form id="convertForm" class="convert-form">
+                <form id="convertForm" class="convert-form" th:attr="data-from-slug=${fromSlug}">
                     <div class="convert-form-row">
                         <div class="convert-input-wrap">
-                            <span class="convert-input-prefix">USD</span>
+                            <span class="convert-input-prefix" th:text="${fromCode}">USD</span>
                             <input type="number" id="customAmount" class="convert-input"
                                    placeholder="Enter amount" min="1" max="10000000" step="1">
                         </div>
@@ -153,10 +165,24 @@
             </div>
 
             <!-- Rate trend chart -->
-            <div class="convert-card" id="convertChartCard" style="display:none">
+            <div class="convert-card" id="convertChartCard" style="display:none"
+                 th:attr="data-cross-pair=${fromSlug != 'usd' ? 'USD/' + fromCode : null}">
                 <h2 class="convert-card-title"><i class="fas fa-chart-line"></i> 7-Day Rate Trend</h2>
                 <div class="history-chart-wrap">
                     <div id="convertChart"></div>
+                </div>
+            </div>
+
+            <!-- Other currencies -->
+            <div class="convert-card">
+                <h2 class="convert-card-title"><i class="fas fa-globe"></i> Convert From Another Currency</h2>
+                <div class="convert-grid">
+                    <a th:each="cur : ${convertCurrencies}"
+                       th:href="@{'/convert/' + ${amount} + '-' + ${cur.slug} + '-to-zig'}"
+                       th:text="${cur.code} + ' → ZiG'"
+                       th:title="${cur.name} + ' to Zimbabwe Gold'"
+                       th:classappend="${cur.slug == fromSlug} ? ' convert-grid-active' : ''"
+                       class="convert-grid-item">GBP → ZiG</a>
                 </div>
             </div>
 
@@ -165,8 +191,8 @@
                 <h2 class="convert-card-title"><i class="fas fa-star"></i> Popular Conversions</h2>
                 <div class="convert-grid">
                     <a th:each="amt : ${commonAmounts}"
-                       th:href="@{'/convert/' + ${amt} + '-usd-to-zig'}"
-                       th:text="${#numbers.formatInteger(amt, 0, 'COMMA')} + ' USD → ZiG'"
+                       th:href="@{'/convert/' + ${amt} + '-' + ${fromSlug} + '-to-zig'}"
+                       th:text="${#numbers.formatInteger(amt, 0, 'COMMA')} + ' ' + ${fromCode} + ' → ZiG'"
                        th:classappend="${amt == amount} ? ' convert-grid-active' : ''"
                        class="convert-grid-item">100 USD → ZiG</a>
                 </div>
@@ -213,10 +239,11 @@
 
     document.getElementById('convertForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        var val = parseInt(document.getElementById('customAmount').value, 10);
+        var slug = this.dataset.fromSlug || 'usd';
+        var val  = parseInt(document.getElementById('customAmount').value, 10);
         if (val > 0 && val <= 10000000) {
             localStorage.setItem('zimrate_convert_amount', val);
-            window.location.href = '/convert/' + val + '-usd-to-zig';
+            window.location.href = '/convert/' + val + '-' + slug + '-to-zig';
         }
     });
 
@@ -255,13 +282,32 @@
             chartInstance.updateOptions(themeOpts());
         };
 
-        Promise.all([
+        // For non-USD pages, also fetch the USD/XXX cross history and divide:
+        // ZiG per XXX = (ZiG per USD) / (XXX per USD), matched per day.
+        var crossPair = card.dataset.crossPair || null;
+
+        var fetches = [
             fetch('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG&days=7').then(function (r) { return r.json(); }),
             fetch('/api/rates/history?source=ZimPriceCheck&pair=USD%2FZiG_InformalLow&days=7').then(function (r) { return r.json(); })
-        ]).then(function (results) {
+        ];
+        if (crossPair) {
+            fetches.push(
+                fetch('/api/rates/history?source=Exchange%20Rate%20API&pair=' + encodeURIComponent(crossPair) + '&days=7')
+                    .then(function (r) { return r.json(); })
+            );
+        }
+
+        Promise.all(fetches).then(function (results) {
             var official    = results[0];
             var blackMarket = results[1];
             if (!official.length && !blackMarket.length) return;
+
+            var crossIdx = null;
+            if (crossPair) {
+                crossIdx = {};
+                (results[2] || []).forEach(function (d) { crossIdx[d.day] = +d.rate; });
+                if (!Object.keys(crossIdx).length) return; // no cross history yet — skip chart
+            }
 
             var daySet = {};
             official.forEach(function (d) { daySet[d.day] = true; });
@@ -271,7 +317,15 @@
             function toSeries(data) {
                 var idx = {};
                 data.forEach(function (d) { idx[d.day] = d.rate; });
-                return labels.map(function (l) { return idx[l] != null ? +Number(idx[l]).toFixed(2) : null; });
+                return labels.map(function (l) {
+                    if (idx[l] == null) return null;
+                    var v = +idx[l];
+                    if (crossIdx) {
+                        if (!crossIdx[l]) return null;
+                        v = v / crossIdx[l];
+                    }
+                    return +v.toFixed(2);
+                });
             }
 
             card.style.display = 'block';

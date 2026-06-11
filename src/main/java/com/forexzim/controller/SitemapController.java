@@ -33,6 +33,15 @@ public class SitemapController {
         300, 500, 750, 1000, 1500, 2000, 2500, 3000, 5000, 7500, 10000
     };
 
+    // Diaspora / regional converter pages (rates derived from scraped USD cross rates)
+    private static final String[] CROSS_CURRENCY_SLUGS = {
+        "gbp", "zar", "eur", "bwp", "zmw", "mzn", "nad", "cny", "aed"
+    };
+
+    private static final long[] CROSS_CALCULATOR_AMOUNTS = {
+        1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000
+    };
+
     private static final YearMonth LAUNCH_MONTH = YearMonth.of(2026, 4);
     private static final DateTimeFormatter SLUG_FMT =
             DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
@@ -61,6 +70,14 @@ public class SitemapController {
         for (long amount : CALCULATOR_AMOUNTS) {
             appendUrl(sb, baseUrl + "/convert/" + amount + "-usd-to-zig",
                       "daily", "0.8", today);
+        }
+
+        // Diaspora converter pages (GBP, ZAR, EUR, ...)
+        for (String slug : CROSS_CURRENCY_SLUGS) {
+            for (long amount : CROSS_CALCULATOR_AMOUNTS) {
+                appendUrl(sb, baseUrl + "/convert/" + amount + "-" + slug + "-to-zig",
+                          "daily", "0.8", today);
+            }
         }
 
         // Historical archive pages

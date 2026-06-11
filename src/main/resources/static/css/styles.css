@@ -3779,6 +3779,7 @@ footer {
     transition: border-color 0.15s;
 }
 .currency-strip-card:hover { border-color: var(--green-700); }
+a.currency-strip-card { text-decoration: none; color: inherit; }
 
 .currency-strip-top {
     display: flex;
