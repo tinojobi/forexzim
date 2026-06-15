@@ -435,7 +435,7 @@ public class AdminController {
         for (BlogPost p : blogRepository.findAll()) {
             boolean published = p.getStatus() == BlogPost.Status.PUBLISHED && p.getPublishedAt() != null;
             LocalDateTime when = published ? p.getPublishedAt()
-                : (p.getStatus() != BlogPost.Status.PUBLISHED ? p.getPublishAt() : null);
+                : (p.getStatus() == BlogPost.Status.DRAFT ? p.getPublishAt() : null);
             if (when == null) continue;
             LocalDate day = when.toLocalDate();
             if (!YearMonth.from(day).equals(ym)) continue;
