@@ -862,7 +862,7 @@ new ApexCharts(document.getElementById('growthChart'), {
 
 // ── Rate Sparkline ─────────────────────────────────────────────────────
 (function loadRateSparkline() {
-    fetch('/api/admin/rate-trend?pair=USD/ZWG&days=14', {
+    fetch('/api/admin/rate-trend?source=ZimPriceCheck&pair=USD%2FZiG&days=14', {
         headers: { 'X-Admin-Token': ADMIN_TOKEN }
     })
     .then(res => {

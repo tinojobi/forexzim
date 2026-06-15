@@ -50,12 +50,12 @@ source_stats = {}
 filter_stats = {"no_date": 0, "old": 0, "non_economic": 0, "economic": 0}
 
 
-def fetch_url(url, timeout=15):
-    """Fetch URL with default curl UA (no custom User-Agent)."""
+def fetch_url(url, timeout=8):
+    """Fetch URL with a tighter timeout so scheduled scans fit cron runtime limits."""
     try:
         result = subprocess.run(
-            ["curl", "-sL", "--max-time", str(timeout), "-o", "-", url],
-            capture_output=True, text=True, timeout=timeout + 5
+            ["curl", "-sL", "--connect-timeout", "4", "--max-time", str(timeout), "-o", "-", url],
+            capture_output=True, text=True, timeout=timeout + 4
         )
         return result.stdout if result.returncode == 0 else None
     except:

@@ -3,6 +3,7 @@ package com.forexzim.controller;
 import com.forexzim.model.BlogPost;
 import com.forexzim.repository.BlogRepository;
 import com.forexzim.service.GscService;
+import com.forexzim.service.RateService;
 import com.forexzim.service.SystemEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,16 @@ public class AdminApiController {
     private final SystemEventService systemEventService;
     private final GscService gscService;
     private final BlogRepository blogRepository;
+    private final RateService rateService;
 
     public AdminApiController(SystemEventService systemEventService,
                                GscService gscService,
-                               BlogRepository blogRepository) {
+                               BlogRepository blogRepository,
+                               RateService rateService) {
         this.systemEventService = systemEventService;
         this.gscService = gscService;
         this.blogRepository = blogRepository;
+        this.rateService = rateService;
     }
 
     private ResponseEntity<?> checkAuth(String token) {
@@ -73,6 +77,22 @@ public class AdminApiController {
         if (auth != null) return auth;
 
         return ResponseEntity.ok(gscService.getArticlePerformance());
+    }
+
+    // ── Rate trend (CBZ USD/ZWG sparkline) ───────────────────────────────────
+
+    @GetMapping("/rate-trend")
+    public ResponseEntity<?> rateTrend(
+            @RequestHeader(value = "X-Admin-Token", required = false) String token,
+            @RequestParam(defaultValue = "CBZ") String source,
+            @RequestParam(defaultValue = "USD/ZWG") String pair,
+            @RequestParam(defaultValue = "14") int days) {
+
+        ResponseEntity<?> auth = checkAuth(token);
+        if (auth != null) return auth;
+
+        int clamped = Math.max(1, Math.min(days, 365));
+        return ResponseEntity.ok(rateService.getRateHistory(source, pair, clamped));
     }
 
     @GetMapping("/gsc/queries")
